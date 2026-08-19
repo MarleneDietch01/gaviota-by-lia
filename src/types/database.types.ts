@@ -1305,6 +1305,24 @@ export type Database = {
         }
         Relationships: []
       }
+      rate_limit_attempts: {
+        Row: {
+          bucket_key: string
+          created_at: string
+          id: number
+        }
+        Insert: {
+          bucket_key: string
+          created_at?: string
+          id?: never
+        }
+        Update: {
+          bucket_key?: string
+          created_at?: string
+          id?: never
+        }
+        Relationships: []
+      }
       reviews: {
         Row: {
           content: string | null
@@ -1545,6 +1563,14 @@ export type Database = {
         Args: { p_code: string; p_subtotal: number; p_user_id?: string }
         Returns: number
       }
+      check_rate_limit: {
+        Args: {
+          p_bucket_key: string
+          p_max_attempts: number
+          p_window_seconds: number
+        }
+        Returns: boolean
+      }
       commit_inventory_sale: { Args: { p_order_id: string }; Returns: number }
       expire_stale_reservations: { Args: never; Returns: number }
       generate_order_number: { Args: never; Returns: string }
@@ -1554,6 +1580,7 @@ export type Database = {
       }
       is_admin: { Args: never; Returns: boolean }
       is_super_admin: { Args: never; Returns: boolean }
+      prune_rate_limit_attempts: { Args: never; Returns: undefined }
       release_reservation: { Args: { p_order_id: string }; Returns: number }
       reserve_inventory: {
         Args: { p_order_id?: string; p_quantity: number; p_variant_id: string }

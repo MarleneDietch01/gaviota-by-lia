@@ -2,6 +2,7 @@
 
 import { redirect } from 'next/navigation';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { checkRateLimit } from '@/lib/security/rate-limit';
 import { isLocale, localizedHref, type Locale } from '@/lib/i18n';
 
 export interface RegisterState {
@@ -30,6 +31,19 @@ export async function signUp(_prevState: RegisterState, formData: FormData): Pro
         lang === 'es'
           ? 'La contraseña debe tener al menos 8 caracteres.'
           : 'Password must be at least 8 characters.',
+    };
+  }
+
+  // 3 registros por email cada 10 minutos: no evita que alguien registre
+  // cuentas distintas en masa (eso lo frena Supabase Auth por IP), pero sí
+  // evita reintentar el mismo correo en bucle.
+  const allowed = await checkRateLimit(`register:${email.toLowerCase()}`, 3, 600);
+  if (!allowed) {
+    return {
+      error:
+        lang === 'es'
+          ? 'Demasiados intentos. Espera unos minutos e inténtalo de nuevo.'
+          : 'Too many attempts. Wait a few minutes and try again.',
     };
   }
 

@@ -2,6 +2,7 @@
 
 import { redirect } from 'next/navigation';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { checkRateLimit } from '@/lib/security/rate-limit';
 
 export interface LoginState {
   readonly error?: string;
@@ -22,6 +23,13 @@ export async function signIn(_prevState: LoginState, formData: FormData): Promis
 
   if (!email || !password) {
     return { error: 'Introduce correo y contraseña.' };
+  }
+
+  // Más estricto que el login de clientas (5/15 min en vez de 5/5 min): es el
+  // objetivo de mayor privilegio del sitio.
+  const allowed = await checkRateLimit(`admin-login:${email.toLowerCase()}`, 5, 900);
+  if (!allowed) {
+    return { error: 'Demasiados intentos. Espera unos minutos e inténtalo de nuevo.' };
   }
 
   const supabase = await createServerSupabaseClient();
