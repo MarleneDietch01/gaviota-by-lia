@@ -1,0 +1,170 @@
+{
+  "hero.desktop": {
+    "src": "/images/gaviota/hero/hero-desktop.jpg",
+    "width": 2400,
+    "height": 3000,
+    "background": "#b27e7b"
+  },
+  "hero.tablet": {
+    "src": "/images/gaviota/hero/hero-tablet.jpg",
+    "width": 1800,
+    "height": 2250,
+    "background": "#b27e7b"
+  },
+  "hero.mobile": {
+    "src": "/images/gaviota/hero/hero-mobile.jpg",
+    "width": 1400,
+    "height": 1866,
+    "background": "#b07d79"
+  },
+  "campaign": {
+    "src": "/images/gaviota/editorial/campaign-aplicacion.jpg",
+    "width": 2000,
+    "height": 2500,
+    "background": "#c37e7f"
+  },
+  "ritual.exfolia": {
+    "src": "/images/gaviota/editorial/ritual-exfolia.jpg",
+    "width": 1600,
+    "height": 2000,
+    "background": "#d48f91"
+  },
+  "ritual.hidrata": {
+    "src": "/images/gaviota/editorial/ritual-hidrata.jpg",
+    "width": 1600,
+    "height": 2000,
+    "background": "#c37e80"
+  },
+  "ritual.labios": {
+    "src": "/images/gaviota/editorial/ritual-labios.jpg",
+    "width": 1600,
+    "height": 2000,
+    "background": "#cf958f"
+  },
+  "story.founder": {
+    "src": "/images/gaviota/editorial/story-fundadora.jpg",
+    "width": 1800,
+    "height": 2250,
+    "background": "#beacab"
+  },
+  "journal.bts": {
+    "src": "/images/gaviota/editorial/journal-tras-camaras.jpg",
+    "width": 1600,
+    "height": 2000,
+    "background": "#aa7777"
+  },
+  "founder.1": {
+    "src": "/images/gaviota/founder/fundadora-1.jpg",
+    "width": 1600,
+    "height": 2000,
+    "background": "#c2b3b3"
+  },
+  "founder.2": {
+    "src": "/images/gaviota/founder/fundadora-2.jpg",
+    "width": 1600,
+    "height": 2000,
+    "background": "#beacab"
+  },
+  "founder.3": {
+    "src": "/images/gaviota/founder/fundadora-3.jpg",
+    "width": 1600,
+    "height": 2000,
+    "background": "#c4b6b8"
+  },
+  "founder.4": {
+    "src": "/images/gaviota/founder/fundadora-4.jpg",
+    "width": 1600,
+    "height": 2000,
+    "background": "#c3b6b9"
+  },
+  "founder.5": {
+    "src": "/images/gaviota/founder/fundadora-5.jpg",
+    "width": 1600,
+    "height": 2000,
+    "background": "#c8c1c2"
+  },
+  "founder.6": {
+    "src": "/images/gaviota/founder/fundadora-6.jpg",
+    "width": 1600,
+    "height": 2000,
+    "background": "#c6c0c1"
+  },
+  "community.9": {
+    "src": "/images/gaviota/community/comunidad-9.jpg",
+    "width": 1400,
+    "height": 1750,
+    "background": "#c38081"
+  },
+  "community.11": {
+    "src": "/images/gaviota/community/comunidad-11.jpg",
+    "width": 1400,
+    "height": 1750,
+    "background": "#b67678"
+  },
+  "community.17": {
+    "src": "/images/gaviota/community/comunidad-17.jpg",
+    "width": 1400,
+    "height": 1750,
+    "background": "#a17366"
+  },
+  "community.18": {
+    "src": "/images/gaviota/community/comunidad-18.jpg",
+    "width": 1400,
+    "height": 1750,
+    "background": "#976963"
+  },
+  "product.crema-anti-estrias": {
+    "src": "/images/gaviota/products/crema-anti-estrias.jpg",
+    "width": 1200,
+    "height": 1200,
+    "background": "#e3a5a5"
+  },
+  "product.aceite-anti-estrias": {
+    "src": "/images/gaviota/products/aceite-anti-estrias-studio.jpg",
+    "width": 1200,
+    "height": 1200,
+    "background": "#f8f6f6"
+  },
+  "product.aceite-anti-estrias-masculino": {
+    "src": "/images/gaviota/products/aceite-anti-estrias-masculino-studio.jpg",
+    "width": 1200,
+    "height": 1200,
+    "background": "#f5f4f4"
+  },
+  "product.serum-vellos-encarnados": {
+    "src": "/images/gaviota/products/serum-vellos-encarnados-studio.jpg",
+    "width": 1200,
+    "height": 1200,
+    "background": "#faf9f9"
+  },
+  "product.sunscreen": {
+    "src": "/images/gaviota/products/sunscreen-studio.jpg",
+    "width": 1200,
+    "height": 1200,
+    "background": "#f5f3f3"
+  },
+  "product.crema-hidratante": {
+    "src": "/images/gaviota/products/crema-hidratante-studio.jpg",
+    "width": 1200,
+    "height": 1200,
+    "background": "#f3f2f1"
+  },
+  "product.exfoliante-de-coco": {
+    "src": "/images/gaviota/products/exfoliante-de-coco-studio.jpg",
+    "width": 1200,
+    "height": 1200,
+    "background": "#f1efef"
+  },
+  "product.tonico-para-barba": {
+    "src": "/images/gaviota/products/tonico-para-barba-studio.jpg",
+    "width": 1200,
+    "height": 1200,
+    "background": "#9f9284"
+  },
+  "collection.all": {
+    "src": "/images/gaviota/editorial/coleccion-completa.jpg",
+    "width": 2000,
+    "height": 2500,
+    "background": "#e69fa3"
+  }
+}

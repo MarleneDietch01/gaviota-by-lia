@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Three.js product viewer — starter</title>
+<style>
+  html,body{ margin:0; height:100%; background:#111318; overflow:hidden; }
+  canvas{ display:block; }
+  .hint{
+    position:fixed; left:50%; bottom:24px; transform:translateX(-50%);
+    color:#9aa0ad; font:13px -apple-system, system-ui, sans-serif; letter-spacing:.02em;
+    pointer-events:none; opacity:.8;
+  }
+</style>
+</head>
+<body>
+<div class="hint">Drag to orbit — scroll to zoom</div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.166.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.166.0/examples/jsm/"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+// ---------- basic scene / renderer ----------
+// See references/threejs-product-viewer.md for why each of these choices
+// (tone mapping, environment map, 3-light rig, shadow floor) matters for realism.
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x111318);
+
+const camera = new THREE.PerspectiveCamera(35, innerWidth / innerHeight, 0.1, 100);
+camera.position.set(0, 0.35, 4.4);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.1;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+document.body.appendChild(renderer.domElement);
+
+// Procedurally-generated studio environment for reflections/ambient light.
+// Swap for an RGBELoader('studio.hdr', ...) if a real HDRI is available — it
+// will look better, but this needs zero external assets to get 90% of the way there.
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+
+// ---------- lighting rig ----------
+const key = new THREE.DirectionalLight(0xffffff, 2.2);
+key.position.set(3, 4, 2);
+key.castShadow = true;
+key.shadow.mapSize.set(1024, 1024);
+scene.add(key);
+
+const fill = new THREE.DirectionalLight(0xffffff, 0.5);
+fill.position.set(-3, 1, 2);
+scene.add(fill);
+
+const rim = new THREE.DirectionalLight(0xffffff, 1.1);
+rim.position.set(0, 3, -3);
+scene.add(rim);
+
+// ---------- floor (shadow only, invisible otherwise) ----------
+const floor = new THREE.Mesh(
+  new THREE.PlaneGeometry(20, 20),
+  new THREE.ShadowMaterial({ opacity: 0.28 })
+);
+floor.rotation.x = -Math.PI / 2;
+floor.position.y = -0.9;
+floor.receiveShadow = true;
+scene.add(floor);
+
+// ---------- procedural product mesh ----------
+// Stand-in for a real .glb: a lathed bottle profile. Replace this whole block
+// with GLTFLoader().load('product.glb', (gltf) => scene.add(gltf.scene)) once
+// a real model exists — everything else (lighting, floor, controls) stays the same.
+// See references/threejs-product-viewer.md "Where the model comes from".
+
+function buildBottle() {
+  const group = new THREE.Group();
+
+  const profile = [
+    new THREE.Vector2(0.00, -0.90),
+    new THREE.Vector2(0.55, -0.90),
+    new THREE.Vector2(0.58, -0.60),
+    new THREE.Vector2(0.58, 0.55),
+    new THREE.Vector2(0.42, 0.62),
+    new THREE.Vector2(0.30, 0.75),
+    new THREE.Vector2(0.30, 0.95),
+  ];
+  const bodyGeo = new THREE.LatheGeometry(profile, 48);
+  const bodyMat = new THREE.MeshPhysicalMaterial({
+    color: 0x1c1d24,
+    roughness: 0.25,
+    metalness: 0.0,
+    clearcoat: 0.6,
+    clearcoatRoughness: 0.2,
+  });
+  const body = new THREE.Mesh(bodyGeo, bodyMat);
+  body.castShadow = true;
+  body.receiveShadow = true;
+  group.add(body);
+
+  const capGeo = new THREE.CylinderGeometry(0.34, 0.36, 0.22, 32);
+  const capMat = new THREE.MeshStandardMaterial({ color: 0xff5a3c, roughness: 0.45, metalness: 0.1 });
+  const cap = new THREE.Mesh(capGeo, capMat);
+  cap.position.y = 1.06;
+  cap.castShadow = true;
+  group.add(cap);
+
+  const labelGeo = new THREE.CylinderGeometry(0.585, 0.585, 0.75, 48, 1, true);
+  const labelMat = new THREE.MeshStandardMaterial({
+    color: 0xff5a3c, roughness: 0.55, metalness: 0.0, side: THREE.DoubleSide,
+  });
+  const label = new THREE.Mesh(labelGeo, labelMat);
+  label.position.y = -0.05;
+  group.add(label);
+
+  return group;
+}
+
+const product = buildBottle();
+scene.add(product);
+
+// ---------- controls ----------
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.08;
+controls.minDistance = 2;
+controls.maxDistance = 6;
+controls.maxPolarAngle = Math.PI * 0.55;
+controls.target.set(0, 0, 0);
+controls.autoRotate = true;
+controls.autoRotateSpeed = 1.0;
+controls.addEventListener('start', () => (controls.autoRotate = false));
+
+// ---------- loop ----------
+function animate() {
+  requestAnimationFrame(animate);
+  controls.update();
+  renderer.render(scene, camera);
+}
+animate();
+
+window.addEventListener('resize', () => {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+</script>
+</body>
+</html>

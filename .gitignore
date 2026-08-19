@@ -1,0 +1,52 @@
+# Dependencias
+node_modules/
+.pnp
+.pnp.*
+
+# Next.js
+.next/
+out/
+build/
+next-env.d.ts
+
+# Producción
+dist/
+
+# Entorno — NUNCA subir secretos
+.env
+.env.local
+.env*.local
+.env.production
+
+# Fotografías originales (324 MB).
+# Se conservan íntegras pero fuera del repositorio: usar almacenamiento aparte
+# o Git LFS. Los derivados servidos viven en public/images/gaviota/.
+originales/
+
+# Pruebas
+coverage/
+test-results/
+playwright-report/
+playwright/.cache/
+
+# Supabase
+supabase/.branches/
+supabase/.temp/
+.supabase/
+
+# Editor / SO
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+npm-debug.log*
+yarn-error.log*
+
+# TypeScript
+*.tsbuildinfo
+.firecrawl/

@@ -1,0 +1,305 @@
+@import 'tailwindcss';
+
+/* =============================================================================
+   Gaviota by Lia — Sistema de diseño "Editorial Premium"
+   -----------------------------------------------------------------------------
+   Todos los pares color/superficie de este archivo están medidos contra WCAG 2.1.
+   Los ratios anotados son reales, no estimados. Si añades un color nuevo, mídelo
+   antes: el sistema anterior falló porque se comprobó el rosa sobre blanco y
+   luego se usó sobre rosa.
+   ============================================================================= */
+
+@theme {
+  /* --- Superficies ----------------------------------------------------------
+     Cuatro. La home alterna entre ellas para crear ritmo; nunca tres secciones
+     seguidas con la misma.                                                    */
+  --color-ivory: #fbf6f2; /* marfil cálido — superficie por defecto */
+  --color-white-warm: #fffdfc; /* blanco cálido — respiro entre marfiles */
+  --color-powder: #ebc4cb; /* rosa empolvado — acento, nunca 2 seguidas */
+  --color-wine: #4b202d; /* vino oscuro — bloques de contraste */
+
+  /* --- Marca ----------------------------------------------------------------
+     rose ...... 5.59:1 sobre marfil, 5.91:1 sobre blanco. Texto normal OK.
+                 3.80:1 sobre rosa empolvado -> NO usar ahí en texto pequeño.
+     rose-deep . 5.24:1 sobre rosa empolvado. Es la variante para eyebrows y
+                 enlaces cuando la superficie es `powder`.
+     rose-ink .. estado :active y hover del botón primario.                    */
+  --color-rose: #a83d60;
+  --color-rose-deep: #8a2c49;
+  --color-rose-ink: #6e2239;
+
+  /* Champán. Solo filetes decorativos (aria-hidden): no transporta información,
+     así que no está sujeto a contraste. Es lo que da el registro editorial sin
+     recurrir a iconografía tropical. */
+  --color-champagne: #c6a87c;
+
+  /* --- Texto ----------------------------------------------------------------
+     ink ....... 14.27:1 marfil / 9.69:1 polvo / 15.10:1 blanco
+     body ......  8.20:1 marfil / 5.57:1 polvo — pasa AA en TODA superficie clara
+     muted .....  5.51:1 marfil / 5.83:1 blanco. En `powder` cae a 3.74:1, así
+                  que sobre rosa empolvado se usa `body`, nunca `muted`.        */
+  --color-ink: #302126;
+  --color-body: #5e434d;
+  --color-muted: #7a5c67;
+
+  /* Sobre vino: polvo 8.61:1, blanco 13.41:1. Ambos AA holgado. */
+  --color-on-dark: #fffdfc;
+  --color-on-dark-soft: #ebc4cb;
+
+  /* --- Estructura ----------------------------------------------------------- */
+  --color-line: #ede0dc; /* hairline sobre marfil */
+  --color-line-strong: #dcc3c8;
+  --color-line-dark: #6b3a49; /* hairline sobre vino */
+
+  /* --- Estado --------------------------------------------------------------- */
+  --color-success: #2c6248;
+  --color-danger: #9c2739;
+
+  /* --- Tipografía -----------------------------------------------------------
+     Dos familias. Cormorant Garamond da el registro de revista; Manrope resuelve
+     interfaz y cifras tabulares para los precios.                             */
+  --font-display: var(--font-cormorant), 'Iowan Old Style', Georgia, serif;
+  --font-sans: var(--font-manrope), system-ui, -apple-system, sans-serif;
+
+  /* Escala fluida CON TOPE. El sistema anterior llegaba a 5.5rem y partía
+     "Anti-Estrías" en dos en tablet. Aquí ningún titular pasa de 4.5rem, y los
+     mínimos suben para que a 360px sigan siendo legibles sin cortes raros. */
+  --text-display: clamp(2.625rem, 1.85rem + 3.1vw, 4.5rem);
+  --text-display--line-height: 1.04;
+  --text-display--letter-spacing: -0.022em;
+
+  --text-h1: clamp(2.125rem, 1.65rem + 1.9vw, 3.25rem);
+  --text-h1--line-height: 1.08;
+  --text-h1--letter-spacing: -0.018em;
+
+  --text-h2: clamp(1.75rem, 1.45rem + 1.25vw, 2.625rem);
+  --text-h2--line-height: 1.12;
+  --text-h2--letter-spacing: -0.014em;
+
+  --text-h3: clamp(1.1875rem, 1.1rem + 0.42vw, 1.4375rem);
+  --text-h3--line-height: 1.25;
+  --text-h3--letter-spacing: -0.008em;
+
+  --text-lead: clamp(1rem, 0.96rem + 0.2vw, 1.125rem);
+  --text-lead--line-height: 1.62;
+
+  /* --- Radios ---------------------------------------------------------------
+     Casi rectos. El único gesto curvo es `--radius-arch`, y se usa contado.    */
+  --radius-xs: 2px;
+  --radius-sm: 3px;
+  --radius-md: 6px;
+  --radius-pill: 999px;
+  --radius-arch: 20px;
+
+  /* --- Sombras --------------------------------------------------------------
+     Muy bajas y teñidas de vino: una sombra gris sobre marfil se ve sucia.     */
+  --shadow-subtle: 0 1px 2px rgb(75 32 45 / 0.05);
+  --shadow-lift: 0 10px 30px -12px rgb(75 32 45 / 0.18);
+  --shadow-drawer: 0 0 60px rgb(48 33 38 / 0.28);
+
+  /* --- Anchos máximos ------------------------------------------------------- */
+  --container-narrow: 44rem; /* 704px — texto largo, newsletter */
+  --container-default: 75rem; /* 1200px — rejillas de contenido */
+  --container-wide: 90rem; /* 1440px — header, footer, galerías */
+
+  /* --- Movimiento ----------------------------------------------------------- */
+  --ease-editorial: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* =============================================================================
+   Base
+   ============================================================================= */
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+
+    /* El header es `sticky`, así que al saltar a un ancla el destino queda
+       DEBAJO de él. Medido: 65px de header en móvil y 81px a partir de `lg`.
+       Sin esto, el titular de la sección enlazada aparecía cortado por arriba.
+       Se reserva la altura del header más un respiro, para que la sección no
+       quede pegada al borde inferior de la barra. */
+    scroll-padding-top: 5.5rem;
+  }
+
+  @media (min-width: 1024px) {
+    html {
+      scroll-padding-top: 7rem;
+    }
+  }
+
+  body {
+    background-color: var(--color-ivory);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    /* Ninguna sección debe poder provocar scroll lateral. */
+    overflow-x: clip;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Foco visible siempre. Nunca `outline: none` sin sustituto. */
+  :focus-visible {
+    outline: 2px solid var(--color-rose-deep);
+    outline-offset: 3px;
+    border-radius: var(--radius-xs);
+  }
+
+  /* Sobre vino el foco rosa se pierde: ahí se invierte a champán. */
+  .on-dark :focus-visible {
+    outline-color: var(--color-champagne);
+  }
+
+  ::selection {
+    background-color: var(--color-powder);
+    color: var(--color-ink);
+  }
+
+  /* El header es sticky: sin esto, cualquier ancla deja el titular debajo. */
+  [id] {
+    scroll-margin-top: 6rem;
+  }
+}
+
+/* =============================================================================
+   Utilidades de marca
+   ============================================================================= */
+
+/* Antetítulo. En superficies `powder` hay que pasar además `text-rose-deep`:
+   el rosa base no llega a AA sobre rosa empolvado. */
+@utility eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-rose);
+}
+
+/* La firma tipográfica: UNA palabra en cursiva dentro de un titular romano.
+   Una por titular, nunca dos. */
+@utility accent-word {
+  font-style: italic;
+  font-weight: 300;
+}
+
+/* Filete champán. Separador editorial, sustituye a la línea recta. */
+@utility rule-champagne {
+  height: 1px;
+  border: 0;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--color-champagne) 18%,
+    var(--color-champagne) 82%,
+    transparent
+  );
+}
+
+/* Marco de arco: dos esquinas opuestas curvadas.
+   IMPORTANTE: define las cuatro esquinas. La versión anterior solo definía dos
+   y `rounded-card` (que se aplicaba en el mismo elemento) las pisaba, dejando el
+   gesto muerto en toda la web. Al declararlas todas, ya no depende del orden. */
+@utility frame-arch {
+  border-start-start-radius: var(--radius-arch);
+  border-start-end-radius: var(--radius-xs);
+  border-end-start-radius: var(--radius-xs);
+  border-end-end-radius: var(--radius-arch);
+  overflow: hidden;
+}
+
+/* Cifras tabulares: los precios no deben "bailar" al cambiar de valor. */
+@utility tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Recorte a N líneas, para que las tarjetas mantengan altura homogénea. */
+@utility line-clamp-2x {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+/* =============================================================================
+   Aparición al entrar en viewport
+   -----------------------------------------------------------------------------
+   CSS puro + IntersectionObserver (ver components/ui/reveal.tsx). Sin librería
+   de animación: framer-motion son ~50 KB de JS de cliente para un fade-up.
+   El estado inicial solo se aplica si el navegador soporta JS y el usuario no ha
+   pedido menos movimiento; así el contenido nunca queda invisible.
+   ============================================================================= */
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-reveal] {
+    opacity: 0;
+    transform: translateY(18px);
+    transition:
+      opacity 0.7s var(--ease-editorial),
+      transform 0.7s var(--ease-editorial);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  [data-reveal='shown'] {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Entrada del hero: se dispara sola al cargar, sin observer ni JS. */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes rise-in {
+    from {
+      opacity: 0;
+      transform: translateY(22px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .hero-rise {
+    animation: rise-in 0.9s var(--ease-editorial) both;
+    animation-delay: var(--rise-delay, 0ms);
+  }
+}
+
+/* =============================================================================
+   Accesibilidad — prefers-reduced-motion
+   -----------------------------------------------------------------------------
+   No es opcional. Todo lo de arriba queda neutralizado aquí, y los componentes
+   interactivos siguen funcionando exactamente igual sin animación.
+   ============================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
