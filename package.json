@@ -34,6 +34,7 @@
     "db:sql": "node scripts/db-remote.mjs sql"
   },
   "dependencies": {
+    "@paypal/paypal-server-sdk": "^2.4.0",
     "@supabase/ssr": "^0.7.0",
     "@supabase/supabase-js": "^2.58.0",
     "framer-motion": "^13.0.0",
