@@ -1,13 +1,63 @@
 import type { NextConfig } from 'next';
 
 /**
- * Cabeceras de seguridad.
+ * Content-Security-Policy.
  *
- * La CSP se irá ajustando en la Fase 7 cuando se conozcan los dominios reales
- * de la pasarela de pago y de la analítica. `unsafe-inline` en `style-src` es
- * necesario para los estilos en línea de next/image.
+ * -----------------------------------------------------------------------------
+ * SIN NONCES, A PROPÓSITO
+ * -----------------------------------------------------------------------------
+ * El método con nonce (recomendado por Next para la CSP más estricta) exige
+ * que TODAS las páginas se rendericen dinámicamente en cada petición: el sitio
+ * pierde el pre-renderizado estático que ya está optimizado a fondo para
+ * rendimiento (ver `docs/STORE_IMPLEMENTATION_STATUS.md`). Es un trade-off que
+ * no compensa hoy: no hay contenido generado por usuarios ni
+ * `dangerouslySetInnerHTML` en ningún componente (verificado en la auditoría
+ * de seguridad), así que el riesgo real de inyección de script inline es bajo.
+ *
+ * `unsafe-inline` en `script-src`/`style-src` es la consecuencia de esa
+ * decisión: sin nonce, es la única forma de que los scripts inline que Next
+ * inyecta (el payload de RSC en streaming, `__NEXT_DATA__`) sigan
+ * ejecutándose. La CSP igual aporta: restringe a un listado explícito de
+ * dominios de dónde puede cargarse CUALQUIER script/imagen/conexión externa —
+ * bloquea la inyección de un dominio no autorizado, que es el vector más
+ * común en la práctica (script de un CDN comprometido, tracker no aprobado).
+ *
+ * Dominios permitidos, y por qué cada uno:
+ *   · js.stripe.com / api.stripe.com  -> Stripe Checkout es una redirección de
+ *     página completa (`window.location.href`), no un iframe embebido, así
+ *     que hoy no se carga Stripe.js en el DOM — se permite igual porque Fase 4
+ *     (Payment/Card Element embebido) sí lo necesitaría sin tener que volver
+ *     a tocar esta lista.
+ *   · www.paypal.com / www.paypalobjects.com / *.paypal.com -> el SDK de
+ *     PayPal Buttons SÍ se inyecta en el DOM (`paypal-button.tsx`) y abre sus
+ *     propios iframes/popups para el widget de pago.
+ *   · *.supabase.co en `connect-src` -> `reset-password-form.tsx` usa el
+ *     cliente de Supabase del NAVEGADOR (`createBrowserSupabaseClient()`),
+ *     así que esa llamada sale directo del cliente a la API de Supabase Auth,
+ *     no pasa por el servidor. Sin este dominio, restablecer la contraseña se
+ *     rompería en silencio (la petición fallaría por CSP, no por un error de
+ *     Supabase) — se detectó probando la propia CSP, no antes.
+ * -----------------------------------------------------------------------------
  */
+const isDev = process.env.NODE_ENV === 'development';
+
+const cspDirectives = [
+  `default-src 'self'`,
+  `script-src 'self' 'unsafe-inline' https://js.stripe.com https://www.paypal.com https://www.paypalobjects.com${isDev ? " 'unsafe-eval'" : ''}`,
+  `style-src 'self' 'unsafe-inline'`,
+  `img-src 'self' blob: data: https://www.paypalobjects.com`,
+  `font-src 'self' data:`,
+  `connect-src 'self' https://api.stripe.com https://*.paypal.com https://*.paypalobjects.com https://*.supabase.co`,
+  `frame-src 'self' https://js.stripe.com https://*.paypal.com`,
+  `object-src 'none'`,
+  `base-uri 'self'`,
+  `form-action 'self'`,
+  `frame-ancestors 'none'`,
+  `upgrade-insecure-requests`,
+];
+
 const securityHeaders = [
+  { key: 'Content-Security-Policy', value: cspDirectives.join('; ') },
   { key: 'X-Content-Type-Options', value: 'nosniff' },
   { key: 'X-Frame-Options', value: 'DENY' },
   { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
