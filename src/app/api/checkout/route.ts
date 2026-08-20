@@ -6,6 +6,7 @@ import { getStripeClient } from '@/lib/stripe/client';
 import { createAdminSupabaseClient } from '@/lib/supabase/admin';
 import { checkRateLimit } from '@/lib/security/rate-limit';
 import { createPendingOrder, validateCheckoutLines } from '@/lib/commerce/checkout';
+import { isSameOriginRequest } from '@/lib/security/origin';
 import { isLocale, type Locale } from '@/lib/i18n';
 
 /**
@@ -26,6 +27,13 @@ import { isLocale, type Locale } from '@/lib/i18n';
  * -----------------------------------------------------------------------------
  */
 export async function POST(request: NextRequest) {
+  // Route Handler, no Server Action: Next no aplica aquí la comprobación de
+  // origen automática que sí hace con `'use server'`. Ver el comentario en
+  // `lib/security/origin.ts`.
+  if (!isSameOriginRequest(request)) {
+    return NextResponse.json({ error: 'invalid_origin' }, { status: 403 });
+  }
+
   // Se resuelve ANTES de escribir nada en la base: si falta la configuración
   // de Stripe, la petición falla aquí y no deja pedidos huérfanos en
   // `pending_payment` sin ninguna sesión de pago detrás.

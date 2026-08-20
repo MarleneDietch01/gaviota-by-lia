@@ -3,6 +3,7 @@ import 'server-only';
 import { NextResponse, type NextRequest } from 'next/server';
 import { getOrdersController } from '@/lib/paypal/client';
 import { createAdminSupabaseClient } from '@/lib/supabase/admin';
+import { isSameOriginRequest } from '@/lib/security/origin';
 
 /**
  * Captura el pago tras la aprobación del comprador (paso 2 del flujo).
@@ -14,6 +15,10 @@ import { createAdminSupabaseClient } from '@/lib/supabase/admin';
  * captura), el webhook igual deja el pedido correcto.
  */
 export async function POST(request: NextRequest) {
+  if (!isSameOriginRequest(request)) {
+    return NextResponse.json({ error: 'invalid_origin' }, { status: 403 });
+  }
+
   let body: unknown;
   try {
     body = await request.json();

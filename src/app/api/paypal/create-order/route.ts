@@ -8,6 +8,7 @@ import { createAdminSupabaseClient } from '@/lib/supabase/admin';
 import { checkRateLimit } from '@/lib/security/rate-limit';
 import { createPendingOrder, validateCheckoutLines } from '@/lib/commerce/checkout';
 import { toUnits } from '@/lib/commerce/money';
+import { isSameOriginRequest } from '@/lib/security/origin';
 import { isLocale, type Locale } from '@/lib/i18n';
 
 /**
@@ -21,6 +22,10 @@ import { isLocale, type Locale } from '@/lib/i18n';
  * cliente llama a `/api/paypal/capture-order` con ese id.
  */
 export async function POST(request: NextRequest) {
+  if (!isSameOriginRequest(request)) {
+    return NextResponse.json({ error: 'invalid_origin' }, { status: 403 });
+  }
+
   // Igual que en /api/checkout: se resuelve ANTES de escribir nada en la
   // base, para no dejar pedidos huérfanos si falta la configuración.
   let orders: ReturnType<typeof getOrdersController>;
