@@ -1,8 +1,12 @@
 'use server';
 
 import { redirect } from 'next/navigation';
+import { z } from 'zod';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { checkRateLimit } from '@/lib/security/rate-limit';
+import { emailSchema, loginPasswordSchema } from '@/lib/validation/auth';
+
+const adminLoginSchema = z.object({ email: emailSchema, password: loginPasswordSchema });
 
 export interface LoginState {
   readonly error?: string;
@@ -18,16 +22,20 @@ export interface LoginState {
  * expulsarla, en vez de dos caminos de autorización distintos que mantener.
  */
 export async function signIn(_prevState: LoginState, formData: FormData): Promise<LoginState> {
-  const email = String(formData.get('email') ?? '').trim();
-  const password = String(formData.get('password') ?? '');
+  const parsed = adminLoginSchema.safeParse({
+    email: formData.get('email'),
+    password: formData.get('password'),
+  });
 
-  if (!email || !password) {
-    return { error: 'Introduce correo y contraseña.' };
+  if (!parsed.success) {
+    return { error: 'Introduce un correo válido y tu contraseña.' };
   }
+
+  const { email, password } = parsed.data;
 
   // Más estricto que el login de clientas (5/15 min en vez de 5/5 min): es el
   // objetivo de mayor privilegio del sitio.
-  const allowed = await checkRateLimit(`admin-login:${email.toLowerCase()}`, 5, 900);
+  const allowed = await checkRateLimit(`admin-login:${email}`, 5, 900);
   if (!allowed) {
     return { error: 'Demasiados intentos. Espera unos minutos e inténtalo de nuevo.' };
   }

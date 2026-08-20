@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createBrowserSupabaseClient } from '@/lib/supabase/client';
+import { resetPasswordSchema } from '@/lib/validation/auth';
 import { localizedHref, type Locale } from '@/lib/i18n';
 
 type Status = 'checking' | 'ready' | 'invalid' | 'saving' | 'done';
@@ -38,9 +39,11 @@ export function ResetPasswordForm({ locale }: { locale: Locale }) {
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const password = String(new FormData(event.currentTarget).get('password') ?? '');
+    const parsed = resetPasswordSchema.safeParse({
+      password: new FormData(event.currentTarget).get('password'),
+    });
 
-    if (password.length < 8) {
+    if (!parsed.success) {
       setError(
         locale === 'es' ? 'La contraseña debe tener al menos 8 caracteres.' : 'Password must be at least 8 characters.',
       );
@@ -51,7 +54,7 @@ export function ResetPasswordForm({ locale }: { locale: Locale }) {
     setError(null);
 
     const supabase = createBrowserSupabaseClient();
-    const { error: updateError } = await supabase.auth.updateUser({ password });
+    const { error: updateError } = await supabase.auth.updateUser({ password: parsed.data.password });
 
     if (updateError) {
       setError(locale === 'es' ? 'No se pudo actualizar la contraseña.' : 'Could not update the password.');

@@ -2,6 +2,7 @@
 
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { checkRateLimit } from '@/lib/security/rate-limit';
+import { forgotPasswordSchema } from '@/lib/validation/auth';
 import { isLocale, type Locale } from '@/lib/i18n';
 
 export interface ForgotPasswordState {
@@ -13,20 +14,23 @@ export async function requestPasswordReset(
   _prevState: ForgotPasswordState,
   formData: FormData,
 ): Promise<ForgotPasswordState> {
-  const email = String(formData.get('email') ?? '').trim();
   const langRaw = String(formData.get('lang') ?? '');
   const lang: Locale = isLocale(langRaw) ? langRaw : 'es';
 
-  if (!email) {
-    return { error: lang === 'es' ? 'Introduce tu correo.' : 'Enter your email.' };
+  const parsed = forgotPasswordSchema.safeParse({ email: formData.get('email'), lang });
+
+  if (!parsed.success) {
+    return { error: lang === 'es' ? 'Introduce un correo válido.' : 'Enter a valid email.' };
   }
+
+  const { email } = parsed.data;
 
   // 3 correos por dirección cada 10 minutos. El resultado visible es SIEMPRE
   // "sent: true" pase lo que pase (exista la cuenta o no, esté limitado o no):
   // devolver un mensaje distinto cuando se excede el límite delataría que ese
   // correo sí está siendo bombardeado con intento tras intento, que es
   // información suficiente para confirmar que la cuenta existe.
-  const allowed = await checkRateLimit(`forgot-password:${email.toLowerCase()}`, 3, 600);
+  const allowed = await checkRateLimit(`forgot-password:${email}`, 3, 600);
 
   if (allowed) {
     const supabase = await createServerSupabaseClient();

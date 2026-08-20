@@ -7,6 +7,7 @@ import { createAdminSupabaseClient } from '@/lib/supabase/admin';
 import { checkRateLimit } from '@/lib/security/rate-limit';
 import { createPendingOrder, validateCheckoutLines } from '@/lib/commerce/checkout';
 import { isSameOriginRequest } from '@/lib/security/origin';
+import { parseOptionalCheckoutEmail } from '@/lib/validation/checkout';
 import { isLocale, type Locale } from '@/lib/i18n';
 
 /**
@@ -58,7 +59,7 @@ export async function POST(request: NextRequest) {
   };
 
   const locale: Locale = typeof lang === 'string' && isLocale(lang) ? lang : 'es';
-  const email = typeof customerEmail === 'string' ? customerEmail.trim().slice(0, 254) : '';
+  const email = parseOptionalCheckoutEmail(customerEmail);
 
   // Límite por IP: crear sesiones de Stripe sin límite es una forma barata de
   // agotar la cuota de la cuenta o de martillar la base de datos con pedidos

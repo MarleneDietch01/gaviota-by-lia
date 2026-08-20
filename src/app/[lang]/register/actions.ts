@@ -3,6 +3,7 @@
 import { redirect } from 'next/navigation';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { checkRateLimit } from '@/lib/security/rate-limit';
+import { registerSchema } from '@/lib/validation/auth';
 import { isLocale, localizedHref, type Locale } from '@/lib/i18n';
 
 export interface RegisterState {
@@ -12,32 +13,39 @@ export interface RegisterState {
 }
 
 export async function signUp(_prevState: RegisterState, formData: FormData): Promise<RegisterState> {
-  const email = String(formData.get('email') ?? '').trim();
-  const password = String(formData.get('password') ?? '');
-  const firstName = String(formData.get('firstName') ?? '').trim();
-  const lastName = String(formData.get('lastName') ?? '').trim();
   const langRaw = String(formData.get('lang') ?? '');
   const lang: Locale = isLocale(langRaw) ? langRaw : 'es';
 
-  if (!email || !password || !firstName) {
+  const parsed = registerSchema.safeParse({
+    email: formData.get('email'),
+    password: formData.get('password'),
+    firstName: formData.get('firstName'),
+    lastName: formData.get('lastName'),
+    lang,
+  });
+
+  if (!parsed.success) {
+    const passwordTooShort = parsed.error.issues.some(
+      (issue) => issue.path[0] === 'password' && issue.message === 'too_short',
+    );
+
     return {
-      error: lang === 'es' ? 'Completa correo, contraseña y nombre.' : 'Fill in email, password and first name.',
+      error: passwordTooShort
+        ? lang === 'es'
+          ? 'La contraseña debe tener al menos 8 caracteres.'
+          : 'Password must be at least 8 characters.'
+        : lang === 'es'
+          ? 'Completa correo, contraseña y nombre correctamente.'
+          : 'Fill in a valid email, password and first name.',
     };
   }
 
-  if (password.length < 8) {
-    return {
-      error:
-        lang === 'es'
-          ? 'La contraseña debe tener al menos 8 caracteres.'
-          : 'Password must be at least 8 characters.',
-    };
-  }
+  const { email, password, firstName, lastName } = parsed.data;
 
   // 3 registros por email cada 10 minutos: no evita que alguien registre
   // cuentas distintas en masa (eso lo frena Supabase Auth por IP), pero sí
   // evita reintentar el mismo correo en bucle.
-  const allowed = await checkRateLimit(`register:${email.toLowerCase()}`, 3, 600);
+  const allowed = await checkRateLimit(`register:${email}`, 3, 600);
   if (!allowed) {
     return {
       error:

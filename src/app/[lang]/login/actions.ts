@@ -3,6 +3,7 @@
 import { redirect } from 'next/navigation';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { checkRateLimit } from '@/lib/security/rate-limit';
+import { loginSchema } from '@/lib/validation/auth';
 import { isLocale, localizedHref, type Locale } from '@/lib/i18n';
 
 export interface AuthFormState {
@@ -19,19 +20,30 @@ const TOO_MANY_ATTEMPTS: Record<Locale, string> = {
   es: 'Demasiados intentos. Espera unos minutos e inténtalo de nuevo.',
 };
 
+const MISSING_FIELDS: Record<Locale, string> = {
+  en: 'Enter a valid email and password.',
+  es: 'Introduce un correo válido y tu contraseña.',
+};
+
 export async function signIn(_prevState: AuthFormState, formData: FormData): Promise<AuthFormState> {
-  const email = String(formData.get('email') ?? '').trim();
-  const password = String(formData.get('password') ?? '');
   const langRaw = String(formData.get('lang') ?? '');
   const lang: Locale = isLocale(langRaw) ? langRaw : 'es';
 
-  if (!email || !password) {
-    return { error: lang === 'es' ? 'Introduce correo y contraseña.' : 'Enter your email and password.' };
+  const parsed = loginSchema.safeParse({
+    email: formData.get('email'),
+    password: formData.get('password'),
+    lang,
+  });
+
+  if (!parsed.success) {
+    return { error: MISSING_FIELDS[lang] };
   }
+
+  const { email, password } = parsed.data;
 
   // 5 intentos por email cada 5 minutos: el vector de fuerza bruta más común
   // contra un login es probar contraseñas repetidas sobre la MISMA cuenta.
-  const allowed = await checkRateLimit(`login:${email.toLowerCase()}`, 5, 300);
+  const allowed = await checkRateLimit(`login:${email}`, 5, 300);
   if (!allowed) {
     return { error: TOO_MANY_ATTEMPTS[lang] };
   }

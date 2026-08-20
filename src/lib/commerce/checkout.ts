@@ -4,6 +4,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { getProductBySlug } from '@/lib/catalog/products';
 import { cents, type Cents } from '@/lib/commerce/money';
 import type { Locale } from '@/lib/i18n';
+import { checkoutLinesSchema } from '@/lib/validation/checkout';
 import type { Database } from '@/types/database.types';
 
 export interface CheckoutItem {
@@ -19,9 +20,6 @@ export interface CheckoutValidationResult {
   readonly subtotal: Cents;
 }
 
-const MAX_LINE_QUANTITY = 20;
-const MAX_LINES = 30;
-
 /**
  * Valida y resuelve las líneas del carrito contra el catálogo del SERVIDOR.
  *
@@ -34,23 +32,12 @@ export async function validateCheckoutLines(
   rawLines: unknown,
   locale: Locale,
 ): Promise<{ ok: true; result: CheckoutValidationResult } | { ok: false; error: string; slugs?: string[] }> {
-  if (!Array.isArray(rawLines) || rawLines.length === 0 || rawLines.length > MAX_LINES) {
+  const parseResult = checkoutLinesSchema.safeParse(rawLines);
+  if (!parseResult.success) {
     return { ok: false, error: 'invalid_lines' };
   }
 
-  const parsed: { slug: string; quantity: number }[] = [];
-  for (const raw of rawLines as unknown[]) {
-    if (typeof raw !== 'object' || raw === null) continue;
-    const { slug, quantity } = raw as { slug?: unknown; quantity?: unknown };
-    if (typeof slug !== 'string' || typeof quantity !== 'number') continue;
-    const safeQuantity = Math.trunc(quantity);
-    if (safeQuantity <= 0 || safeQuantity > MAX_LINE_QUANTITY) continue;
-    parsed.push({ slug, quantity: safeQuantity });
-  }
-
-  if (parsed.length === 0) {
-    return { ok: false, error: 'no_valid_lines' };
-  }
+  const parsed = parseResult.data;
 
   const resolved = await Promise.all(
     parsed.map(async (line) => ({ line, product: await getProductBySlug(line.slug, locale) })),

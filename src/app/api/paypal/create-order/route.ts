@@ -9,6 +9,7 @@ import { checkRateLimit } from '@/lib/security/rate-limit';
 import { createPendingOrder, validateCheckoutLines } from '@/lib/commerce/checkout';
 import { toUnits } from '@/lib/commerce/money';
 import { isSameOriginRequest } from '@/lib/security/origin';
+import { parseOptionalCheckoutEmail } from '@/lib/validation/checkout';
 import { isLocale, type Locale } from '@/lib/i18n';
 
 /**
@@ -49,7 +50,7 @@ export async function POST(request: NextRequest) {
   };
 
   const locale: Locale = typeof lang === 'string' && isLocale(lang) ? lang : 'es';
-  const email = typeof customerEmail === 'string' ? customerEmail.trim().slice(0, 254) : '';
+  const email = parseOptionalCheckoutEmail(customerEmail);
 
   const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
   const allowed = await checkRateLimit(`checkout:${ip}`, 10, 300);
