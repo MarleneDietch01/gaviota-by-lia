@@ -185,30 +185,13 @@ const CATALOG: readonly Product[] = [
     categorySlug: 'cuidado-masculino',
     needSlugs: [],
   },
-  {
-    slug: 'sunscreen',
-    name: 'Sunscreen',
-    // Único claim impreso en el envase: "HIDRATANTE / MOISTURIZING".
-    // NO se reproduce ninguna afirmación de protección solar: en EE. UU. eso
-    // convierte el producto en medicamento OTC y la documentación del
-    // fabricante sigue pendiente (LEGAL_TODO L2).
-    shortDescription: 'Fórmula hidratante de uso diario.',
-    price: cents(3000),
-    sizeLabel: '59 mL',
-    image: '/images/gaviota/products/sunscreen-studio.jpg',
-    imageAlt: 'Frasco con dosificador de Sunscreen Gaviota by Lia de 59 mL',
-    imageWidth: 1200,
-    imageHeight: 1200,
-    imageBackground: '#ffffff',
-    featured: true,
-    reviewCount: 0,
-    contentComplete: false,
-    categorySlug: 'cremas-e-hidratacion',
-    needSlugs: ['hidratacion'],
-  },
 ];
 
-// SIGUEN FUERA, por falta de dato, no de decisión:
+// SIGUEN FUERA, por falta de dato o por decisión:
+//   · Sunscreen           -> RETIRADO A PROPÓSITO. Decisión explícita de la
+//     propietaria: no se vende protector solar en la web (evita por completo
+//     el riesgo de LEGAL_TODO.md L2 — en EE. UU. un SPF es medicamento OTC,
+//     no cosmético).
 //   · Crema Anti-Estrías -> hay packshot (recortado de GA9) pero no existe
 //     precio en ninguna parte: nunca se vendió online. Falta precio y descripción.
 //   · Producto labial    -> ni packshot ni precio ni nombre confirmado.
@@ -223,7 +206,6 @@ const ENGLISH: Record<string, Pick<Product, 'name' | 'shortDescription' | 'image
   'serum-vellos-encarnados': { name: 'Ingrown Hair Serum', shortDescription: 'Post-hair-removal care for smoother-looking skin.', imageAlt: '2 fl oz Gaviota by Lia Ingrown Hair Serum bottle' },
   'aceite-anti-estrias-masculino': { name: "Men's Stretch Mark Body Oil", shortDescription: 'Firming hydration for soft, luminous-looking skin.', imageAlt: "4 fl oz Gaviota by Lia Men's Stretch Mark Body Oil dropper bottle" },
   'tonico-para-barba': { name: 'Beard Tonic', shortDescription: 'Beard tonic for daily use.', imageAlt: 'Gaviota by Lia Beard Tonic bottle next to its box' },
-  'sunscreen': { name: 'Sunscreen', shortDescription: 'Moisturizing formula for daily use.', imageAlt: '2 fl oz Gaviota by Lia Sunscreen pump bottle' },
 };
 
 function localizeProduct(product: Product, locale: Locale): Product {
