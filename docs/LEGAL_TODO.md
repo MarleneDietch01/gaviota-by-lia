@@ -7,24 +7,28 @@ asesoría legal.
 
 ---
 
-## 🔴 L1 — Nombre legal y jurisdicción
+## ✅ L1 — Nombre legal y jurisdicción — RESUELTO (2026-08-21)
 
-**No aparece en ninguna parte del sitio actual.**
+Confirmado con el EIN emitido por el IRS (CP 575 G, notificado 20-02-2025) y las
+Articles of Organization presentadas ante el Secretary of State de Rhode Island
+(Filing Number 202565164450, 19-02-2025).
 
-| Dato | Estado |
+| Dato | Valor |
 |---|---|
-| Nombre legal completo de la empresa | ❓ Pendiente |
-| Forma jurídica (LLC, Corp, SRL…) | ❓ Pendiente |
-| País y estado de registro | ❓ Pendiente |
-| Número de identificación fiscal | ❓ Pendiente |
-| Dirección legal completa | ❓ Pendiente — hoy solo consta "Estados Unidos" |
+| Nombre legal completo | Gaviota By Lia LLC |
+| Forma jurídica | LLC (elige tributar como corporación — Article III) |
+| País y estado de registro | Estados Unidos, Rhode Island |
+| EIN | 33-3534338 |
+| Dirección del agente registrado / oficina principal | 5 Rangeley Avenue, Providence, RI 02908 |
+| Miembro único / agente registrado | Marlene I Dietsch |
+| Duración | Perpetua |
 
-**Indicios encontrados:** moneda USD · teléfono 401 (Rhode Island, EE. UU.) · USPS ·
-fundadora dominicana.
-
-**Por qué bloquea.** Determina la normativa cosmética aplicable, el contenido de todas las
-políticas, el tratamiento fiscal y **la posibilidad de contratar una pasarela de pago**.
-El alta del comercio exige el nombre legal y la dirección reales.
+**Pendiente, ahora que la identidad está resuelta:** ¿se publica esta dirección
+completa como dirección de contacto/legal en el sitio (footer, política de
+privacidad, términos), o se usa una dirección comercial/apartado distinta? Es la
+dirección del agente registrado en la presentación estatal — puede ser una
+dirección particular de la propietaria, así que la decisión de publicarla tal
+cual en un sitio público le corresponde a ella, no se asume aquí.
 
 ---
 
@@ -246,7 +250,7 @@ por accesibilidad, frecuente en comercio electrónico en EE. UU.
 
 | # | Asunto | Prioridad | Bloquea lanzamiento |
 |---|---|---|---|
-| L1 | Nombre legal y jurisdicción | 🔴 | **Sí** |
+| L1 | Nombre legal y jurisdicción | ✅ Resuelto | — |
 | L2 | Documentación del protector solar | 🔴 | **Sí** |
 | L3 | Política de privacidad | 🔴 | **Sí** |
 | L4 | Política de reembolso | 🔴 | **Sí** |

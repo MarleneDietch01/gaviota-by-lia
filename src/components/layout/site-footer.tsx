@@ -77,7 +77,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
 
           <div className="flex flex-col gap-4 text-xs leading-relaxed text-on-dark-soft sm:flex-row sm:items-start sm:justify-between">
             <p>
-              © {new Date().getFullYear()} Gaviota by Lia.{' '}
+              © {new Date().getFullYear()} Gaviota By Lia LLC.{' '}
               {pick(locale, 'All rights reserved.', 'Todos los derechos reservados.')}
             </p>
             <p className="sm:max-w-md sm:text-right">

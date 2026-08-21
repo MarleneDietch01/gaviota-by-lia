@@ -226,7 +226,7 @@ personal", "conocimiento experto", sin un solo dato concreto.
 |---|---|---|
 | Correo | `gaviotabylia@gmail.com` | ¿Se migra a `hola@gaviotabylia.com`? |
 | Teléfono | `401-305-8713` | ¿Sigue vigente? ¿Es WhatsApp? |
-| Dirección | "Estados Unidos" | Dirección real (`LEGAL_TODO.md` L1) |
+| Dirección | "Estados Unidos" | Ya se conoce (5 Rangeley Avenue, Providence, RI 02908 — `LEGAL_TODO.md` L1), pero falta decidir si se publica esa dirección tal cual en el sitio o se usa otra |
 | Horario | — | ❓ |
 | Instagram | `@gaviotabylia` | ✅ |
 | Otras redes | — | ¿TikTok? ¿Facebook? |
