@@ -253,21 +253,23 @@ online**:
 
 ---
 
-## 🟠 C15 — Tónico Para Barba
+## 🟡 C15 — Tónico Para Barba — parcialmente resuelto (2026-08-21)
 
-El producto peor documentado del catálogo. Su descripción íntegra son 92 caracteres:
+Ya tiene etiqueta fotografiada propia, con ingredientes, precauciones y modo de uso
+reales, y packshot de estudio propio (fondo blanco) — publicados. Sigue pendiente
+la parte de `LEGAL_TODO.md` L8:
 
-> Rellena los vacios / Estimula, y acelera el crecimiento. / combate la caida
+> Rellena los vacíos / Estimula y acelera el crecimiento / Combatiendo las caídas
 
-Sin acentos, sin mayúsculas iniciales, sin ingredientes, sin modo de uso. Y los tres claims
-son de crecimiento capilar, es decir, de medicamento (`LEGAL_TODO.md` L8).
+Los tres claims de la etiqueta son de crecimiento/anticaída capilar, es decir, de
+medicamento — **no se reproducen** en la web tal cual. La descripción se queda en
+"Tónico para barba, de uso diario" hasta que se decida cómo reescribirlos en
+lenguaje cosmético (o si se documentan como corresponde a un medicamento OTC).
 
-Además **no aparece en ninguna de las 17 fotografías**: todo el material disponible es
-femenino.
-
-- [ ] ¿Se mantiene en el catálogo?
-- [ ] Si sí: contenido completo + fotografía propia
-- [ ] Si no: se archiva
+- [x] ¿Se mantiene en el catálogo? — sí
+- [x] Fotografía propia — sí, packshot de estudio
+- [ ] Reescribir los tres claims en lenguaje cosmético permitido, o retirarlos
+      definitivamente
 
 ---
 

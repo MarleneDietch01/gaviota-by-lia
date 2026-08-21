@@ -212,10 +212,12 @@ const CATALOG: readonly Product[] = [
   {
     slug: 'tonico-para-barba',
     name: 'Tónico Para Barba',
-    // Del propio envase: "USO DIARIO". No se reproducen los tres claims que
-    // lleva impresos la caja (rellenar vacíos, acelerar el crecimiento,
-    // combatir las canas): son claims de crecimiento capilar, categoría de
-    // medicamento, pendientes de reescritura (CONTENT_TODO C15).
+    // Del propio envase: "USO DIARIO". No se reproducen los claims impresos en
+    // la etiqueta ("Rellena los vacíos", "Estimula y acelera el crecimiento",
+    // "Combatiendo las caídas"): son claims de crecimiento capilar, categoría
+    // de medicamento, pendientes de reescritura (CONTENT_TODO C15, LEGAL_TODO
+    // L8). Ingredientes, precauciones y modo de uso sí son datos factuales de
+    // la etiqueta, sin ese problema.
     shortDescription: 'Tónico para barba, de uso diario.',
     price: cents(4000),
     sizeLabel: '115 mL',
@@ -226,9 +228,14 @@ const CATALOG: readonly Product[] = [
     imageBackground: '#e8e2da',
     featured: true,
     reviewCount: 0,
-    contentComplete: false,
     categorySlug: 'cuidado-masculino',
     needSlugs: [],
+    ingredients:
+      'Paraffinum Liquidum, Mineral Oil, Cocos Nucifera (Coconut) Oil, Rosa Moschata (Rosehip) Seed Oil, Prunus Dulcis (Almond) Oil, Tocopherol Acetate, Isopropyl Myristate, Fragance/Parfum, Glycine Soja Oil.',
+    precautions:
+      'Mantener fuera del alcance de los niños. En caso de irritación, descontinuar su uso. Evite contacto con los ojos. Uso externo.',
+    usageInstructions:
+      'Aplicar el spray sobre la barba limpia y seca, masajeando suavemente la piel para favorecer la absorción. Usar 1-2 veces al día de forma constante para mejores resultados.',
   },
 ];
 
@@ -288,6 +295,8 @@ const ENGLISH: Record<
     name: 'Beard Tonic',
     shortDescription: 'Beard tonic for daily use.',
     imageAlt: 'Gaviota by Lia Beard Tonic bottle next to its box',
+    precautions: 'Keep out of reach of children. In case of irritation, discontinue use. Avoid contact with eyes. External use.',
+    usageInstructions: 'Apply the spray to a clean, dry beard, gently massaging it into the skin to promote absorption. Use 1-2 times daily for consistent, best results.',
   },
 };
 
