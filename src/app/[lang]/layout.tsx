@@ -31,9 +31,39 @@ export async function generateMetadata({ params }: LayoutProps<'/[lang]'>): Prom
   };
 }
 
+/**
+ * Datos estructurados de Organización.
+ *
+ * Ya previsto en `docs/SITEMAP.md` ("nombre legal, logo, contacto, sameAs
+ * Instagram"), pero sin implementar hasta ahora porque no existía el nombre
+ * legal real — inventar uno habría sido peor que no publicar nada. Datos de
+ * `LEGAL_TODO.md` L1 (EIN del IRS + Articles of Organization de Rhode Island).
+ */
+function organizationJsonLd(siteUrl: string) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'Gaviota by Lia',
+    legalName: 'Gaviota By Lia LLC',
+    url: siteUrl,
+    logo: `${siteUrl}/icon.png`,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: '5 Rangeley Avenue',
+      addressLocality: 'Providence',
+      addressRegion: 'RI',
+      postalCode: '02908',
+      addressCountry: 'US',
+    },
+    sameAs: ['https://www.instagram.com/gaviotabylia/'],
+  };
+}
+
 export default async function RootLayout({ children, params }: LayoutProps<'/[lang]'> & { children: ReactNode }) {
   const { lang } = await params;
   if (!isLocale(lang)) notFound();
+
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
 
   return (
     // `data-scroll-behavior="smooth"` es necesario en Next 16: por defecto ya
@@ -46,6 +76,12 @@ export default async function RootLayout({ children, params }: LayoutProps<'/[la
       data-scroll-behavior="smooth"
     >
       <body className="min-h-dvh antialiased">
+        {/* JSON estático generado en servidor, sin datos de usuario — no hay
+            riesgo de inyección al usar dangerouslySetInnerHTML aquí. */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd(siteUrl)) }}
+        />
         <a
           href="#content"
           className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-100 focus:inline-flex focus:min-h-11 focus:items-center focus:rounded-xs focus:bg-rose focus:px-4 focus:text-sm focus:font-semibold focus:text-white-warm"
