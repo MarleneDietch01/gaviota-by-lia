@@ -18,12 +18,20 @@ import { filterCatalogProducts } from '@/lib/catalog/query';
  *   · tamaños (115/236/59 mL) -> lectura directa de las etiquetas en GA9.jpg
  *   · shortDescription      -> claims IMPRESOS EN EL ENVASE, que son cosméticos
  *                              y están mejor redactados que la web actual
+ *   · ingredients/precautions/usageInstructions -> transcritos de las
+ *     etiquetas físicas fotografiadas (bilingües de origen; el inglés no lo
+ *     tradujo esta aplicación). Resuelve CONTENT_TODO.md C1/C2/C3 para los
+ *     4 productos que ya tienen etiqueta: aceite, exfoliante, crema
+ *     hidratante y sérum. `aceite-anti-estrias-masculino` y
+ *     `tonico-para-barba` siguen sin este dato — C16 no está resuelto (no se
+ *     confirma que el masculino comparta fórmula con el femenino) y el
+ *     tónico no tiene etiqueta fotografiada todavía.
  *
  * DELIBERADAMENTE AUSENTES, porque no existe el dato:
  *   · compareAtPrice  -> los 8 productos del sitio actual tienen descuento
  *                        permanente sin vigencia. No se replica.
  *   · rating / reviewCount -> el sitio actual no tiene NI UNA reseña.
- *   · ingredientes, precauciones, peso -> pendientes (CONTENT_TODO.md C1, C2, C7)
+ *   · peso -> pendiente (CONTENT_TODO.md C7)
  * -----------------------------------------------------------------------------
  */
 
@@ -64,6 +72,19 @@ export interface Product {
   /** Taxonomía verificada/propuesta en PRODUCT_INVENTORY.md §6. */
   readonly categorySlug: CategorySlug;
   readonly needSlugs: readonly NeedSlug[];
+  /**
+   * Lista INCI tal cual aparece en la etiqueta física. Nomenclatura
+   * internacional estandarizada: no se traduce entre idiomas.
+   * Resuelve CONTENT_TODO.md C1 para los productos que ya tienen etiqueta
+   * fotografiada — los que no la tienen se quedan sin este campo (`tonico-para-barba`,
+   * `aceite-anti-estrias-masculino`: C16 sigue sin resolver si es la misma
+   * fórmula que la versión femenina o no, así que no se asume).
+   */
+  readonly ingredients?: string;
+  /** Bloque "PRECAUCIONES" de la etiqueta. Resuelve C2. */
+  readonly precautions?: string;
+  /** Bloque "MODO DE USO" de la etiqueta. Resuelve C3. */
+  readonly usageInstructions?: string;
 }
 
 export const CATEGORIES = [
@@ -99,6 +120,12 @@ const CATALOG: readonly Product[] = [
     reviewCount: 0,
     categorySlug: 'aceites-y-serums',
     needSlugs: ['hidratacion', 'estrias'],
+    ingredients:
+      'Paraffinum Liquidum, Mineral Oil, Cocos Nucifera (Coconut) Oil, Rosa Moschata (Rosehip) Seed Oil, Prunus Dulcis (Almond) Oil, Tocopherol Acetate, Isopropyl Myristate, Fragance/Parfum, Glycine Soja Oil.',
+    precautions:
+      'Mantener fuera del alcance de los niños. En caso de irritación, descontinuar su uso. Evite contacto con los ojos. Uso externo.',
+    usageInstructions:
+      'Aplicar en la zona deseada y masajear con movimientos circulares por unos minutos. Para óptimos resultados, aplicar después del baño, dos veces al día.',
   },
   {
     slug: 'exfoliante-de-coco',
@@ -115,6 +142,12 @@ const CATALOG: readonly Product[] = [
     reviewCount: 0,
     categorySlug: 'exfoliacion',
     needSlugs: ['textura'],
+    ingredients:
+      'Sacarosa, Prunus Amygdalus Dulcis Oil, Simmondsia Chinensis Seed Oil, Fragance/Parfum, Cocos Nucifera Oil, Phenoxyethanol, Benzoato De Sosa.',
+    precautions:
+      'Mantener fuera del alcance de los niños. En caso de irritación, descontinuar su uso. Evite contacto con los ojos. Uso externo.',
+    usageInstructions:
+      'Aplicar en la piel húmeda una cantidad moderada y dar masajes circulares durante unos 3-5 minutos en el área deseada. Luego retirar con abundante agua. Para óptimos resultados, utilizar dos veces por semana.',
   },
   {
     slug: 'crema-hidratante',
@@ -131,6 +164,12 @@ const CATALOG: readonly Product[] = [
     reviewCount: 0,
     categorySlug: 'cremas-e-hidratacion',
     needSlugs: ['hidratacion'],
+    ingredients:
+      'Aqua, Stearic Acid, Isopropyl Myristate, Paraffinum Liquidum, Glyceryl Stearate, Ethylhexyl Methoxycinnamate, Morus Nigra Fruit Extract, Hydrogenated Castor Oil, Glycerin, Cocos Nucifera Fruit Extract, Triethanolamine, Cetyl Alcohol, Carbomer, Phenoxyethanol, Parfum, Sodium PCA, Hydroxystearic Acid, Sodium Hydroxide, Disodium EDTA, Sodium Ascorbyl Phosphate, Alpha-Isomethyl Ionone, Benzyl Benzoate, Butylphenyl Methylpropional.',
+    precautions:
+      'Mantener fuera del alcance de los niños. En caso de irritación, descontinuar su uso. Evite contacto con los ojos. Uso externo.',
+    usageInstructions:
+      'Aplicar una moderada cantidad en el área a tratar, dando suaves masajes circulares hasta que la piel absorba por completo. Se recomienda utilizar en las noches.',
   },
   {
     slug: 'serum-vellos-encarnados',
@@ -147,6 +186,12 @@ const CATALOG: readonly Product[] = [
     reviewCount: 0,
     categorySlug: 'aceites-y-serums',
     needSlugs: ['post-depilacion'],
+    ingredients:
+      'Aqua, Propylene Glycol, 3-O-Ethyl Ascorbic Acid, Tocopheryl Acetate, Polyisobutene, Polysorbate 20, Sorbitan Isostearate, Hyaluronic Acid, Xanthan Gum, Benzoic Acid, Sorbic Acid, Salicylic Acid, Lactic Acid, Citric Acid, Benzyl Alcohol, Sodium Polyacrylate.',
+    precautions:
+      'Mantener fuera del alcance de los niños. En caso de irritación, suspender su uso. Evitar el contacto con los ojos. Uso externo.',
+    usageInstructions:
+      'Aplique el producto después de la depilación para calmar la piel y prevenir los pelos encarnados.',
   },
   {
     slug: 'aceite-anti-estrias-masculino',
@@ -199,13 +244,51 @@ const CATALOG: readonly Product[] = [
 //     ACLARACIÓN" quemado en la imagen, y "aclaración" es justamente el término
 //     regulado que se decidió retirar del nombre comercial.
 
-const ENGLISH: Record<string, Pick<Product, 'name' | 'shortDescription' | 'imageAlt'>> = {
-  'aceite-anti-estrias': { name: 'Stretch Mark Body Oil', shortDescription: 'Firming hydration for soft, luminous-looking skin.', imageAlt: '4 fl oz Gaviota by Lia Stretch Mark Body Oil dropper bottle' },
-  'exfoliante-de-coco': { name: 'Coconut Body Scrub', shortDescription: 'Gentle exfoliation with a tropical coconut scent.', imageAlt: '8 fl oz Gaviota by Lia Coconut Body Scrub jar' },
-  'crema-hidratante': { name: 'Hydrating Body Cream', shortDescription: 'Deep, fast-absorbing hydration for everyday softness.', imageAlt: '8 fl oz Gaviota by Lia Hydrating Body Cream jar' },
-  'serum-vellos-encarnados': { name: 'Ingrown Hair Serum', shortDescription: 'Post-hair-removal care for smoother-looking skin.', imageAlt: '2 fl oz Gaviota by Lia Ingrown Hair Serum bottle' },
-  'aceite-anti-estrias-masculino': { name: "Men's Stretch Mark Body Oil", shortDescription: 'Firming hydration for soft, luminous-looking skin.', imageAlt: "4 fl oz Gaviota by Lia Men's Stretch Mark Body Oil dropper bottle" },
-  'tonico-para-barba': { name: 'Beard Tonic', shortDescription: 'Beard tonic for daily use.', imageAlt: 'Gaviota by Lia Beard Tonic bottle next to its box' },
+// `ingredients` no se traduce (nomenclatura INCI internacional) — solo
+// `precautions`/`usageInstructions`, tomados literalmente del lado inglés de
+// la misma etiqueta bilingüe, no traducidos por esta aplicación.
+const ENGLISH: Record<
+  string,
+  Pick<Product, 'name' | 'shortDescription' | 'imageAlt' | 'precautions' | 'usageInstructions'>
+> = {
+  'aceite-anti-estrias': {
+    name: 'Stretch Mark Body Oil',
+    shortDescription: 'Firming hydration for soft, luminous-looking skin.',
+    imageAlt: '4 fl oz Gaviota by Lia Stretch Mark Body Oil dropper bottle',
+    precautions: 'Keep out of reach of children. In case of irritation, discontinue use. Avoid contact with eyes. External use.',
+    usageInstructions: 'Apply to the desired area and massage in circular motions for a few minutes. For optimal results, apply after bathing, twice a day.',
+  },
+  'exfoliante-de-coco': {
+    name: 'Coconut Body Scrub',
+    shortDescription: 'Gentle exfoliation with a tropical coconut scent.',
+    imageAlt: '8 fl oz Gaviota by Lia Coconut Body Scrub jar',
+    precautions: 'Keep out of reach of children. In case of irritation, discontinue use. Avoid contact with eyes. External use.',
+    usageInstructions: 'Apply a moderate amount to damp skin and massage in circular motions for 3-5 minutes on the desired area. Then remove with plenty of water. For optimal results, use twice a week.',
+  },
+  'crema-hidratante': {
+    name: 'Hydrating Body Cream',
+    shortDescription: 'Deep, fast-absorbing hydration for everyday softness.',
+    imageAlt: '8 fl oz Gaviota by Lia Hydrating Body Cream jar',
+    precautions: 'Keep out of reach of children. In case of irritation, discontinue use. Avoid contact with eyes. External use.',
+    usageInstructions: 'Apply a moderate amount to the area to be treated, massaging gently in a circular motion until completely absorbed by the skin. It is recommended to use at night.',
+  },
+  'serum-vellos-encarnados': {
+    name: 'Ingrown Hair Serum',
+    shortDescription: 'Post-hair-removal care for smoother-looking skin.',
+    imageAlt: '2 fl oz Gaviota by Lia Ingrown Hair Serum bottle',
+    precautions: 'Keep out of reach of children. If irritation occurs, discontinue use. Avoid contact with eyes. External use.',
+    usageInstructions: 'Apply the product after waxing to soothe the skin and prevent ingrown hairs.',
+  },
+  'aceite-anti-estrias-masculino': {
+    name: "Men's Stretch Mark Body Oil",
+    shortDescription: 'Firming hydration for soft, luminous-looking skin.',
+    imageAlt: "4 fl oz Gaviota by Lia Men's Stretch Mark Body Oil dropper bottle",
+  },
+  'tonico-para-barba': {
+    name: 'Beard Tonic',
+    shortDescription: 'Beard tonic for daily use.',
+    imageAlt: 'Gaviota by Lia Beard Tonic bottle next to its box',
+  },
 };
 
 function localizeProduct(product: Product, locale: Locale): Product {

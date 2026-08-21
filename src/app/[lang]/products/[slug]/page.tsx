@@ -81,6 +81,36 @@ export default async function ProductPage({ params }: Props) {
           </div>
         </Container>
       </Section>
+      {product.ingredients || product.precautions || product.usageInstructions ? (
+        <Section tone="powder">
+          <Container size="narrow">
+            <h2 className="text-h2">{pick(lang, 'Good to know', 'Lo que debes saber')}</h2>
+            <Rule className="my-8" />
+            <dl className="divide-y divide-line-strong/60 rounded-sm bg-white-warm">
+              {product.usageInstructions ? (
+                <div className="p-6 sm:p-7">
+                  <dt className="eyebrow text-rose">{pick(lang, 'How to use', 'Modo de uso')}</dt>
+                  <dd className="mt-3 text-[0.9375rem] leading-relaxed text-body">
+                    {product.usageInstructions}
+                  </dd>
+                </div>
+              ) : null}
+              {product.ingredients ? (
+                <div className="p-6 sm:p-7">
+                  <dt className="eyebrow text-rose">{pick(lang, 'Ingredients', 'Ingredientes')}</dt>
+                  <dd className="mt-3 text-[0.9375rem] leading-relaxed text-body">{product.ingredients}</dd>
+                </div>
+              ) : null}
+              {product.precautions ? (
+                <div className="p-6 sm:p-7">
+                  <dt className="eyebrow text-rose">{pick(lang, 'Precautions', 'Precauciones')}</dt>
+                  <dd className="mt-3 text-[0.9375rem] leading-relaxed text-body">{product.precautions}</dd>
+                </div>
+              ) : null}
+            </dl>
+          </Container>
+        </Section>
+      ) : null}
       <Section tone="white">
         <Container>
           <h2 className="text-h2">{pick(lang, 'You may also like', 'También puede gustarte')}</h2>
