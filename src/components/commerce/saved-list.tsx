@@ -39,8 +39,24 @@ export function SavedList({
     () => 0,
   );
   const favoriteCount = useSyncExternalStore(subscribeFavorites, () => getFavorites().length, () => 0);
-  const bag = useMemo(() => (bagCount >= 0 ? getBag() : EMPTY_BAG), [bagCount]);
-  const favorites = useMemo(() => (favoriteCount >= 0 ? getFavorites() : EMPTY_FAVORITES), [favoriteCount]);
+
+  // `getBag()`/`getFavorites()` leen localStorage directamente: llamarlas sin
+  // más en el render también se ejecuta en la pasada de hidratación, cuando el
+  // cliente ya tiene `window` pero el HTML que debe reconciliar es el vacío que
+  // pintó el servidor. `hydrated` fuerza esa primera pasada de cliente a
+  // devolver `false` (igual que `getServerSnapshot`), así que `bag`/`favorites`
+  // solo leen el store real después de que React confirma la hidratación.
+  const hydrated = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
+  // bagCount/favoriteCount no se leen dentro del closure, pero deben disparar
+  // la recomputación cuando la bolsa/favoritos cambian.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const bag = useMemo(() => (hydrated ? getBag() : EMPTY_BAG), [hydrated, bagCount]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const favorites = useMemo(() => (hydrated ? getFavorites() : EMPTY_FAVORITES), [hydrated, favoriteCount]);
 
   const lines =
     kind === 'cart'
