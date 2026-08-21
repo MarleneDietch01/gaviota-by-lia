@@ -126,9 +126,10 @@ export const STUDIO_PACKSHOTS = [
   { slug: 'aceite-anti-estrias',           file: 'aceite.jpg',      fit: 'height', size: 0.74 },
   { slug: 'aceite-anti-estrias-masculino', file: 'masculino-1.jpg', fit: 'height', size: 0.74 },
   { slug: 'serum-vellos-encarnados',       file: 'serum.jpg',       fit: 'height', size: 0.74 },
-  { slug: 'sunscreen',                     file: 'sunscreen.jpg',   fit: 'height', size: 0.70 },
   { slug: 'crema-hidratante',              file: 'crema.jpg',       fit: 'width',  size: 0.56 },
   { slug: 'exfoliante-de-coco',            file: 'exfoliante.jpg',  fit: 'width',  size: 0.56 },
+  // Frasco spray, misma familia de forma que aceite/serum (alto y estrecho).
+  { slug: 'tonico-para-barba',             file: 'tonico-4.jpg',    fit: 'height', size: 0.74 },
 ];
 
 /**
@@ -141,13 +142,14 @@ export const STUDIO_PACKSHOTS = [
 export const STUDIO_BACKGROUND = { r: 255, g: 255, b: 255 };
 
 /**
- * Tónico Para Barba: no existe packshot de estudio, solo fotografías de
- * ambiente en una barbería. Se publica con la mejor de las tres, pero queda
- * fuera de los destacados para no romper la coherencia de la rejilla.
+ * Fotografías de ambiente (sin packshot de estudio propio).
+ *
+ * Vacío desde que llegó `tonico-4.jpg`: el Tónico Para Barba ya tiene su
+ * propio packshot de estudio (ver `STUDIO_PACKSHOTS`) y se movió ahí. Queda
+ * el mecanismo por si otro producto lo necesita antes de tener foto de
+ * estudio propia.
  */
-export const LIFESTYLE_PACKSHOTS = [
-  { slug: 'tonico-para-barba', file: 'tonico-1.png', focal: { x: 0.5, y: 0.55 } },
-];
+export const LIFESTYLE_PACKSHOTS = [];
 
 /**
  * Punto focal por fotografía (0 = izquierda/arriba, 1 = derecha/abajo).

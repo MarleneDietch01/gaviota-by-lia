@@ -6,6 +6,7 @@ import { Benefits } from '@/components/sections/benefits';
 import { Collection } from '@/components/sections/collection';
 import { BuildRitual } from '@/components/sections/build-ritual';
 import { Campaign } from '@/components/sections/campaign';
+import { CampaignFlyers } from '@/components/sections/campaign-flyers';
 import { RitualSteps } from '@/components/sections/ritual-steps';
 import { Ingredients } from '@/components/sections/ingredients';
 import { Founder } from '@/components/sections/founder';
@@ -29,6 +30,7 @@ import { Newsletter } from '@/components/sections/newsletter';
  *   Colección ......... rosa empolvado
  *   Build your ritual . marfil
  *   Campaña ........... vino          ← a sangre, sin padding
+ *   Flyers campaña .... marfil
  *   Ritual 3 pasos .... blanco
  *   Ingredientes ...... marfil
  *   Fundadora ......... blanco
@@ -53,6 +55,7 @@ export default async function HomePage({ params }: PageProps<'/[lang]'>) {
       <Collection locale={lang} />
       <BuildRitual locale={lang} />
       <Campaign locale={lang} />
+      <CampaignFlyers locale={lang} />
       <RitualSteps locale={lang} />
       <Ingredients locale={lang} />
       <Founder locale={lang} />

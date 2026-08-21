@@ -225,7 +225,7 @@ const CATALOG: readonly Product[] = [
     imageAlt: 'Tónico Para Barba Gaviota by Lia junto a su estuche',
     imageWidth: 1200,
     imageHeight: 1200,
-    imageBackground: '#e8e2da',
+    imageBackground: '#f0eeee',
     featured: true,
     reviewCount: 0,
     categorySlug: 'cuidado-masculino',
