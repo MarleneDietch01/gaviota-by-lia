@@ -2,6 +2,7 @@ import 'server-only';
 
 import { randomUUID } from 'node:crypto';
 import { NextResponse, type NextRequest } from 'next/server';
+import type Stripe from 'stripe';
 import { getStripeClient } from '@/lib/stripe/client';
 import { createAdminSupabaseClient } from '@/lib/supabase/admin';
 import { checkRateLimit } from '@/lib/security/rate-limit';
@@ -97,34 +98,60 @@ export async function POST(request: NextRequest) {
 
   const { orderId, orderNumber } = pendingOrder;
 
-  try {
-    const session = await stripe.checkout.sessions.create(
-      {
-        mode: 'payment',
-        line_items: items.map((item) => ({
-          quantity: item.quantity,
-          price_data: {
-            currency: 'usd',
-            unit_amount: item.unitPrice,
-            product_data: {
-              name: item.name,
-              images: [`${siteUrl}${item.imageUrl}`],
-            },
-          },
-        })),
-        ...(email ? { customer_email: email } : {}),
-        client_reference_id: orderId,
-        metadata: { order_id: orderId, order_number: orderNumber },
-        // Sin esto, el `PaymentIntent` que Stripe crea detrás de la Checkout
-        // Session NO hereda los metadatos de la sesión: `payment_intent.succeeded`
-        // y `payment_intent.payment_failed` llegarían sin forma de identificar
-        // a qué pedido pertenecen.
-        payment_intent_data: { metadata: { order_id: orderId, order_number: orderNumber } },
-        success_url: `${siteUrl}/${locale}/checkout/success?order=${orderNumber}`,
-        cancel_url: `${siteUrl}/${locale}/checkout/cancel`,
+  // Tienda orientada a EE. UU.: el checkout solo admite direcciones de envío
+  // de Estados Unidos. `shipping_address_collection` no exige tener
+  // `shipping_options` — sin ellos, Stripe recoge la dirección pero no cobra
+  // envío (queda en 0 hasta que exista una tarifa real, ver `SHIPPING_TODO.md`).
+  const baseParams: Stripe.Checkout.SessionCreateParams = {
+    mode: 'payment',
+    line_items: items.map((item) => ({
+      quantity: item.quantity,
+      price_data: {
+        currency: 'usd',
+        unit_amount: item.unitPrice,
+        product_data: {
+          name: item.name,
+          images: [`${siteUrl}${item.imageUrl}`],
+        },
       },
-      { idempotencyKey },
-    );
+    })),
+    ...(email ? { customer_email: email } : {}),
+    client_reference_id: orderId,
+    metadata: { order_id: orderId, order_number: orderNumber },
+    // Sin esto, el `PaymentIntent` que Stripe crea detrás de la Checkout
+    // Session NO hereda los metadatos de la sesión: `payment_intent.succeeded`
+    // y `payment_intent.payment_failed` llegarían sin forma de identificar
+    // a qué pedido pertenecen.
+    payment_intent_data: { metadata: { order_id: orderId, order_number: orderNumber } },
+    shipping_address_collection: { allowed_countries: ['US'] },
+    success_url: `${siteUrl}/${locale}/checkout/success?order=${orderNumber}`,
+    cancel_url: `${siteUrl}/${locale}/checkout/cancel`,
+  };
+
+  try {
+    let session: Stripe.Checkout.Session;
+
+    try {
+      // Stripe Tax calcula el impuesto de venta real según el estado de
+      // envío — no se fija ni se estima ninguna tasa aquí. Requiere que la
+      // cuenta tenga una dirección fiscal configurada en el Dashboard
+      // (Settings -> Tax); mientras no exista, Stripe rechaza la petición.
+      session = await stripe.checkout.sessions.create(
+        { ...baseParams, automatic_tax: { enabled: true } },
+        { idempotencyKey },
+      );
+    } catch (taxError) {
+      const message = taxError instanceof Error ? taxError.message : '';
+      if (!message.toLowerCase().includes('tax')) throw taxError;
+
+      // Cae a la sesión sin impuesto automático en vez de bloquear el
+      // checkout — clave de idempotencia distinta: Stripe cachea también las
+      // respuestas de error bajo la clave original, así que reintentar con la
+      // misma habría devuelto el mismo rechazo.
+      session = await stripe.checkout.sessions.create(baseParams, {
+        idempotencyKey: `${idempotencyKey}-notax`,
+      });
+    }
 
     await admin.from('payments').update({ provider_payment_id: session.id }).eq('order_id', orderId);
 

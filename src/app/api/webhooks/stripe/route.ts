@@ -75,9 +75,21 @@ export async function POST(request: NextRequest) {
         const orderId = session.metadata?.['order_id'];
         if (!orderId) break;
 
+        // Si la sesión llevaba Stripe Tax activado, el impuesto real solo se
+        // conoce AQUÍ — se calculó en la página alojada de Stripe según la
+        // dirección que introdujo la compradora, después de crear el pedido.
+        // `grand_total` se corrige para que siga cuadrando con la restricción
+        // `totals_add_up` (subtotal - descuento + impuesto + envío).
+        const amountTax = session.total_details?.amount_tax ?? 0;
+        const amountTotal = session.amount_total ?? undefined;
+
         await admin
           .from('orders')
-          .update({ order_status: 'paid', payment_status: 'paid' })
+          .update({
+            order_status: 'paid',
+            payment_status: 'paid',
+            ...(amountTotal !== undefined ? { tax_total: amountTax, grand_total: amountTotal } : {}),
+          })
           .eq('id', orderId);
 
         await admin
@@ -86,6 +98,7 @@ export async function POST(request: NextRequest) {
             status: 'paid',
             paid_at: new Date().toISOString(),
             provider_payment_id: typeof session.payment_intent === 'string' ? session.payment_intent : session.id,
+            ...(amountTotal !== undefined ? { amount: amountTotal } : {}),
           })
           .eq('order_id', orderId);
 
