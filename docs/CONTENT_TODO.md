@@ -253,6 +253,28 @@ online**:
 
 ---
 
+## 🔴 C21 — Foto de Crema Hidratante con "Lorem ipsum" en la etiqueta
+
+`public/images/gaviota/products/crema-hidratante.jpg` y `crema-hidratante-studio.jpg`
+(ambas derivadas de `originales/shopify/crema.jpg`) son una etiqueta de **mockup del
+fabricante**, no la etiqueta final: el envase real tiene "Lorem ipsum dolor sit amet"
+impreso dos veces, visible a simple vista.
+
+Es la foto que usa el catálogo hoy (`products.ts` → `crema-hidratante`), así que está
+**publicada en producción**: ficha de producto, grilla de la tienda, sección de
+bestsellers del home y carrito.
+
+**Decisión de la propietaria (2026-08-21):** dejarla en vivo por ahora, mientras se
+gestiona una foto real. Mismo patrón que ya resolvió `protector solar` (retirado) y
+`kit.png` (rechazado como fuente) cuando corresponda actuar.
+
+- [ ] ¿Existe o se puede conseguir una foto de estudio de Crema Hidratante sin el
+      mockup del fabricante?
+- [ ] Mientras tanto, ¿se acepta el riesgo de que una clienta vea el envase con el
+      texto de relleno?
+
+---
+
 ## 🟡 C15 — Tónico Para Barba — parcialmente resuelto (2026-08-21)
 
 Ya tiene etiqueta fotografiada propia, con ingredientes, precauciones y modo de uso
@@ -342,7 +364,7 @@ El blog existe (`/blogs/news`) y **está vacío**: cero artículos.
 
 | Prioridad | Asuntos |
 |---|---|
-| 🔴 Bloquea lanzamiento | C1 ingredientes · C2 precauciones · C3 modo de uso · C4 precios · C5 kit · C6 inventario · C7 pesos |
+| 🔴 Bloquea lanzamiento | C1 ingredientes · C2 precauciones · C3 modo de uso · C4 precios · C5 kit · C6 inventario · C7 pesos · C21 foto Crema Hidratante |
 | 🟠 Alta | C8 FAQ · C9 ritual · C10 quién es Lia · C11 afirmaciones · C12 fundadora · C13 contacto · C14 productos fuera de la web · C15 tónico · C16 aceite masculino |
 | 🟡 Media | C17 textos · C18 foto 12 |
 | 🟢 Mejora | C19 reseñas · C20 journal |
