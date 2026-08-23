@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: LayoutProps<'/[lang]'>): Prom
     metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'),
     title: { default: `Gaviota by Lia | ${title}`, template: '%s | Gaviota by Lia' },
     description,
-    alternates: { canonical: `/${lang}`, languages: { 'en-US': '/en', 'es': '/es', 'x-default': '/es' } },
+    alternates: { canonical: `/${lang}`, languages: { 'en-US': '/en', 'es': '/es', 'x-default': '/en' } },
     openGraph: { type: 'website', locale: lang === 'en' ? 'en_US' : 'es_DO', siteName: 'Gaviota by Lia', description },
     twitter: { card: 'summary_large_image' },
   };
