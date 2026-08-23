@@ -217,18 +217,18 @@ hasta que exista aprobación explícita.
 | "Underarm Brightener" | Claim de aclarado de piel — mismo problema que L8 (Crema Hidratante) |
 | "Beard growth" / crecimiento de barba | Mismo claim ya bloqueado en L8 (Tónico Para Barba) |
 | Código QR | No apunta a ningún destino confirmado en el sitio actual |
-| WhatsApp +1 401 305 8713 | Canal de contacto no confirmado — el sitio usa Instagram como único canal verificado |
+| ~~WhatsApp +1 401 305 8713~~ | ✅ Verificado (2026-08-22) — confirmado en la tienda Shopify real (`/pages/contact`), agregado a `route-pages.ts` (`contact`) como canal real |
 | @gaviotabylia dentro de la imagen | Redundante con el link real del footer, pero congelado en un píxel no editable |
-| www.gaviotabylia.com | No coincide con el dominio desplegado (`gaviota-by-lia-marlene5.vercel.app` en este momento) |
+| www.gaviotabylia.com | Confirmado como el dominio final (tienda Shopify actual). Pendiente migrar el DNS a este proyecto — ver siguiente punto |
 
 **Decisiones:**
-- [ ] ¿Hay autorización de las clientas en las fotos de antes/después para publicarlas?
+- [x] ¿Hay autorización de las clientas en las fotos de antes/después para publicarlas? — sin
+      resolver, siguen bloqueadas
 - [ ] ¿Hay estudio o respaldo para "Underarm Brightener" y el crecimiento de barba? (ver L8)
 - [ ] ¿A dónde debe apuntar el QR? ¿Existe ya ese destino?
-- [ ] ¿El WhatsApp +1 401 305 8713 es un canal real de la marca? Si sí, se agrega como canal
-      verificado (no solo dentro de una imagen) y se referencia en `route-pages.ts` (`contact`).
-- [ ] ¿`www.gaviotabylia.com` es el dominio final? Si sí, hay que migrar el dominio en Vercel
-      y actualizar `NEXT_PUBLIC_SITE_URL` antes de publicarlo en cualquier parte del sitio.
+- [x] ¿El WhatsApp +1 401 305 8713 es un canal real de la marca? — **Sí**, confirmado
+- [ ] Migrar `gaviotabylia.com` (hoy en Shopify) al DNS de este proyecto en Vercel y actualizar
+      `NEXT_PUBLIC_SITE_URL` antes de publicarlo en cualquier parte del sitio.
 
 Los archivos de imagen originales (`campana-flyer-*.jpg`) siguen en `public/images/gaviota/editorial/`
 por si se necesita extraer algo puntual, pero ya no están enlazados desde ningún componente.

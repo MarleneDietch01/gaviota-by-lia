@@ -174,6 +174,11 @@ Propuesta a validar, **no confirmada**:
 **La marca se llama Gaviota by _Lia_. La fundadora publicada es _Marlene Dietsch_.**
 El sitio nunca explica quién es Lia.
 
+**Revisado (2026-08-22):** se extrajo el contenido de la tienda Shopify real
+(`gaviotabylia.com/pages/conoce-nuestra-fundadora`) y tampoco ahí se explica el nombre
+"Lia" — la propia marca nunca lo ha publicado en ningún canal verificado. Sigue siendo
+la pregunta abierta.
+
 Es lo primero que se pregunta cualquier visitante y ahora mismo no tiene respuesta en
 ninguna parte.
 
@@ -207,26 +212,33 @@ ellas: la fundadora es dominicana y la inspiración es dominicana. Eso ya es ver
 
 ---
 
-## 🟠 C12 — Biografía de la fundadora
+## 🟡 C12 — Biografía de la fundadora — parcialmente resuelto (2026-08-22)
 
-El texto actual es genérico: "trayectoria inspiradora en la industria del cuidado
+El texto que había era genérico: "trayectoria inspiradora en la industria del cuidado
 personal", "conocimiento experto", sin un solo dato concreto.
+
+**Lo que se hizo:** se extrajo el texto real de `/founder` en la tienda Shopify actual
+(`conoce-nuestra-fundadora`) y se publicó en `/founder` de este sitio (`route-pages.ts`),
+reemplazando el aviso de "biografía pendiente" por contenido real ya aprobado y publicado
+por la propia marca. **Pero sigue siendo igual de genérico** — el texto original de
+Shopify tiene el mismo problema que este TODO señala desde el inicio: ningún dato
+concreto (años, formación, qué la llevó a crear la marca).
 
 - [ ] ¿Cuántos años de trayectoria?
 - [ ] ¿Formación?
 - [ ] ¿Qué la llevó a crear la marca?
 - [ ] ¿Vive en EE. UU. o en RD?
-- [ ] ¿Autoriza que se publique su nombre completo? (ya está publicado)
+- [x] ¿Autoriza que se publique su nombre completo? — ya está publicado en su propia tienda
 
 ---
 
-## 🟠 C13 — Datos de contacto
+## 🟡 C13 — Datos de contacto — parcialmente resuelto (2026-08-22)
 
 | Dato | Valor actual | Pendiente |
 |---|---|---|
 | Correo | `gaviotabylia@gmail.com` | ¿Se migra a `hola@gaviotabylia.com`? |
-| Teléfono | `401-305-8713` | ¿Sigue vigente? ¿Es WhatsApp? |
-| Dirección | "Estados Unidos" | Ya se conoce (5 Rangeley Avenue, Providence, RI 02908 — `LEGAL_TODO.md` L1), pero falta decidir si se publica esa dirección tal cual en el sitio o se usa otra |
+| Teléfono | `401-305-8713` | ✅ Confirmado vigente y es WhatsApp — verificado en la tienda Shopify real (`/pages/contact`), publicado en `route-pages.ts` (`contact`) |
+| Dirección | "Estados Unidos" | Ya se conoce (5 Rangeley Avenue, Providence, RI 02908 — `LEGAL_TODO.md` L1), ya publicada en el sitio |
 | Horario | — | ❓ |
 | Instagram | `@gaviotabylia` | ✅ |
 | Otras redes | — | ¿TikTok? ¿Facebook? |
@@ -365,8 +377,8 @@ El blog existe (`/blogs/news`) y **está vacío**: cero artículos.
 | Prioridad | Asuntos |
 |---|---|
 | 🔴 Bloquea lanzamiento | C1 ingredientes · C2 precauciones · C3 modo de uso · C4 precios · C5 kit · C6 inventario · C7 pesos · C21 foto Crema Hidratante |
-| 🟠 Alta | C8 FAQ · C9 ritual · C10 quién es Lia · C11 afirmaciones · C12 fundadora · C13 contacto · C14 productos fuera de la web · C15 tónico · C16 aceite masculino |
-| 🟡 Media | C17 textos · C18 foto 12 |
+| 🟠 Alta | C8 FAQ · C9 ritual · C10 quién es Lia · C11 afirmaciones · C14 productos fuera de la web · C16 aceite masculino |
+| 🟡 Media | C12 fundadora (parcial) · C13 contacto (parcial) · C15 tónico (parcial) · C17 textos · C18 foto 12 |
 | 🟢 Mejora | C19 reseñas · C20 journal |
 
 **Las siete tareas 🔴 son de recopilación, no de redacción.** Casi todas se resuelven
