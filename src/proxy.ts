@@ -22,7 +22,12 @@ export const config = {
   // `<link rel="icon">`/`apple-touch-icon` (ver `src/app/icon.png`): viven en
   // la raíz de `app/`, así que sin excluirlas aquí el proxy las redirige a
   // `/es/icon.png`, que no existe, y el favicon deja de cargar en todo el sitio.
+  //
+  // `sitemap.xml`/`robots.txt` son la misma convención de archivo (`src/app/
+  // sitemap.ts` / `robots.ts`), mismo problema: sin excluirlas, Google pide
+  // `/sitemap.xml`, el proxy lo manda a `/en/sitemap.xml` (no existe) y el
+  // sitemap desaparece del rastreo.
   matcher: [
-    '/((?!api|_next/static|_next/image|favicon.ico|icon.png|apple-icon.png|images|admin).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico|icon.png|apple-icon.png|sitemap.xml|robots.txt|images|admin).*)',
   ],
 };

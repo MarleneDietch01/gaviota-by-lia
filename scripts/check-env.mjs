@@ -55,6 +55,9 @@ require_('SUPABASE_SERVICE_ROLE_KEY');
 if (process.env.NEXT_PUBLIC_SITE_URL?.includes('localhost')) {
   problems.push('NEXT_PUBLIC_SITE_URL sigue en localhost — los redirect_url de Stripe/PayPal y los enlaces de correo saldrán rotos.');
 }
+if (process.env.NEXT_PUBLIC_SITE_URL?.includes('.vercel.app')) {
+  problems.push('NEXT_PUBLIC_SITE_URL sigue apuntando a un dominio *.vercel.app — el canonical, hreflang y JSON-LD de Organización saldrán apuntando ahí en vez del dominio real, y Google indexará el sitio equivocado como el "bueno". Actualízala al dominio real en Vercel → Environment Variables.');
+}
 
 // --- Pagos: al menos un proveedor real conectado -----------------------------
 forbid('PAYMENT_PROVIDER', ['mock'], 'PAYMENT_PROVIDER sigue en "mock" — es la variable legada, pero su presencia en "mock" es la señal histórica de "no configurado todavía".');

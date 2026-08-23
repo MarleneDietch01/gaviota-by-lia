@@ -96,7 +96,14 @@ const legacyRedirects = [
   // El handle original de la Crema Hidratante era, literalmente, "new".
   ['/products/new', '/products/crema-hidratante'],
   ['/products/aceite-masculino-anti-estrias', '/products/aceite-anti-estrias-masculino'],
-  ['/products/kit-anti-estrias-y-aclaracion', '/products/kit-rutina-completa'],
+  // Was pointing at '/products/kit-rutina-completa', a slug that never
+  // existed in the catalog — confirmed 404 in production. The kit isn't sold
+  // as its own product page; '/sets' is the real destination for kit/routine
+  // shoppers.
+  ['/products/kit-anti-estrias-y-aclaracion', '/sets'],
+  // Discontinued — removed from the catalog entirely (owner decision).
+  ['/products/sunscreen', '/shop'],
+  ['/apps/track123', '/track-order'],
   // El título original usaba caracteres Unicode matemáticos, que dejaban una
   // URL percent-encoded ilegible e incompartible.
   [
@@ -131,11 +138,19 @@ const nextConfig: NextConfig = {
   },
 
   async redirects() {
-    return legacyRedirects.map(([source, destination]) => ({
-      source: source as string,
-      destination: destination as string,
-      permanent: true,
-    }));
+    return [
+      ...legacyRedirects.map(([source, destination]) => ({
+        source: source as string,
+        destination: destination as string,
+        permanent: true,
+      })),
+      // Catch-alls for any old Shopify collection/page handle not covered
+      // above. Must come after the specific redirects: Next.js resolves
+      // `redirects()` in array order and stops at the first match, so a
+      // catch-all listed first would swallow every specific one below it.
+      { source: '/collections/:slug', destination: '/shop', permanent: true },
+      { source: '/pages/:slug', destination: '/', permanent: true },
+    ];
   },
 };
 

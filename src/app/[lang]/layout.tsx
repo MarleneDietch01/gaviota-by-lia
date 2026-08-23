@@ -6,6 +6,7 @@ import { SiteHeader } from '@/components/layout/site-header';
 import { SiteFooter } from '@/components/layout/site-footer';
 import { AnnouncementBar } from '@/components/layout/announcement-bar';
 import { isLocale, locales, pick } from '@/lib/i18n';
+import { getSiteUrl } from '@/lib/site-url';
 import '../globals.css';
 
 export function generateStaticParams() {
@@ -22,7 +23,7 @@ export async function generateMetadata({ params }: LayoutProps<'/[lang]'>): Prom
     'Rituales de cuidado corporal creados para hidratar, suavizar y celebrar tu piel.',
   );
   return {
-    metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'),
+    metadataBase: new URL(getSiteUrl()),
     title: { default: `Gaviota by Lia | ${title}`, template: '%s | Gaviota by Lia' },
     description,
     alternates: { canonical: `/${lang}`, languages: { 'en-US': '/en', 'es': '/es', 'x-default': '/en' } },
@@ -63,7 +64,7 @@ export default async function RootLayout({ children, params }: LayoutProps<'/[la
   const { lang } = await params;
   if (!isLocale(lang)) notFound();
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
+  const siteUrl = getSiteUrl();
 
   return (
     // `data-scroll-behavior="smooth"` es necesario en Next 16: por defecto ya
