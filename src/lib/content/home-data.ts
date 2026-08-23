@@ -99,11 +99,11 @@ export const RITUAL_NEEDS: readonly RitualNeed[] = [
       en: 'So skin feels comfortable all day long.',
       es: 'Para que la piel se sienta cómoda todo el día.',
     },
-    image: '/images/gaviota/editorial/ritual-hidrata.jpg',
-    focal: '45% 42%',
+    image: '/images/gaviota/editorial/campaign-aplicacion.jpg',
+    focal: '38% 30%',
     alt: {
-      en: 'Woman applying Gaviota by Lia body cream to her shoulder',
-      es: 'Mujer aplicando crema hidratante Gaviota by Lia sobre su hombro',
+      en: 'Woman applying a Gaviota by Lia cream to her shoulder',
+      es: 'Mujer aplicando una crema Gaviota by Lia sobre su hombro',
     },
   },
   {
@@ -113,11 +113,12 @@ export const RITUAL_NEEDS: readonly RitualNeed[] = [
       en: 'Nourishing oils for smoother-looking skin.',
       es: 'Aceites que ayudan a mejorar su apariencia.',
     },
-    image: '/images/gaviota/editorial/ritual-exfolia.jpg',
-    focal: '50% 55%',
+    image: '/images/gaviota/products/aceite-anti-estrias-studio.jpg',
+    focal: '50% 50%',
+    fit: 'contain',
     alt: {
-      en: 'Woman applying a Gaviota by Lia product to her leg',
-      es: 'Mujer aplicando producto Gaviota by Lia en su pierna',
+      en: 'Gaviota by Lia Stretch Mark Body Oil bottle',
+      es: 'Frasco del Aceite Anti-Estrías Gaviota by Lia',
     },
   },
   {
@@ -127,11 +128,12 @@ export const RITUAL_NEEDS: readonly RitualNeed[] = [
       en: 'Prep your skin for everything that follows.',
       es: 'Prepara la piel para todo lo que viene después.',
     },
-    image: '/images/gaviota/editorial/ritual-labios.jpg',
-    focal: '52% 38%',
+    image: '/images/gaviota/products/exfoliante-de-coco-studio.jpg',
+    focal: '50% 50%',
+    fit: 'contain',
     alt: {
-      en: 'Woman holding a Gaviota by Lia product',
-      es: 'Mujer sosteniendo un producto Gaviota by Lia',
+      en: 'Gaviota by Lia Coconut Body Scrub jar',
+      es: 'Tarro del Exfoliante de Coco Gaviota by Lia',
     },
   },
   {
@@ -141,11 +143,12 @@ export const RITUAL_NEEDS: readonly RitualNeed[] = [
       en: 'Thoughtful care after hair removal.',
       es: 'Cuidado después de la depilación.',
     },
-    image: '/images/gaviota/community/comunidad-17.jpg',
-    focal: '50% 42%',
+    image: '/images/gaviota/products/serum-vellos-encarnados-studio.jpg',
+    focal: '50% 50%',
+    fit: 'contain',
     alt: {
-      en: 'Three women holding Gaviota by Lia scrub and oil',
-      es: 'Tres mujeres sosteniendo el exfoliante y el aceite Gaviota by Lia',
+      en: 'Gaviota by Lia ingrown hair serum bottle',
+      es: 'Frasco del sérum para vellos encarnados Gaviota by Lia',
     },
   },
   {
@@ -281,7 +284,23 @@ export const INGREDIENTS: readonly Ingredient[] = [
 ];
 
 /* ===========================================================================
-   5. Comunidad
+   5. "Resultados reales" — franja de beneficios de campaña
+   ---------------------------------------------------------------------------
+   Reemplaza dos imágenes de flyer de campaña que llevaban el texto incrustado
+   en el píxel (no traducía a /en, no era accesible ni indexable, y llevaban un
+   QR, un WhatsApp y un dominio que no corresponden a ningún canal verificado
+   del sitio — ver LEGAL_TODO.md L13). Los bullets los dio la propietaria de la
+   marca directamente para esta sección; no son ingredientes ni porcentajes.
+   =========================================================================== */
+export const CAMPAIGN_BENEFITS: readonly Bilingual[] = [
+  { en: 'Deep hydration', es: 'Hidratación profunda' },
+  { en: 'Elasticity and firmness', es: 'Elasticidad y firmeza' },
+  { en: 'Even tone', es: 'Tono uniforme' },
+  { en: 'Visible results', es: 'Resultados visibles' },
+];
+
+/* ===========================================================================
+   6. Comunidad
    =========================================================================== */
 export interface CommunityPhoto {
   readonly src: string;

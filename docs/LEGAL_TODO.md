@@ -203,6 +203,38 @@ de modelo para el resto.
 
 ---
 
+## 🔴 L13 — Claims de antes/después en los flyers de campaña
+
+La sección "Resultados reales" del home usaba dos imágenes de flyer (`campana-flyer-mujer.jpg`,
+`campana-flyer-hombre.jpg`) con fotos de antes/después incrustadas en el propio píxel. Se
+reconstruyó la sección con maquetación real (bullets como texto, en `home-data.ts`), pero
+el contenido de antes/después que llevaban esos flyers **no se republicó** — queda fuera
+hasta que exista aprobación explícita.
+
+| Contenido bloqueado | Motivo |
+|---|---|
+| Fotos de antes/después de estrías | Claim de resultado sobre la piel — no verificado |
+| "Underarm Brightener" | Claim de aclarado de piel — mismo problema que L8 (Crema Hidratante) |
+| "Beard growth" / crecimiento de barba | Mismo claim ya bloqueado en L8 (Tónico Para Barba) |
+| Código QR | No apunta a ningún destino confirmado en el sitio actual |
+| WhatsApp +1 401 305 8713 | Canal de contacto no confirmado — el sitio usa Instagram como único canal verificado |
+| @gaviotabylia dentro de la imagen | Redundante con el link real del footer, pero congelado en un píxel no editable |
+| www.gaviotabylia.com | No coincide con el dominio desplegado (`gaviota-by-lia-marlene5.vercel.app` en este momento) |
+
+**Decisiones:**
+- [ ] ¿Hay autorización de las clientas en las fotos de antes/después para publicarlas?
+- [ ] ¿Hay estudio o respaldo para "Underarm Brightener" y el crecimiento de barba? (ver L8)
+- [ ] ¿A dónde debe apuntar el QR? ¿Existe ya ese destino?
+- [ ] ¿El WhatsApp +1 401 305 8713 es un canal real de la marca? Si sí, se agrega como canal
+      verificado (no solo dentro de una imagen) y se referencia en `route-pages.ts` (`contact`).
+- [ ] ¿`www.gaviotabylia.com` es el dominio final? Si sí, hay que migrar el dominio en Vercel
+      y actualizar `NEXT_PUBLIC_SITE_URL` antes de publicarlo en cualquier parte del sitio.
+
+Los archivos de imagen originales (`campana-flyer-*.jpg`) siguen en `public/images/gaviota/editorial/`
+por si se necesita extraer algo puntual, pero ya no están enlazados desde ningún componente.
+
+---
+
 ## 🟠 L9 — Política de cookies y consentimiento
 
 No existe hoy. Se planifican GA4, Meta Pixel, Clarity y TikTok Pixel.
@@ -257,6 +289,7 @@ por accesibilidad, frecuente en comercio electrónico en EE. UU.
 | L5 | Términos y condiciones | 🔴 | **Sí** |
 | L6 | Autorizaciones de imagen | 🔴 | **Sí** |
 | L8 | Claims de producto | 🔴 | **Sí** |
+| L13 | Claims de antes/después en flyers de campaña | 🔴 | **Sí** |
 | L7 | Derechos fotográficos | 🟠 | Recomendado |
 | L9 | Cookies y consentimiento | 🟠 | Sí, si hay analítica |
 | L10 | Impuestos | 🟠 | Recomendado |

@@ -1,4 +1,3 @@
-import { EditorialImage } from '@/components/media/site-image';
 import { LinkButton } from '@/components/ui/button';
 import { Container, Rule, Section } from '@/components/ui/layout-primitives';
 import { Reveal } from '@/components/ui/reveal';
@@ -20,6 +19,14 @@ import { localizedHref, pick, type Locale } from '@/lib/i18n';
  * se muestra la tarjeta con un aviso de "pendiente" a las visitantes, igual
  * que `home.testimonials`/`home.ugc` no se pintan mientras estén en `draft`.
  * No se inventa ni un ingrediente ni un porcentaje.
+ *
+ * SIN IMAGEN A PROPÓSITO: con un solo ingrediente confirmado, una foto a toda
+ * altura junto al texto dejaba un vacío enorme (la columna de texto es mucho
+ * más corta que la imagen). El banco de fotografía disponible tampoco tenía
+ * ninguna que no estuviera ya en uso en otro punto de la home sin repetirse
+ * (ver home-data.ts: `coleccion-completa.jpg` vivía aquí Y en `RITUAL_NEEDS`).
+ * Franja compacta de una sola columna en vez de forzar una imagen repetida o
+ * un hueco.
  * -----------------------------------------------------------------------------
  */
 export async function Ingredients({ locale }: { locale: Locale }) {
@@ -28,69 +35,50 @@ export async function Ingredients({ locale }: { locale: Locale }) {
 
   return (
     <Section tone="ivory" labelledBy="ingredients-title">
-      <Container>
-        <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16 xl:gap-20">
-          <Reveal className="frame-arch order-1 lg:order-2">
-            <div className="aspect-[4/5] lg:aspect-[4/5]">
-              <EditorialImage
-                src="/images/gaviota/editorial/coleccion-completa.jpg"
-                alt={pick(
-                  locale,
-                  'The complete Gaviota by Lia product line arranged together',
-                  'La línea completa de productos Gaviota by Lia dispuesta en conjunto',
-                )}
-                width={2000}
-                height={2500}
-                sizes="(min-width: 1024px) 46vw, 100vw"
-                focal="50% 45%"
-              />
-            </div>
-          </Reveal>
+      <Container size="narrow">
+        <Reveal className="text-center">
+          <p className="eyebrow mb-4 text-rose">
+            {pick(locale, 'Ingredients', 'Ingredientes')}
+          </p>
 
-          <Reveal className="order-2 lg:order-1">
-            <p className="eyebrow mb-4 text-rose">
-              {pick(locale, 'Ingredients', 'Ingredientes')}
-            </p>
+          <h2 id="ingredients-title" className="text-h2">
+            {pick(locale, 'What goes ', 'Lo que llevan ')}
+            <span className="accent-word">{pick(locale, 'inside', 'dentro')}</span>.
+          </h2>
 
-            <h2 id="ingredients-title" className="text-h2">
-              {pick(locale, 'What goes ', 'Lo que llevan ')}
-              <span className="accent-word">{pick(locale, 'inside', 'dentro')}</span>.
-            </h2>
+          <Rule className="mx-auto my-7 max-w-24" />
 
-            <Rule className="my-7 max-w-24" />
+          <dl className="mx-auto flex max-w-md flex-col items-center gap-1.5">
+            {verifiedIngredients.map((ingredient) => (
+              <div key={ingredient.key}>
+                <dt className="font-sans text-[0.9375rem] font-semibold tracking-[-0.01em]">
+                  {t(ingredient.name, locale)}
+                </dt>
+                <dd className="mt-1 text-[0.9375rem] leading-relaxed text-body">
+                  {t(ingredient.body, locale)}
+                </dd>
+              </div>
+            ))}
+          </dl>
 
-            <dl className="space-y-7">
-              {verifiedIngredients.map((ingredient) => (
-                <div key={ingredient.key}>
-                  <dt className="font-sans text-[0.9375rem] font-semibold tracking-[-0.01em]">
-                    {t(ingredient.name, locale)}
-                  </dt>
-                  <dd className="mt-1 text-[0.9375rem] leading-relaxed text-body">
-                    {t(ingredient.body, locale)}
-                  </dd>
-                </div>
-              ))}
-            </dl>
+          <p className="mx-auto mt-6 max-w-md text-sm leading-relaxed text-muted">
+            {pick(
+              locale,
+              'The full ingredient list for each product is printed on its label and will be published here in full.',
+              'La lista completa de ingredientes de cada producto está impresa en su etiqueta y se publicará aquí íntegra.',
+            )}
+          </p>
 
-            <p className="mt-8 text-sm leading-relaxed text-muted">
-              {pick(
-                locale,
-                'The full ingredient list for each product is printed on its label and will be published here in full.',
-                'La lista completa de ingredientes de cada producto está impresa en su etiqueta y se publicará aquí íntegra.',
-              )}
-            </p>
-
-            <div className="mt-8">
-              <LinkButton
-                href={localizedHref(locale, '/ingredients')}
-                variant="secondary"
-                size="lg"
-              >
-                {pick(locale, 'See all ingredients', 'Ver todos los ingredientes')}
-              </LinkButton>
-            </div>
-          </Reveal>
-        </div>
+          <div className="mt-8">
+            <LinkButton
+              href={localizedHref(locale, '/ingredients')}
+              variant="secondary"
+              size="lg"
+            >
+              {pick(locale, 'See all ingredients', 'Ver todos los ingredientes')}
+            </LinkButton>
+          </div>
+        </Reveal>
       </Container>
     </Section>
   );

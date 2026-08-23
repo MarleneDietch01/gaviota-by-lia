@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { EditorialImage } from '@/components/media/site-image';
 import { NeedCard } from '@/components/sections/build-ritual';
+import { LinkButton } from '@/components/ui/button';
 import { Container, Rule, Section } from '@/components/ui/layout-primitives';
 import { Reveal } from '@/components/ui/reveal';
 import { SavedList } from '@/components/commerce/saved-list';
@@ -17,31 +17,37 @@ import { isLocale, localizedHref, type Locale } from '@/lib/i18n';
  * Ninguna página de este catch-all puede ser un callejón sin salida: si
  * `page.links` no trae nada (como `journal` o `founder`), cae a un
  * único "Volver al inicio" en vez de dejar el texto colgado sin ninguna acción.
+ *
+ * Pasa siempre por `LinkButton` (nunca un `<a>`/`<Link>` con clases sueltas
+ * imitando el estilo primario): así ningún botón puede derivar en silencio del
+ * sistema de diseño. Jerarquía consistente con el resto del sitio — solo el
+ * primer enlace es `primary` (la única acción principal por pantalla), el
+ * resto `secondary`.
  */
 function PageLinks({ page, lang }: { page: RoutePage; lang: Locale }) {
   const links = page.links?.length ? page.links : [{ href: '/', label: { en: 'Back to home', es: 'Volver al inicio' } }];
 
   return (
     <div className="mt-9 flex flex-wrap gap-3">
-      {links.map((item) =>
+      {links.map((item, i) =>
         item.href.startsWith('http') ? (
-          <a
+          <LinkButton
             key={item.href}
             href={item.href}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex min-h-12 items-center rounded-xs bg-rose px-6 text-sm font-semibold text-white-warm transition-colors hover:bg-rose-deep"
+            variant={i === 0 ? 'primary' : 'secondary'}
           >
             {localizedCopy(item.label, lang)}
-          </a>
+          </LinkButton>
         ) : (
-          <Link
+          <LinkButton
             key={item.href}
             href={localizedHref(lang, item.href)}
-            className="inline-flex min-h-12 items-center rounded-xs bg-rose px-6 text-sm font-semibold text-white-warm transition-colors hover:bg-rose-deep"
+            variant={i === 0 ? 'primary' : 'secondary'}
           >
             {localizedCopy(item.label, lang)}
-          </Link>
+          </LinkButton>
         ),
       )}
     </div>
