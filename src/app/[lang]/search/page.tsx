@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { CatalogPage } from '@/components/catalog/catalog-page';
 import { isCatalogSort, isCategorySlug, type CatalogQuery } from '@/lib/catalog/products';
-import { isLocale, pick } from '@/lib/i18n';
+import { isLocale, pageAlternates, pick } from '@/lib/i18n';
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
@@ -12,7 +12,7 @@ export async function generateMetadata({ params }: PageProps<'/[lang]/search'>):
   return {
     title: pick(lang, 'Search', 'Buscar'),
     robots: { index: false, follow: true },
-    alternates: { canonical: `/${lang}/search` },
+    alternates: pageAlternates(lang, '/search'),
   };
 }
 

@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { CatalogPage } from '@/components/catalog/catalog-page';
 import { CATEGORIES, isCatalogSort, isCategorySlug, type CatalogQuery } from '@/lib/catalog/products';
-import { isLocale, pick } from '@/lib/i18n';
+import { isLocale, pageAlternates, pick } from '@/lib/i18n';
 
 type Params = Promise<{ lang: string; slug: string }>;
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   if (!isLocale(lang) || !isCategorySlug(slug)) return {};
   const category = CATEGORIES.find((item) => item.slug === slug)!;
   const name = lang === 'es' ? category.es : category.en;
-  return { title: name, description: pick(lang, `Explore ${name.toLowerCase()} by Gaviota by Lia.`, `Descubre ${name.toLowerCase()} de Gaviota by Lia.`), alternates: { canonical: `/${lang}/categories/${slug}` } };
+  return { title: name, description: pick(lang, `Explore ${name.toLowerCase()} by Gaviota by Lia.`, `Descubre ${name.toLowerCase()} de Gaviota by Lia.`), alternates: pageAlternates(lang, `/categories/${slug}`) };
 }
 
 export default async function CategoryPage({ params, searchParams }: { params: Params; searchParams: SearchParams }) {

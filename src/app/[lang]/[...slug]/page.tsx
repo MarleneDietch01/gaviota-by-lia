@@ -9,7 +9,7 @@ import { SavedList } from '@/components/commerce/saved-list';
 import { getAllProducts } from '@/lib/catalog/products';
 import { RITUAL_NEEDS } from '@/lib/content/home-data';
 import { ROUTE_PAGES, localizedCopy, type RoutePage } from '@/lib/content/route-pages';
-import { isLocale, localizedHref, type Locale } from '@/lib/i18n';
+import { isLocale, localizedHref, pageAlternates, type Locale } from '@/lib/i18n';
 
 /**
  * Botones al pie de una página de contenido.
@@ -65,6 +65,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ? {
         title: localizedCopy(page.title, lang),
         description: localizedCopy(page.body[0]!, lang),
+        alternates: pageAlternates(lang, `/${key}`),
         robots:
           key === 'track-order' || key === 'cart' || key === 'wishlist'
             ? { index: false }

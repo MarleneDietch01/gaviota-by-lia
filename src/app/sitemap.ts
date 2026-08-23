@@ -22,26 +22,31 @@ const STATIC_PATHS = [
   '/faq',
 ];
 
-function localizedEntry(
-  siteUrl: string,
-  path: string,
-): MetadataRoute.Sitemap[number] {
-  const withLocale = (locale: Locale) => `${siteUrl}/${locale}${path === '/' ? '' : path}`;
-  return {
-    url: withLocale('en'),
-    alternates: {
-      languages: Object.fromEntries(locales.map((locale) => [locale, withLocale(locale)])),
-    },
-  };
+/**
+ * One `<url>` entry per locale for a given path — a Spanish visitor and an
+ * English visitor land on two different URLs for the "same" page, so each
+ * needs its own sitemap entry, not one entry with the other locale merely
+ * listed as an alternate. Each entry still declares `alternates.languages`
+ * pointing at every locale (itself included), same as the page's own
+ * hreflang tags.
+ */
+function localizedEntries(siteUrl: string, path: string): MetadataRoute.Sitemap {
+  const urlFor = (locale: Locale) => `${siteUrl}/${locale}${path === '/' ? '' : path}`;
+  const languages = Object.fromEntries(locales.map((locale) => [locale, urlFor(locale)]));
+
+  return locales.map((locale) => ({
+    url: urlFor(locale),
+    alternates: { languages },
+  }));
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = getSiteUrl();
   const products = await getAllProducts();
 
-  const homeAndStatic = ['/', ...STATIC_PATHS].map((path) => localizedEntry(siteUrl, path));
-  const categories = CATEGORIES.map((category) => localizedEntry(siteUrl, `/categories/${category.slug}`));
-  const productPages = products.map((product) => localizedEntry(siteUrl, `/products/${product.slug}`));
+  const homeAndStatic = ['/', ...STATIC_PATHS].flatMap((path) => localizedEntries(siteUrl, path));
+  const categories = CATEGORIES.flatMap((category) => localizedEntries(siteUrl, `/categories/${category.slug}`));
+  const productPages = products.flatMap((product) => localizedEntries(siteUrl, `/products/${product.slug}`));
 
   return [...homeAndStatic, ...categories, ...productPages];
 }
