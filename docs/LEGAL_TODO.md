@@ -278,6 +278,30 @@ por accesibilidad, frecuente en comercio electrónico en EE. UU.
 
 ---
 
+## 🟡 L14 — Renovación manual de gaviotabylia.com (2026-08-22)
+
+El dominio está registrado en Shopify (no en un registrador aparte). Al cancelar el plan
+de la tienda Shopify (decisión tomada — la web ya funciona 100% independiente, DNS
+apuntando a Vercel), Shopify avisó explícitamente: **"Domains will not renew after
+today"** — el dominio deja de renovarse automáticamente en cuanto se cancela el plan.
+
+El registro actual sigue válido hasta la fecha de renovación ya vista (noviembre 2026,
+$16 USD/año) — cancelar el plan **no** afecta el sitio en vivo, que ya no depende de
+Shopify para nada.
+
+**Lo único pendiente:** antes de esa fecha, alguien tiene que **renovar manualmente el
+dominio dentro de Shopify** (pagando el cargo aunque ya no haya tienda activa) o
+**transferirlo a otro registrador** (Hostinger, ~$9, toma 5-7 días). Si no se hace
+ninguna de las dos cosas, el dominio expira y queda disponible para que lo registre
+cualquier otra persona.
+
+- [ ] Antes de ~octubre 2026: decidir renovar manual en Shopify vs. transferir a otro
+      registrador
+- [ ] Poner un recordatorio fuera de este repo (calendario, no solo aquí) — este archivo
+      no envía alertas
+
+---
+
 ## Resumen
 
 | # | Asunto | Prioridad | Bloquea lanzamiento |
@@ -295,6 +319,7 @@ por accesibilidad, frecuente en comercio electrónico en EE. UU.
 | L10 | Impuestos | 🟠 | Recomendado |
 | L11 | Correo comercial | 🟡 | No |
 | L12 | Accesibilidad | 🟡 | No |
+| L14 | Renovación manual del dominio (~oct 2026) | 🟡 | No, pero pierde el dominio si se olvida |
 
 **Recomendación general.** L1, L3, L4 y L5 conviene encargarlos a un profesional legal en
 la jurisdicción correspondiente. El coste es modesto comparado con publicar una política
