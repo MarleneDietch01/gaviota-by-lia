@@ -120,6 +120,87 @@ export async function POST(request: NextRequest) {
         break;
       }
 
+      case 'PAYMENT.CAPTURE.REFUNDED': {
+        const customId = resource['custom_id'] as string | undefined;
+        if (typeof customId !== 'string') break;
+
+        const amount = resource['amount'] as { currency_code?: string; value?: string } | undefined;
+
+        // Mismo motivo que en Stripe: `orders`/`payments` guardan todo en
+        // centavos de USD. Se creó la orden pidiendo 'USD' explícito
+        // (create-order/route.ts), así que esto siempre debería serlo — pero
+        // se verifica antes de tocar ningún estado, no se asume.
+        if (amount?.currency_code !== 'USD') {
+          throw new Error(
+            `PAYMENT.CAPTURE.REFUNDED con currency_code="${amount?.currency_code}" (se esperaba "USD") — ` +
+              `order_id=${customId}. No se actualizó el estado. Revisar manualmente en el dashboard de PayPal.`,
+          );
+        }
+
+        const { data: payment } = await admin
+          .from('payments')
+          .select('amount')
+          .eq('order_id', customId)
+          .eq('provider', 'paypal')
+          .maybeSingle();
+
+        const refundedCents = amount.value ? Math.round(Number(amount.value) * 100) : 0;
+        const isFullRefund = payment ? refundedCents >= payment.amount : true;
+        const status = isFullRefund ? 'refunded' : 'partially_refunded';
+
+        await admin.from('orders').update({ order_status: status, payment_status: status }).eq('id', customId);
+        await admin.from('payments').update({ status }).eq('order_id', customId).eq('provider', 'paypal');
+
+        break;
+      }
+
+      case 'CUSTOMER.DISPUTE.CREATED': {
+        // El recurso de disputa referencia la transacción original por
+        // `seller_transaction_id` (el id de la captura, el mismo que se
+        // guardó como `provider_payment_id` en PAYMENT.CAPTURE.COMPLETED) —
+        // no trae `custom_id` directamente.
+        const disputedTransactions = resource['disputed_transactions'] as
+          | Array<{ seller_transaction_id?: string }>
+          | undefined;
+        const captureId = disputedTransactions?.[0]?.seller_transaction_id;
+        if (!captureId) break;
+
+        // Igual que en Stripe: no se toca `orders.order_status` ni
+        // `orders.payment_status`, solo `payments.status` — es estado del
+        // pago, no del pedido. El plazo real lo maneja el Resolution Center
+        // de PayPal (correo + panel); este registro es el respaldo interno.
+        await admin
+          .from('payments')
+          .update({ status: 'disputed' })
+          .eq('provider', 'paypal')
+          .eq('provider_payment_id', captureId);
+
+        break;
+      }
+
+      case 'CUSTOMER.DISPUTE.RESOLVED': {
+        const disputedTransactions = resource['disputed_transactions'] as
+          | Array<{ seller_transaction_id?: string }>
+          | undefined;
+        const captureId = disputedTransactions?.[0]?.seller_transaction_id;
+        if (!captureId) break;
+
+        const outcome = resource['dispute_outcome'] as { outcome_code?: string } | undefined;
+
+        // A favor de la vendedora: el pago vuelve a 'paid'. Cualquier otro
+        // desenlace implica que ya hubo o habrá un reembolso, que llega como
+        // su propio PAYMENT.CAPTURE.REFUNDED y lo marca ese handler.
+        if (outcome?.outcome_code === 'RESOLVED_SELLER_FAVOUR') {
+          await admin
+            .from('payments')
+            .update({ status: 'paid' })
+            .eq('provider', 'paypal')
+            .eq('provider_payment_id', captureId);
+        }
+
+        break;
+      }
+
       case 'PAYMENT.CAPTURE.DENIED': {
         const customId = resource['custom_id'] as string | undefined;
 

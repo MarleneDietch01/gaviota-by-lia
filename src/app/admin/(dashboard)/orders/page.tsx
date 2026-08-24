@@ -29,9 +29,13 @@ const STATUS_TONE: Record<string, string> = {
 
 export default async function AdminOrdersPage() {
   const supabase = await createServerSupabaseClient();
+  // `payments(status)` es un join embebido, no un campo de `orders`: la
+  // disputa vive solo en `payments.status` (ver el webhook de Stripe/PayPal),
+  // nunca se pisa `order_status` con ella — un pedido puede estar `shipped` y
+  // tener su pago en disputa al mismo tiempo.
   const { data: orders, error } = await supabase
     .from('orders')
-    .select('id, order_number, customer_email, grand_total, order_status, payment_status, created_at')
+    .select('id, order_number, customer_email, grand_total, order_status, payment_status, created_at, payments(status)')
     .order('created_at', { ascending: false })
     .limit(100);
 
@@ -55,7 +59,9 @@ export default async function AdminOrdersPage() {
               </tr>
             </thead>
             <tbody>
-              {orders.map((order) => (
+              {orders.map((order) => {
+                const disputed = order.payments?.some((payment) => payment.status === 'disputed') ?? false;
+                return (
                 <tr key={order.id} className="border-b border-line last:border-0">
                   <td className="tabular px-4 py-3 font-medium">{order.order_number}</td>
                   <td className="px-4 py-3 text-body">{order.customer_email}</td>
@@ -65,6 +71,11 @@ export default async function AdminOrdersPage() {
                     >
                       {STATUS_LABEL[order.order_status] ?? order.order_status}
                     </span>
+                    {disputed ? (
+                      <span className="ml-2 inline-flex rounded-pill bg-danger/15 px-2.5 py-1 text-xs font-semibold text-danger">
+                        Pago en disputa
+                      </span>
+                    ) : null}
                   </td>
                   <td className="tabular px-4 py-3 text-right font-semibold">
                     {formatMoney(cents(order.grand_total), 'USD', 'es-US')}
@@ -77,7 +88,8 @@ export default async function AdminOrdersPage() {
                     })}
                   </td>
                 </tr>
-              ))}
+                );
+              })}
             </tbody>
           </table>
         </div>

@@ -136,6 +136,14 @@ export async function POST(request: NextRequest) {
     // a qué pedido pertenecen.
     payment_intent_data: { metadata: { order_id: orderId, order_number: orderNumber } },
     shipping_address_collection: { allowed_countries: ['US'] },
+    // La tienda solo vende y envía en EE. UU. — Adaptive Pricing (activo por
+    // defecto a nivel de cuenta en Stripe, no algo que este código haya
+    // pedido) convertía el precio a la moneda local de compradoras fuera de
+    // EE. UU., lo que además rompía el webhook: `session.amount_total` viene
+    // en esa moneda de presentación, no en centavos de USD, y se estaba
+    // grabando tal cual en `orders.grand_total`. Desactivarlo aquí cierra los
+    // dos problemas — el webhook además verifica la moneda como segunda capa.
+    adaptive_pricing: { enabled: false },
     shipping_options: [
       {
         shipping_rate_data: {

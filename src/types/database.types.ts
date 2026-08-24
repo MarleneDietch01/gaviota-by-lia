@@ -1627,6 +1627,7 @@ export type Database = {
         | "cancelled"
         | "refunded"
         | "partially_refunded"
+        | "disputed"
       review_status: "pending" | "approved" | "rejected"
       user_role: "customer" | "admin" | "super_admin"
       user_status: "active" | "suspended"
@@ -1802,6 +1803,7 @@ export const Constants = {
         "cancelled",
         "refunded",
         "partially_refunded",
+        "disputed",
       ],
       review_status: ["pending", "approved", "rejected"],
       user_role: ["customer", "admin", "super_admin"],

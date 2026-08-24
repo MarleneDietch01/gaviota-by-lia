@@ -75,6 +75,20 @@ export async function POST(request: NextRequest) {
         const orderId = session.metadata?.['order_id'];
         if (!orderId) break;
 
+        // `orders`/`payments` guardan todo en centavos de USD. Con Adaptive
+        // Pricing desactivado (ver /api/checkout) esto siempre debería ser
+        // 'usd', pero se verifica de todos modos: si alguna vez no lo es,
+        // `session.amount_total` vendría en la moneda de presentación, no en
+        // centavos de USD, y grabarlo tal cual corrompería el pedido. Se
+        // prefiere un pago sin procesar (evento marcado 'failed', para
+        // revisión manual) a una orden con el monto equivocado.
+        if (session.currency !== 'usd') {
+          throw new Error(
+            `checkout.session.completed con currency="${session.currency}" (se esperaba "usd") — ` +
+              `order_id=${orderId}. No se escribió ningún monto. Revisar manualmente en el dashboard de Stripe.`,
+          );
+        }
+
         // Si la sesión llevaba Stripe Tax activado, el impuesto real solo se
         // conoce AQUÍ — se calculó en la página alojada de Stripe según la
         // dirección que introdujo la compradora, después de crear el pedido.
@@ -124,6 +138,85 @@ export async function POST(request: NextRequest) {
           .from('payments')
           .update({ status: 'paid', paid_at: new Date().toISOString(), provider_payment_id: intent.id })
           .eq('order_id', orderId);
+
+        break;
+      }
+
+      case 'charge.refunded': {
+        const charge = event.data.object as Stripe.Charge;
+        const paymentIntentId = typeof charge.payment_intent === 'string' ? charge.payment_intent : charge.payment_intent?.id;
+        if (!paymentIntentId) break;
+
+        // Se busca por `provider_payment_id` en vez de metadata: un reembolso
+        // no siempre trae los metadatos originales del pedido, pero el pago
+        // ya quedó enlazado a `payments` desde `checkout.session.completed`.
+        const { data: payment } = await admin
+          .from('payments')
+          .select('order_id, amount, currency')
+          .eq('provider', 'stripe')
+          .eq('provider_payment_id', paymentIntentId)
+          .maybeSingle();
+
+        if (!payment) break;
+
+        // Mismo motivo que en checkout.session.completed: si esto no está en
+        // USD, no se toca ningún monto — solo se registra el evento (ya
+        // insertado arriba) para revisión manual.
+        if (charge.currency !== 'usd') {
+          throw new Error(
+            `charge.refunded con currency="${charge.currency}" (se esperaba "usd") — ` +
+              `order_id=${payment.order_id}. No se actualizó el estado. Revisar manualmente en el dashboard de Stripe.`,
+          );
+        }
+
+        const isFullRefund = charge.amount_refunded >= charge.amount;
+        const status = isFullRefund ? 'refunded' : 'partially_refunded';
+
+        await admin.from('orders').update({ order_status: status, payment_status: status }).eq('id', payment.order_id);
+        await admin.from('payments').update({ status }).eq('order_id', payment.order_id).eq('provider', 'stripe');
+
+        break;
+      }
+
+      case 'charge.dispute.created': {
+        const dispute = event.data.object as Stripe.Dispute;
+        const paymentIntentId = typeof dispute.payment_intent === 'string' ? dispute.payment_intent : dispute.payment_intent?.id;
+        if (!paymentIntentId) break;
+
+        // Deliberadamente NO se toca `orders.order_status` ni
+        // `orders.payment_status`: una orden puede estar `shipped` y su pago
+        // en disputa a la vez, y un solo campo obligaría a perder una de las
+        // dos verdades. La disputa es estado del PAGO — vive solo en
+        // `payments.status`. `/admin` la muestra sin pisar el estado del pedido.
+        //
+        // El plazo real para responder lo marca y lo comunica Stripe (correo +
+        // Dashboard) — eso no se duplica aquí. Este registro es la señal
+        // interna de respaldo para cuando ese correo se pierda.
+        await admin
+          .from('payments')
+          .update({ status: 'disputed' })
+          .eq('provider', 'stripe')
+          .eq('provider_payment_id', paymentIntentId);
+
+        break;
+      }
+
+      case 'charge.dispute.closed': {
+        const dispute = event.data.object as Stripe.Dispute;
+        const paymentIntentId = typeof dispute.payment_intent === 'string' ? dispute.payment_intent : dispute.payment_intent?.id;
+        if (!paymentIntentId) break;
+
+        // 'won': el cargo se mantiene, el pago vuelve a 'paid'. Cualquier otro
+        // desenlace ('lost', etc.) implica que Stripe ya revirtió el cargo —
+        // eso llega como su propio `charge.refunded` y lo marca ese handler,
+        // así que aquí no se hace nada más que dejarlo como estaba.
+        if (dispute.status === 'won') {
+          await admin
+            .from('payments')
+            .update({ status: 'paid' })
+            .eq('provider', 'stripe')
+            .eq('provider_payment_id', paymentIntentId);
+        }
 
         break;
       }
