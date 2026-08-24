@@ -81,6 +81,20 @@ if (process.env.PAYPAL_ENVIRONMENT !== 'live' && paypalConfigured) {
   problems.push('PAYPAL_ENVIRONMENT no está en "live" en un build de producción (sigue en sandbox).');
 }
 
+// --- Envío: sin esto el checkout cobra un envío inventado o revienta ---------
+// `computeShipping()` (lib/commerce/checkout.ts) cae a esta variable cuando
+// `shipping_rates` está vacía — hoy lo está, 0 filas en producción. Se exige
+// aquí, no solo en tiempo de ejecución, porque preferimos que el build falle
+// con un mensaje claro a descubrir en producción que cada venta se está
+// subcobrando el costo real de envío (ver SHIPPING_TODO.md).
+require_(
+  'SHIPPING_FLAT_RATE_CENTS',
+  'Falta SHIPPING_FLAT_RATE_CENTS. No se inventa un número: confirma la tarifa real de envío con la propietaria (o carga una fila activa en shipping_rates) antes de este build.',
+);
+if (process.env.SHIPPING_FLAT_RATE_CENTS && !Number.isInteger(Number(process.env.SHIPPING_FLAT_RATE_CENTS))) {
+  problems.push('SHIPPING_FLAT_RATE_CENTS no es un entero (debe ser centavos, ej. 995 para $9.95).');
+}
+
 // --- Seguridad: nada con el valor de ejemplo del repo ------------------------
 forbid(
   'CRON_SECRET',

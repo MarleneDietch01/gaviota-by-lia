@@ -6,7 +6,7 @@ import { CheckoutPaymentIntent } from '@paypal/paypal-server-sdk';
 import { getOrdersController } from '@/lib/paypal/client';
 import { createAdminSupabaseClient } from '@/lib/supabase/admin';
 import { checkRateLimit } from '@/lib/security/rate-limit';
-import { createPendingOrder, validateCheckoutLines } from '@/lib/commerce/checkout';
+import { computeShipping, createPendingOrder, validateCheckoutLines } from '@/lib/commerce/checkout';
 import { toUnits } from '@/lib/commerce/money';
 import { isSameOriginRequest } from '@/lib/security/origin';
 import { parseOptionalCheckoutEmail } from '@/lib/validation/checkout';
@@ -70,10 +70,21 @@ export async function POST(request: NextRequest) {
   const admin = createAdminSupabaseClient();
   const idempotencyKey = randomUUID();
 
+  // Igual que en /api/checkout: se resuelve antes de crear el pedido, para
+  // no dejar uno huérfano si no hay ninguna tarifa de envío configurada.
+  let shipping: Awaited<ReturnType<typeof computeShipping>>;
+  try {
+    shipping = await computeShipping(admin, subtotal);
+  } catch (error) {
+    console.error('[paypal/create-order] shipping not configured:', error);
+    return NextResponse.json({ error: 'shipping_not_configured' }, { status: 503 });
+  }
+
   const pendingOrder = await createPendingOrder(admin, {
     email,
     items,
     subtotal,
+    shipping: shipping.shippingCents,
     provider: 'paypal',
     idempotencyKey,
   });
@@ -96,9 +107,16 @@ export async function POST(request: NextRequest) {
               invoiceId: orderNumber,
               amount: {
                 currencyCode: 'USD',
+                // `value` es el total que PayPal cobra de verdad; el desglose
+                // debajo tiene que sumar exactamente lo mismo o PayPal
+                // rechaza la petición (ITEM_TOTAL_MISMATCH). Antes `itemTotal`
+                // estaba puesto igual a `grandTotal` completo (bug real,
+                // independiente del envío: sobrestimaba el valor de la
+                // mercancía en el desglose que ve la clienta en PayPal).
                 value: toUnits(grandTotal).toFixed(2),
                 breakdown: {
-                  itemTotal: { currencyCode: 'USD', value: toUnits(grandTotal).toFixed(2) },
+                  itemTotal: { currencyCode: 'USD', value: toUnits(subtotal).toFixed(2) },
+                  shipping: { currencyCode: 'USD', value: toUnits(shipping.shippingCents).toFixed(2) },
                 },
               },
               items: items.map((item) => ({

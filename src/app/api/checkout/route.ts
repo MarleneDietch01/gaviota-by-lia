@@ -6,7 +6,7 @@ import type Stripe from 'stripe';
 import { getStripeClient } from '@/lib/stripe/client';
 import { createAdminSupabaseClient } from '@/lib/supabase/admin';
 import { checkRateLimit } from '@/lib/security/rate-limit';
-import { createPendingOrder, validateCheckoutLines } from '@/lib/commerce/checkout';
+import { computeShipping, createPendingOrder, validateCheckoutLines } from '@/lib/commerce/checkout';
 import { isSameOriginRequest } from '@/lib/security/origin';
 import { parseOptionalCheckoutEmail } from '@/lib/validation/checkout';
 import { isLocale, type Locale } from '@/lib/i18n';
@@ -84,10 +84,22 @@ export async function POST(request: NextRequest) {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
   const idempotencyKey = randomUUID();
 
+  // Se resuelve ANTES de crear el pedido, igual que la config de Stripe más
+  // arriba: si no hay ninguna tarifa configurada (ni en `shipping_rates` ni
+  // en `SHIPPING_FLAT_RATE_CENTS`), esto lanza y no queda un pedido huérfano.
+  let shipping: Awaited<ReturnType<typeof computeShipping>>;
+  try {
+    shipping = await computeShipping(admin, subtotal);
+  } catch (error) {
+    console.error('[checkout] shipping not configured:', error);
+    return NextResponse.json({ error: 'shipping_not_configured' }, { status: 503 });
+  }
+
   const pendingOrder = await createPendingOrder(admin, {
     email,
     items,
     subtotal,
+    shipping: shipping.shippingCents,
     provider: 'stripe',
     idempotencyKey,
   });
@@ -99,9 +111,9 @@ export async function POST(request: NextRequest) {
   const { orderId, orderNumber } = pendingOrder;
 
   // Tienda orientada a EE. UU.: el checkout solo admite direcciones de envío
-  // de Estados Unidos. `shipping_address_collection` no exige tener
-  // `shipping_options` — sin ellos, Stripe recoge la dirección pero no cobra
-  // envío (queda en 0 hasta que exista una tarifa real, ver `SHIPPING_TODO.md`).
+  // de Estados Unidos. El costo se declara vía `shipping_options` (no como un
+  // line item disfrazado de producto) para que Stripe Tax lo trate como
+  // envío, no como mercancía, al calcular el impuesto por estado.
   const baseParams: Stripe.Checkout.SessionCreateParams = {
     mode: 'payment',
     line_items: items.map((item) => ({
@@ -124,6 +136,15 @@ export async function POST(request: NextRequest) {
     // a qué pedido pertenecen.
     payment_intent_data: { metadata: { order_id: orderId, order_number: orderNumber } },
     shipping_address_collection: { allowed_countries: ['US'] },
+    shipping_options: [
+      {
+        shipping_rate_data: {
+          type: 'fixed_amount',
+          fixed_amount: { amount: shipping.shippingCents, currency: 'usd' },
+          display_name: shipping.freeShippingApplied ? 'Free shipping' : 'Standard shipping',
+        },
+      },
+    ],
     success_url: `${siteUrl}/${locale}/checkout/success?order=${orderNumber}`,
     cancel_url: `${siteUrl}/${locale}/checkout/cancel`,
   };

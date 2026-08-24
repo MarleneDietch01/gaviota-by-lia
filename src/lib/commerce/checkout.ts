@@ -61,16 +61,96 @@ export async function validateCheckoutLines(
   return { ok: true, result: { items, subtotal } };
 }
 
+export interface ShippingResult {
+  readonly shippingCents: Cents;
+  /** Para que el proveedor de pago pueda mostrar "Free shipping" en vez de $0. */
+  readonly freeShippingApplied: boolean;
+}
+
+/**
+ * Lee `SHIPPING_FLAT_RATE_CENTS` del entorno. Lanza si no es un entero válido
+ * — a propósito: no hay ningún número por defecto porque nadie ha aprobado
+ * uno todavía (ver la conversación en `SHIPPING_TODO.md`). Un checkout que
+ * falla con un error claro es preferible a uno que cobra un envío inventado.
+ */
+function fallbackFlatShippingCents(): Cents {
+  const raw = process.env.SHIPPING_FLAT_RATE_CENTS;
+  const value = raw ? Number(raw) : NaN;
+  if (!Number.isInteger(value) || value < 0) {
+    throw new Error(
+      'Ninguna tarifa de envío configurada: shipping_rates está vacía y ' +
+        'SHIPPING_FLAT_RATE_CENTS no tiene un valor entero válido en el entorno. ' +
+        'No se inventa un número — confirma la tarifa real con la propietaria y ' +
+        'configura SHIPPING_FLAT_RATE_CENTS (o una fila en shipping_rates) antes de aceptar pedidos.',
+    );
+  }
+  return cents(value);
+}
+
+/**
+ * Lee `FREE_SHIPPING_THRESHOLD_CENTS` del entorno. `undefined` = desactivado
+ * (comportamiento por defecto): no se inventa un umbral de envío gratis.
+ */
+function fallbackFreeShippingThresholdCents(): Cents | null {
+  const raw = process.env.FREE_SHIPPING_THRESHOLD_CENTS;
+  if (!raw) return null;
+  const value = Number(raw);
+  if (!Number.isInteger(value) || value <= 0) {
+    throw new Error('FREE_SHIPPING_THRESHOLD_CENTS tiene un valor inválido en el entorno (debe ser un entero positivo en centavos).');
+  }
+  return cents(value);
+}
+
+/**
+ * Calcula el costo de envío para un subtotal, SIEMPRE en servidor.
+ *
+ * Prioridad: una fila activa de `shipping_rates` (EE. UU., sin estado
+ * específico, sin recogida local) manda sobre todo lo demás — trae su propia
+ * tarifa y su propio umbral de envío gratis (`free_above`). Si la tabla está
+ * vacía (hoy lo está: 0 filas en producción), cae a las constantes de
+ * entorno de arriba. Esto permite pasar a tarifas reales gestionadas desde
+ * una fila de base de datos más adelante sin tocar código — hoy no se
+ * construye ningún selector de zonas, solo el punto de entrada para uno.
+ */
+export async function computeShipping(
+  admin: SupabaseClient<Database>,
+  subtotal: Cents,
+): Promise<ShippingResult> {
+  const { data: rateRow } = await admin
+    .from('shipping_rates')
+    .select('rate, free_above')
+    .eq('country', 'US')
+    .is('state', null)
+    .eq('status', 'active')
+    .eq('is_local_pickup', false)
+    .order('sort_order', { ascending: true })
+    .limit(1)
+    .maybeSingle();
+
+  const rate = rateRow ? cents(rateRow.rate) : fallbackFlatShippingCents();
+  const freeAbove = rateRow ? (rateRow.free_above !== null ? cents(rateRow.free_above) : null) : fallbackFreeShippingThresholdCents();
+
+  if (freeAbove !== null && subtotal >= freeAbove) {
+    return { shippingCents: cents(0), freeShippingApplied: true };
+  }
+
+  return { shippingCents: rate, freeShippingApplied: false };
+}
+
 /**
  * Crea el pedido `pending_payment` + sus líneas + el registro de pago, en
  * Supabase, antes de hablar con el proveedor de pago.
  *
- * Sin descuentos/impuestos/envío en el MVP (`grand_total = subtotal`) — ver
- * `LEGAL_TODO.md` L10. `variant_id` queda sin asignar a propósito: no hay
- * inventario real todavía (`CONTENT_TODO.md` C6), así que
- * `reserve_inventory()`/`commit_inventory_sale()` no tienen nada que hacer con
- * estas líneas — no es un olvido, es el estado explícito "sin control de
- * inventario" que el propio esquema ya contempla.
+ * `grand_total = subtotal + shipping` — sin descuentos ni impuestos todavía
+ * en el MVP (esos los calcula Stripe Tax por su cuenta y no pasan por esta
+ * columna; ver `LEGAL_TODO.md` L10 para descuentos). La restricción
+ * `totals_add_up` de la base de datos (`grand_total = subtotal - discount_total
+ * + tax_total + shipping_total`) rechaza el insert si esta cuenta no cuadra —
+ * es la verificación real, esto solo tiene que dejarle los números correctos.
+ * `variant_id` queda sin asignar a propósito: no hay inventario real todavía
+ * (`CONTENT_TODO.md` C6), así que `reserve_inventory()`/`commit_inventory_sale()`
+ * no tienen nada que hacer con estas líneas — no es un olvido, es el estado
+ * explícito "sin control de inventario" que el propio esquema ya contempla.
  */
 export async function createPendingOrder(
   admin: SupabaseClient<Database>,
@@ -78,11 +158,12 @@ export async function createPendingOrder(
     email: string;
     items: readonly CheckoutItem[];
     subtotal: Cents;
+    shipping: Cents;
     provider: 'stripe' | 'paypal';
     idempotencyKey: string;
   },
 ): Promise<{ orderId: string; orderNumber: string; grandTotal: Cents } | { error: string }> {
-  const grandTotal = params.subtotal;
+  const grandTotal = cents(params.subtotal + params.shipping);
 
   const { data: order, error: orderError } = await admin
     .from('orders')
@@ -90,6 +171,7 @@ export async function createPendingOrder(
       customer_email: params.email || 'sin-correo@pendiente.gaviotabylia.com',
       currency: 'USD',
       subtotal: params.subtotal,
+      shipping_total: params.shipping,
       grand_total: grandTotal,
       payment_status: 'pending',
       order_status: 'pending_payment',

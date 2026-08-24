@@ -103,7 +103,12 @@ const legacyRedirects = [
   ['/products/kit-anti-estrias-y-aclaracion', '/sets'],
   // Discontinued — removed from the catalog entirely (owner decision).
   ['/products/sunscreen', '/shop'],
-  ['/apps/track123', '/track-order'],
+  // Used to point at /track-order, but that page is a placeholder — no order
+  // lookup and no shipped-with-tracking email exist yet (see SHIPPING_TODO.md
+  // §7). Sending old Shopify tracking-link traffic to a page that can't
+  // actually answer "where's my package" is worse than sending it to a human.
+  // Revisit once real order tracking exists.
+  ['/apps/track123', '/contact'],
   // El título original usaba caracteres Unicode matemáticos, que dejaban una
   // URL percent-encoded ilegible e incompartible.
   [
