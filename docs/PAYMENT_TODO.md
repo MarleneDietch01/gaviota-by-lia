@@ -214,3 +214,55 @@ PAYMENT_WEBHOOK_SECRET=        # SECRETO — verificación de firma
 **El último punto se comprueba automáticamente:** el despliegue de producción falla si
 `PAYMENT_PROVIDER=mock`. Es la garantía técnica de la regla "no publicar mocks en
 producción".
+
+---
+
+## 11. Hallazgos verificados contra la cuenta Live de Stripe (2026-08-24)
+
+Verificado directamente por la propietaria contra el dashboard y sesiones reales —
+no es una suposición leída del código.
+
+### Stripe Tax no cobra nada, y el bloqueo NO es la dirección de origen
+
+`automatic_tax.enabled = true` ya está en el código (`api/checkout/route.ts`), pero
+en producción cada sesión sale con `status: "requires_location_inputs"` y
+`total_details.amount_tax = 0`. `/v1/tax/registrations` en modo Live devuelve una
+lista **vacía** — cero registros fiscales.
+
+**El bloqueo real: Stripe Tax solo cobra impuesto en una jurisdicción donde la
+cuenta tiene un registro fiscal (`tax registration`) dado de alta.** Configurar la
+dirección de origen del negocio en Settings → Business no activa el cobro por sí
+sola — es un permiso de **sales tax de Rhode Island** que la propietaria debe
+tramitar ante el estado y después registrar en Stripe (Settings → Tax →
+Registrations), no un campo de formulario. Sin ese registro, `automatic_tax` sigue
+activo pero cobrando siempre $0, exactamente como se observa hoy. La corrección
+anterior en `check-env.mjs`/conversación que hablaba solo de "la dirección de
+origen" estaba incompleta — queda corregida aquí.
+
+### Adaptive Pricing está activo y no fue una decisión de este código
+
+`adaptive_pricing.enabled = true` en las sesiones Live — confirmado con dos sesiones
+reales que salieron en `presentment_currency: "dop"` (pesos dominicanos, ej.
+306000 = RD$3,060). **No hay ninguna línea en el código que active esto** (`grep
+adaptive_pricing src/` no devuelve nada): es un ajuste que Stripe activa por
+defecto a nivel de cuenta/Checkout para cuentas nuevas, no algo que se decidiera
+aquí.
+
+Dos problemas, uno de UX y uno de integridad de datos:
+
+1. **Envíos**: `shipping_address_collection` solo permite EE. UU. — alguien que
+   paga en pesos dominicanos vería el precio convertido pero tendría que dar una
+   dirección de EE. UU. para poder completar la compra. Confuso, pero no rompe el
+   envío (la tienda de verdad solo envía a EE. UU.).
+2. **🔴 Real, más grave**: el webhook (`api/webhooks/stripe/route.ts`) escribe
+   `session.amount_total` directo en `orders.grand_total`/`payments.amount`
+   asumiendo que está en centavos de USD. Con Adaptive Pricing activo,
+   `amount_total` viene en la **moneda de presentación** (pesos dominicanos en
+   el ejemplo real) — el webhook grabaría 306000 como si fueran $3,060.00 USD en
+   vez de los ~$50 reales. Es corrupción de datos financieros, no solo un
+   detalle de presentación.
+
+**Recomendación:** desactivar Adaptive Pricing explícitamente en la Checkout
+Session (`adaptive_pricing: { enabled: false }`), ya que la tienda solo vende y
+envía en EE. UU. — cierra los dos problemas de una vez sin tener que hacer el
+webhook consciente de conversión de moneda.
