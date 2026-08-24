@@ -341,6 +341,14 @@ export const COMMUNITY_PHOTOS: readonly CommunityPhoto[] = [
       es: 'Cuatro mujeres posando juntas con productos Gaviota by Lia',
     },
   },
+  {
+    src: '/images/gaviota/community/comunidad-19.jpg',
+    focal: '50% 30%',
+    alt: {
+      en: 'Woman seated and surrounded by hands holding the Gaviota by Lia product line',
+      es: 'Mujer sentada rodeada de manos sosteniendo la línea de productos Gaviota by Lia',
+    },
+  },
 ];
 
 /* ===========================================================================
