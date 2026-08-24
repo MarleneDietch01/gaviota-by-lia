@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { ProductCard } from '@/components/products/product-card';
 import { QuickAdd, FavoriteToggle } from '@/components/products/product-actions';
 import { ProductPackshot } from '@/components/products/product-packshot';
+import { ProductReviews } from '@/components/products/product-reviews';
 import { Container, Rule, Section } from '@/components/ui/layout-primitives';
 import { getAllProducts, getProductBySlug } from '@/lib/catalog/products';
 import { formatMoney } from '@/lib/commerce/money';
@@ -113,6 +114,11 @@ export default async function ProductPage({ params }: Props) {
           </Container>
         </Section>
       ) : null}
+      <Section tone={product.ingredients || product.precautions || product.usageInstructions ? 'ivory' : 'powder'}>
+        <Container size="narrow">
+          <ProductReviews slug={product.slug} locale={lang} />
+        </Container>
+      </Section>
       <Section tone="white">
         <Container>
           <h2 className="text-h2">{pick(lang, 'You may also like', 'También puede gustarte')}</h2>

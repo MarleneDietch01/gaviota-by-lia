@@ -8,6 +8,7 @@ import { signOutAdmin } from './actions';
 const NAV = [
   { href: '/admin', label: 'Panel' },
   { href: '/admin/orders', label: 'Pedidos' },
+  { href: '/admin/reviews', label: 'Reseñas' },
   { href: '/admin/users', label: 'Usuarios' },
 ] as const;
 
