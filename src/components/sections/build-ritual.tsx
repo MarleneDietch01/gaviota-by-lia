@@ -79,12 +79,18 @@ export function NeedCard({
       href={localizedHref(locale, need.href)}
       className="group flex h-full flex-col overflow-hidden rounded-sm bg-white-warm transition-shadow duration-500 ease-soft hover:shadow-lift"
     >
-      {/* En la tarjeta destacada la imagen CRECE para llenar la altura de las
-          dos filas que ocupa (`lg:flex-1`), en vez de quedarse con una
-          proporción fija y dejar 350px de hueco muerto debajo del texto. */}
+      {/* Cuadrado, no 4:3, en las cinco tarjetas: los packshots de estudio son
+          lienzos cuadrados de 1200 px (ver `docs/IMAGE_USAGE.md` §5), así que
+          en un contenedor cuadrado `fit="contain"` y `fit="cover"` producen el
+          MISMO resultado — llenan el marco sin dejar el margen blanco que
+          delataba cuál tarjeta era un packshot y cuál una foto de estilo de
+          vida. Antes, con 4:3, esa diferencia de tratamiento era la única
+          anatomía distinta entre tarjetas; ahora la única diferencia real es
+          el tamaño de la destacada, que crece por el `col-span`/`row-span` de
+          la rejilla, no por tener un recorte de imagen distinto. */}
       <div
         className={
-          feature ? 'aspect-[4/3] lg:aspect-auto lg:min-h-0 lg:flex-1' : 'aspect-[4/3]'
+          feature ? 'aspect-square lg:aspect-auto lg:min-h-0 lg:flex-1' : 'aspect-square'
         }
       >
         <EditorialImage
