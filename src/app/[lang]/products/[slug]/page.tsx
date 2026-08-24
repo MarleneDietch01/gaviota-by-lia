@@ -1,13 +1,16 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import { Breadcrumbs } from '@/components/navigation/breadcrumbs';
 import { ProductCard } from '@/components/products/product-card';
 import { QuickAdd, FavoriteToggle } from '@/components/products/product-actions';
 import { ProductPackshot } from '@/components/products/product-packshot';
 import { ProductReviews } from '@/components/products/product-reviews';
 import { Container, Rule, Section } from '@/components/ui/layout-primitives';
-import { getAllProducts, getProductBySlug } from '@/lib/catalog/products';
+import { CATEGORIES, getAllProducts, getProductBySlug } from '@/lib/catalog/products';
 import { formatMoney } from '@/lib/commerce/money';
-import { isLocale, pageAlternates, pick, socialMeta } from '@/lib/i18n';
+import { isLocale, localizedHref, pageAlternates, pick, socialMeta } from '@/lib/i18n';
+import { getSiteUrl } from '@/lib/site-url';
+import { breadcrumbJsonLd, productJsonLd } from '@/lib/structured-data';
 
 type Props = PageProps<'/[lang]/products/[slug]'>;
 
@@ -36,11 +39,40 @@ export default async function ProductPage({ params }: Props) {
   if (!product) notFound();
   const related = (await getAllProducts(lang)).filter((item) => item.slug !== slug).slice(0, 3);
 
+  const siteUrl = getSiteUrl();
+  const category = CATEGORIES.find((item) => item.slug === product.categorySlug)!;
+  const categoryName = lang === 'es' ? category.es : category.en;
+  const breadcrumbItems = [
+    { label: pick(lang, 'Shop', 'Tienda'), href: '/shop' },
+    { label: categoryName, href: `/categories/${category.slug}` },
+    { label: product.name },
+  ];
+
   return (
     <>
+      {/* JSON estático generado en servidor, sin datos de usuario — no hay
+          riesgo de inyección al usar dangerouslySetInnerHTML aquí. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd(product, lang, siteUrl)) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            breadcrumbJsonLd([
+              { name: pick(lang, 'Home', 'Inicio'), url: `${siteUrl}${localizedHref(lang, '/')}` },
+              { name: pick(lang, 'Shop', 'Tienda'), url: `${siteUrl}${localizedHref(lang, '/shop')}` },
+              { name: categoryName, url: `${siteUrl}${localizedHref(lang, `/categories/${category.slug}`)}` },
+              { name: product.name, url: `${siteUrl}${localizedHref(lang, `/products/${product.slug}`)}` },
+            ]),
+          ),
+        }}
+      />
       <Section tone="ivory" padding="compact">
         <Container>
-          <div className="grid gap-10 lg:grid-cols-2 lg:items-center lg:gap-16">
+          <Breadcrumbs items={breadcrumbItems} locale={lang} />
+          <div className="mt-6 grid gap-10 lg:grid-cols-2 lg:items-center lg:gap-16">
             <ProductPackshot
               src={product.image}
               alt={product.imageAlt}
