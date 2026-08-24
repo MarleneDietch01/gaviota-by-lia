@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { InstagramIcon } from '@/components/icons/instagram-icon';
+import { NewsletterForm } from '@/components/newsletter/newsletter-form';
 import { Container, Rule } from '@/components/ui/layout-primitives';
 import {
   BRAND_NAV,
@@ -49,6 +50,10 @@ export function SiteFooter({ locale }: { locale: Locale }) {
                   {pick(locale, '(opens in a new tab)', '(se abre en una pestaña nueva)')}
                 </span>
               </a>
+
+              <div className="mt-8">
+                <NewsletterForm locale={locale} />
+              </div>
             </div>
 
             {COLUMNS.map((column) => (
