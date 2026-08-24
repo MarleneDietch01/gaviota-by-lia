@@ -5,7 +5,7 @@ import { fontVariables } from '@/lib/fonts';
 import { SiteHeader } from '@/components/layout/site-header';
 import { SiteFooter } from '@/components/layout/site-footer';
 import { AnnouncementBar } from '@/components/layout/announcement-bar';
-import { isLocale, locales, pageAlternates, pick } from '@/lib/i18n';
+import { isLocale, locales, pageAlternates, pick, socialMeta } from '@/lib/i18n';
 import { getSiteUrl } from '@/lib/site-url';
 import '../globals.css';
 
@@ -27,8 +27,7 @@ export async function generateMetadata({ params }: LayoutProps<'/[lang]'>): Prom
     title: { default: `Gaviota by Lia | ${title}`, template: '%s | Gaviota by Lia' },
     description,
     alternates: pageAlternates(lang, ''),
-    openGraph: { type: 'website', locale: lang === 'en' ? 'en_US' : 'es_DO', siteName: 'Gaviota by Lia', description },
-    twitter: { card: 'summary_large_image' },
+    ...socialMeta(lang, '', description),
   };
 }
 

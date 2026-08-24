@@ -41,3 +41,51 @@ export function pageAlternates(lang: Locale, path: string) {
     },
   };
 }
+
+export interface SocialImage {
+  readonly url: string;
+  readonly width: number;
+  readonly height: number;
+  readonly alt: string;
+}
+
+/** Brand family shot, cropped to the 1200x630 Open Graph aspect ratio. Used
+ *  on every page that doesn't have a more specific image of its own (a
+ *  product's studio photo, for example). */
+export const DEFAULT_SOCIAL_IMAGE: SocialImage = {
+  url: '/images/gaviota/og/default.jpg',
+  width: 1200,
+  height: 630,
+  alt: 'Gaviota by Lia body care collection: stretch mark oil, coconut scrub, hydrating cream and ingrown hair serum',
+};
+
+/**
+ * `openGraph`/`twitter` for one route, self-referencing — the `openGraph`
+ * sibling to `pageAlternates()`, needed for the exact same reason: Next.js
+ * does NOT deep-merge `openGraph` between a layout and its page, so a page
+ * that sets `openGraph` at all replaces the layout's object entirely (losing
+ * `siteName`/`locale`), while a page that sets none inherits the parent's
+ * `url` verbatim — every visible route calls this so `og:url` always matches
+ * that page's own canonical URL, not the home's.
+ */
+export function socialMeta(lang: Locale, path: string, description: string, image: SocialImage = DEFAULT_SOCIAL_IMAGE) {
+  const suffix = path === '/' ? '' : path;
+  const url = `/${lang}${suffix}`;
+  const images = [{ url: image.url, width: image.width, height: image.height, alt: image.alt }];
+
+  return {
+    openGraph: {
+      type: 'website' as const,
+      locale: lang === 'en' ? 'en_US' : 'es_DO',
+      siteName: 'Gaviota by Lia',
+      description,
+      url,
+      images,
+    },
+    twitter: {
+      card: 'summary_large_image' as const,
+      description,
+      images,
+    },
+  };
+}

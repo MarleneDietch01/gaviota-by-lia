@@ -7,7 +7,7 @@ import { ProductReviews } from '@/components/products/product-reviews';
 import { Container, Rule, Section } from '@/components/ui/layout-primitives';
 import { getAllProducts, getProductBySlug } from '@/lib/catalog/products';
 import { formatMoney } from '@/lib/commerce/money';
-import { isLocale, pageAlternates, pick } from '@/lib/i18n';
+import { isLocale, pageAlternates, pick, socialMeta } from '@/lib/i18n';
 
 type Props = PageProps<'/[lang]/products/[slug]'>;
 
@@ -15,9 +15,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { lang, slug } = await params;
   if (!isLocale(lang)) return {};
   const product = await getProductBySlug(slug, lang);
-  return product
-    ? { title: product.name, description: product.shortDescription, alternates: pageAlternates(lang, `/products/${slug}`) }
-    : {};
+  if (!product) return {};
+  return {
+    title: product.name,
+    description: product.shortDescription,
+    alternates: pageAlternates(lang, `/products/${slug}`),
+    ...socialMeta(lang, `/products/${slug}`, product.shortDescription, {
+      url: product.image,
+      width: product.imageWidth,
+      height: product.imageHeight,
+      alt: product.imageAlt,
+    }),
+  };
 }
 
 export default async function ProductPage({ params }: Props) {

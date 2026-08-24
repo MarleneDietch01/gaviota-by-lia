@@ -2,17 +2,20 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { CatalogPage } from '@/components/catalog/catalog-page';
 import { isCatalogSort, isCategorySlug, type CatalogQuery } from '@/lib/catalog/products';
-import { isLocale, pageAlternates, pick } from '@/lib/i18n';
+import { isLocale, pageAlternates, pick, socialMeta } from '@/lib/i18n';
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
 export async function generateMetadata({ params }: PageProps<'/[lang]/search'>): Promise<Metadata> {
   const { lang } = await params;
   if (!isLocale(lang)) return {};
+  const description = pick(lang, 'Search Gaviota by Lia body care products.', 'Busca productos de cuidado corporal Gaviota by Lia.');
   return {
     title: pick(lang, 'Search', 'Buscar'),
+    description,
     robots: { index: false, follow: true },
     alternates: pageAlternates(lang, '/search'),
+    ...socialMeta(lang, '/search', description),
   };
 }
 
