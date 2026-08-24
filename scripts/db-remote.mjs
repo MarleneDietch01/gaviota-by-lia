@@ -2,6 +2,7 @@
  * Ejecuta SQL contra el proyecto Supabase enlazado.
  *
  *   node scripts/db-remote.mjs seed          -> carga supabase/seed/dev.sql
+ *   node scripts/db-remote.mjs seed:prod     -> carga supabase/seed/prod.sql (idempotente, apto para producción)
  *   node scripts/db-remote.mjs test          -> ejecuta las pruebas pgTAP
  *   node scripts/db-remote.mjs sql "SELECT 1"
  *
@@ -31,6 +32,10 @@ try {
     const sql = await readFile('supabase/seed/dev.sql', 'utf8');
     await client.query(sql);
     console.log('✓ Seeds de desarrollo cargados');
+  } else if (mode === 'seed:prod') {
+    const sql = await readFile('supabase/seed/prod.sql', 'utf8');
+    await client.query(sql);
+    console.log('✓ Catálogo de producción cargado (o ya estaba, es idempotente)');
   } else if (mode === 'test') {
     // pgTAP vive en el esquema `extensions` de Supabase.
     await client.query('create extension if not exists pgtap with schema extensions');
@@ -67,7 +72,7 @@ try {
     const result = await client.query(process.argv[3]);
     console.table(result.rows);
   } else {
-    console.error('Uso: node scripts/db-remote.mjs [seed|test|sql "..."]');
+    console.error('Uso: node scripts/db-remote.mjs [seed|seed:prod|test|sql "..."]');
     process.exitCode = 1;
   }
 } finally {
