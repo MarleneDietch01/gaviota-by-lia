@@ -212,13 +212,16 @@ const CATALOG: readonly Product[] = [
   {
     slug: 'tonico-para-barba',
     name: 'Tónico Para Barba',
-    // Del propio envase: "USO DIARIO". No se reproducen los claims impresos en
-    // la etiqueta ("Rellena los vacíos", "Estimula y acelera el crecimiento",
-    // "Combatiendo las caídas"): son claims de crecimiento capilar, categoría
-    // de medicamento, pendientes de reescritura (CONTENT_TODO C15, LEGAL_TODO
-    // L8). Ingredientes, precauciones y modo de uso sí son datos factuales de
-    // la etiqueta, sin ese problema.
-    shortDescription: 'Tónico para barba, de uso diario.',
+    // Del propio envase: "USO DIARIO". Los claims impresos en la etiqueta
+    // ("Rellena los vacíos", "Estimula y acelera el crecimiento", "Combatiendo
+    // las caídas") NO se reproducen aquí ni en ningún otro texto del sitio: son
+    // claims de crecimiento/anticaída capilar, categoría de medicamento en
+    // EE. UU., no cosmético. Reescrito con vocabulario cosmético (acondiciona,
+    // suaviza, aroma) — decisión y vocabulario permitido confirmados por la
+    // propietaria. Resuelve CONTENT_TODO C15 y la fila del tónico en
+    // LEGAL_TODO L8. Ingredientes, precauciones y modo de uso son datos
+    // factuales de la etiqueta, sin ese problema.
+    shortDescription: 'Acondiciona, suaviza y ayuda a domar la barba, con un aroma fresco de uso diario.',
     price: cents(4000),
     sizeLabel: '115 mL',
     image: '/images/gaviota/products/tonico-para-barba-studio.jpg',
@@ -293,7 +296,7 @@ const ENGLISH: Record<
   },
   'tonico-para-barba': {
     name: 'Beard Tonic',
-    shortDescription: 'Beard tonic for daily use.',
+    shortDescription: 'Conditions, softens and helps tame your beard, with a fresh everyday scent.',
     imageAlt: 'Gaviota by Lia Beard Tonic bottle next to its box',
     precautions: 'Keep out of reach of children. In case of irritation, discontinue use. Avoid contact with eyes. External use.',
     usageInstructions: 'Apply the spray to a clean, dry beard, gently massaging it into the skin to promote absorption. Use 1-2 times daily for consistent, best results.',

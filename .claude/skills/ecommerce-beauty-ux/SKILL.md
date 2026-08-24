@@ -17,19 +17,20 @@ Fuente: `src/lib/catalog/products.ts`, `docs/PRODUCT_INVENTORY.md`,
 
 | Dato | Estado |
 |------|--------|
-| Productos publicables | **5** (4 destacados) |
-| Reseñas | **0**. Ni una. |
+| Productos publicables | **6** (los 6 destacados) |
+| Reseñas | **0** enviadas, pero el sistema de envío/moderación ya existe y está en producción |
 | `compareAtPrice` | No existe con vigencia real |
 | Histórico de ventas | No existe |
 | Stock en tiempo real | No existe |
 | Ingredientes completos | Pendientes |
-| Checkout / pasarela | Pendiente (`docs/PAYMENT_TODO.md`) |
-| Envíos | Pendiente (`docs/SHIPPING_TODO.md`) |
-| Productos capilares | **Ninguno publicable** |
+| Checkout / pasarela | **Activo** — Stripe y PayPal en vivo, firma de webhook verificada en ambos |
+| Envíos | **Publicado** — `/shipping-policy` con contenido real (2 días de proceso, USPS Priority Mail, 3–4 días de tránsito) |
+| Productos capilares | Tónico de barba (cuidado, no crecimiento — ver regla 4) |
 
 Excluidos a propósito: `sunscreen` (medicamento OTC en EE. UU. sin
-documentación), tónico de barba (claims de crecimiento capilar sin reescribir),
-crema anti-estrías y labial (no confirmados para venta).
+documentación), crema anti-estrías y labial (no confirmados para venta). El
+tónico de barba dejó de estar excluido (2026-08-24): se vende, con el copy
+reescrito en lenguaje cosmético — ver regla 4 más abajo.
 
 ## Reglas de honestidad — no negociables
 

@@ -175,17 +175,18 @@ Si se requiere crédito, se añade en el pie de `/our-story` y `/founder`.
 
 ## 🔴 L8 — Claims de producto
 
-Seis de ocho productos publican claims que describen un medicamento, no un cosmético.
+Seis de ocho productos publicaban claims que describen un medicamento, no un cosmético.
+Una fila ya resuelta (Tónico), cinco siguen abiertas.
 
-| Frase publicada | Producto |
-|---|---|
-| "libre de estrías" / "prevenir la formación de estrías" | Aceite Anti-Estrías |
-| "trabajando en las capas más internas de la piel" | Aceite Anti-Estrías |
-| "Estimula, y acelera el crecimiento" / "combate la caida" | Tónico Para Barba |
-| "eliminando granitos y vellos encarnados" | Sérum |
-| "Protección contra Radicales Libres" / "actúa como un escudo" | Crema Hidratante |
-| "ACLARANTE" · "RETRASA EL ENVEJECIMIENTO" | Crema Hidratante (**envase**) |
-| "Aclaración" | Kit (**nombre comercial**) |
+| Frase publicada | Producto | Estado |
+|---|---|---|
+| "libre de estrías" / "prevenir la formación de estrías" | Aceite Anti-Estrías | Abierto |
+| "trabajando en las capas más internas de la piel" | Aceite Anti-Estrías | Abierto |
+| "Estimula, y acelera el crecimiento" / "combate la caida" | Tónico Para Barba | 🟢 **Resuelto (2026-08-24)** — no se reprodujo, reescrito con lenguaje cosmético (ver `CONTENT_TODO.md` C15) |
+| "eliminando granitos y vellos encarnados" | Sérum | Abierto |
+| "Protección contra Radicales Libres" / "actúa como un escudo" | Crema Hidratante | Abierto |
+| "ACLARANTE" · "RETRASA EL ENVEJECIMIENTO" | Crema Hidratante (**envase**) | Abierto |
+| "Aclaración" | Kit (**nombre comercial**) | Abierto |
 
 **Agravante:** *"ACLARANTE"* y *"RETRASA EL ENVEJECIMIENTO"* están **impresos en el envase
 físico**. La web puede matizar, pero el envase seguirá circulando.

@@ -287,18 +287,20 @@ gestiona una foto real. Mismo patrón que ya resolvió `protector solar` (retira
 
 ---
 
-## 🟡 C15 — Tónico Para Barba — parcialmente resuelto (2026-08-21)
+## 🟢 C15 — Tónico Para Barba — resuelto (2026-08-24)
 
 Ya tiene etiqueta fotografiada propia, con ingredientes, precauciones y modo de uso
-reales, y packshot de estudio propio (fondo blanco) — publicados. Sigue pendiente
-la parte de `LEGAL_TODO.md` L8:
+reales, y packshot de estudio propio (fondo blanco) — publicados.
 
 > Rellena los vacíos / Estimula y acelera el crecimiento / Combatiendo las caídas
 
 Los tres claims de la etiqueta son de crecimiento/anticaída capilar, es decir, de
-medicamento — **no se reproducen** en la web tal cual. La descripción se queda en
-"Tónico para barba, de uso diario" hasta que se decida cómo reescribirlos en
-lenguaje cosmético (o si se documentan como corresponde a un medicamento OTC).
+medicamento — **no se reproducen** en la web. Decisión del cliente: el producto se
+vende, reescrito con lenguaje cosmético. `shortDescription` pasó de "Tónico para
+barba, de uso diario" a "Acondiciona, suaviza y ayuda a domar la barba, con un
+aroma fresco de uso diario." (ES) / "Conditions, softens and helps tame your beard,
+with a fresh everyday scent." (EN). También resuelve la fila del tónico en
+`LEGAL_TODO.md` L8.
 
 - [x] ¿Se mantiene en el catálogo? — sí
 - [x] Fotografía propia — sí, packshot de estudio
@@ -378,8 +380,9 @@ El blog existe (`/blogs/news`) y **está vacío**: cero artículos.
 |---|---|
 | 🔴 Bloquea lanzamiento | C1 ingredientes · C2 precauciones · C3 modo de uso · C4 precios · C5 kit · C6 inventario · C7 pesos · C21 foto Crema Hidratante |
 | 🟠 Alta | C8 FAQ · C9 ritual · C10 quién es Lia · C11 afirmaciones · C14 productos fuera de la web · C16 aceite masculino |
-| 🟡 Media | C12 fundadora (parcial) · C13 contacto (parcial) · C15 tónico (parcial) · C17 textos · C18 foto 12 |
+| 🟡 Media | C12 fundadora (parcial) · C13 contacto (parcial) · C17 textos · C18 foto 12 |
 | 🟢 Mejora | C19 reseñas · C20 journal |
+| ✅ Resuelto | C15 tónico |
 
 **Las siete tareas 🔴 son de recopilación, no de redacción.** Casi todas se resuelven
 fotografiando las etiquetas traseras de los envases, contando el stock y pesando los

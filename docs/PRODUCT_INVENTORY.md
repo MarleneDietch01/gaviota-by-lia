@@ -17,7 +17,7 @@ fotografiada, no inventado.
 | 3 | Crema Hidratante | $40 | $50 | 8 oz / 236 mL | ⚠️ Revisar claims |
 | 4 | Exfoliante de Coco | $40 | $50 | 8 oz / 236 mL | ✅ Publicar |
 | 5 | Sérum Vellos Encarnados | $40 | $50 | 2 oz / 59 mL | ⚠️ Revisar claims |
-| 6 | Tónico Para Barba | $40 | $50 | no legible | ⚠️ Revisar claims + contenido |
+| 6 | Tónico Para Barba | $40 | $50 | no legible | ✅ Publicado — claims reescritos (RESUELTO, ver §6) |
 | 7 | Sunscreen | $30 | $40 | 2 oz / 59 mL | 🛑 **Bloqueado** — ver §4 |
 | 8 | Kit Anti-Estrías y Aclaración | $120 | $130 | — | ⚠️ Renombrar + recalcular |
 | 9 | **Crema Anti-Estrías** | — | — | 8 oz / 236 mL | 🆕 Fotografiado, **no se vende online** |
@@ -157,6 +157,15 @@ URL, buscador interno y lectores de pantalla.
 "caida"), sin mayúscula inicial en dos de tres líneas, sin ingredientes, sin modo de uso,
 sin precauciones. Y los tres claims son de crecimiento capilar, es decir, **claims de
 medicamento**, no cosméticos.
+
+**🟢 RESUELTO (2026-08-24).** Decisión del cliente: el producto SÍ se vende. Los tres
+claims de arriba quedan como registro de por qué estuvo bloqueado — **ninguno se
+reprodujo** en el sitio. `shortDescription` se reescribió con vocabulario cosmético
+("Acondiciona, suaviza y ayuda a domar la barba, con un aroma fresco de uso diario." /
+"Conditions, softens and helps tame your beard, with a fresh everyday scent."), y la
+etiqueta física ya aportó ingredientes/precauciones/modo de uso factuales, sin el
+problema de origen. Resuelve también CONTENT_TODO.md C15 y la fila del tónico en
+LEGAL_TODO.md L8.
 
 Además es el único producto claramente masculino en un catálogo y una web dirigidos a
 mujeres — no encaja con la navegación ni con la fotografía disponible (no hay ni una
@@ -312,5 +321,5 @@ Hoy no existe taxonomía. Propuesta basada en los productos reales:
 | Kits | `kits` | Kit |
 | Cuidado masculino | `cuidado-masculino` | Tónico Para Barba, Aceite Masculino |
 
-`Cuidado masculino` solo se activa si se confirma que el Tónico Para Barba permanece en
-el catálogo.
+`Cuidado masculino` — confirmado (2026-08-24): el Tónico Para Barba permanece en el
+catálogo, con copy reescrito. Ver §6.

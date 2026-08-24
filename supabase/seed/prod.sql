@@ -93,13 +93,19 @@ insert into products (
 
   -- CORREGIDO vs. dev.sql: 'active', no 'draft' — contenido real ya confirmado
   -- (ingredientes, precauciones, modo de uso) y en venta hoy.
+  --
+  -- short_description/seo_description reescritos (2026-08-24) para que
+  -- coincidan EXACTAMENTE con el shortDescription ES de src/lib/catalog/
+  -- products.ts: los claims de crecimiento/anticaída capilar de la etiqueta
+  -- original no se reproducen en ningún texto del sitio (ver el comentario
+  -- de ese archivo, CONTENT_TODO C15, LEGAL_TODO L8).
   ('a0000006-0000-4000-8000-000000000006',
    'Tónico Para Barba', 'tonico-para-barba',
-   'Tónico en spray de uso diario.',
+   'Acondiciona, suaviza y ayuda a domar la barba, con un aroma fresco de uso diario.',
    'GBL-TNB-000', 4000, 'active', false,
    'c0000005-0000-4000-8000-000000000005', true, '115 mL', null, true,
    'Tónico Para Barba | Gaviota by Lia',
-   'Tónico para barba de uso diario, en presentación spray.')
+   'Acondiciona, suaviza y ayuda a domar la barba, con un aroma fresco de uso diario.')
 on conflict (id) do nothing;
 
 insert into product_variants (id, product_id, name, sku, price, stock_quantity, low_stock_threshold, status)
