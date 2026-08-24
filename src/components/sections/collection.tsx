@@ -25,10 +25,15 @@ export async function Collection({ locale }: { locale: Locale }) {
 
   return (
     <Section tone="powder" id="collection" labelledBy="collection-title">
-      {/* `xl:max-w-[82rem]` ensancha ligeramente la rejilla en escritorio grande
-          — la tarjeta pasa de 252px a 272px — sin romper la alineación con el
-          resto de secciones en anchos menores, donde el contenedor no cambia. */}
-      <Container className="xl:max-w-[82rem]">
+      {/* `wide`, no el ancho por defecto: esta es una rejilla de 4 columnas de
+          producto, igual que Comunidad más abajo — las dos únicas secciones
+          del home con una rejilla ancha de tarjetas/fotos usan el mismo
+          `size="wide"` en vez de que cada una invente su propio valor de
+          `max-width` (antes esta sección llevaba un `xl:max-w-[82rem]` suelto
+          por `className`, un ancho que no existía en ningún otro sitio del
+          home). Ver el comentario de `Container` en `layout-primitives.tsx`
+          para el sistema completo. */}
+      <Container size="wide">
         <SectionHeader
           id="collection-title"
           eyebrow={c.eyebrow}

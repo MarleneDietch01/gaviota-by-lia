@@ -7,20 +7,36 @@ import { CAMPAIGN_BENEFITS, t } from '@/lib/content/home-data';
 import { localizedHref, pick, type Locale } from '@/lib/i18n';
 
 /**
- * "Resultados reales" — franja de beneficios de campaña.
+ * Franja de beneficios de campaña.
  *
  * Antes eran dos imágenes de flyer (rosa/azul) con todo el texto incrustado en
  * el píxel: no traducía a /en, no era accesible ni indexable por buscadores, y
  * llevaban un QR, un WhatsApp y un dominio propio que no corresponden a ningún
  * canal verificado del sitio actual. Reconstruida con maquetación real —
- * bullets como texto (`CAMPAIGN_BENEFITS`, en `home-data.ts`) y fotografía de
- * producto real del mismo banco que el resto del sitio.
+ * bullets como texto (`CAMPAIGN_BENEFITS`, en `home-data.ts`).
  *
  * Las fotos de antes/después y los claims de aclarado de piel / crecimiento de
  * barba que llevaban los flyers originales NO se republican: quedan anotados
  * como bloqueados por aprobación en `docs/LEGAL_TODO.md` (L13), con el mismo
  * criterio que L8. Los archivos originales siguen en `editorial/` por si hace
  * falta recuperar algo puntual, pero ya no los referencia ningún componente.
+ *
+ * REDISEÑO — dos correcciones sobre la primera reconstrucción:
+ *
+ * 1) El eyebrow decía "Real results" / "Resultados reales" encima de una
+ *    lista de beneficios y dos botones de tienda — ningún antes/después, sin
+ *    testimonio. Prometía una prueba que la sección no entrega. Se cambia a
+ *    "What to expect" / "Lo que puedes esperar": describe honestamente lo que
+ *    SÍ hay (una lista de beneficios), no lo que falta.
+ * 2) La pareja de fotos combinaba una foto de estilo de vida sobre rosa con un
+ *    packshot del tónico de barba sobre blanco en la misma fila — fondos,
+ *    iluminación y escala distintos, y un producto masculino conviviendo con
+ *    una escena de cuidado corporal femenino en el mismo módulo. Queda una
+ *    sola foto (recorte limpio de la sesión, ver comentario en el JSX de
+ *    abajo); "Ver cuidado masculino" ya vive en la navegación principal y en
+ *    el footer, así que retirarlo de aquí no reduce su visibilidad en el
+ *    sitio. La línea masculina merece su propio bloque dedicado más adelante,
+ *    no compartir fila con esto — no se construye en este pase por alcance.
  */
 export function CampaignFlyers({ locale }: { locale: Locale }) {
   return (
@@ -28,7 +44,7 @@ export function CampaignFlyers({ locale }: { locale: Locale }) {
       <Container>
         <SectionHeader
           id="campaign-flyers-title"
-          eyebrow={pick(locale, 'Real results', 'Resultados reales')}
+          eyebrow={pick(locale, 'What to expect', 'Lo que puedes esperar')}
           title={pick(locale, 'Your best version starts here.', 'Tu mejor versión empieza aquí.')}
         />
 
@@ -43,52 +59,35 @@ export function CampaignFlyers({ locale }: { locale: Locale }) {
           </ul>
         </Reveal>
 
-        <div className="grid gap-8 sm:grid-cols-2">
-          <Reveal>
-            <figure className="aspect-square overflow-hidden rounded-sm bg-powder/20">
-              <EditorialImage
-                src="/images/gaviota/editorial/journal-tras-camaras.jpg"
-                alt={pick(
-                  locale,
-                  'Gaviota by Lia product being applied to skin during a photoshoot',
-                  'Producto Gaviota by Lia aplicándose sobre la piel durante una sesión de fotos',
-                )}
-                width={1600}
-                height={2000}
-                sizes="(max-width: 639px) 100vw, 50vw"
-                focal="62% 60%"
-              />
-            </figure>
-            <div className="mt-5 text-center">
-              <LinkButton href={localizedHref(locale, '/shop')} variant="secondary">
-                {pick(locale, 'Shop the collection', 'Ver la colección')}
-              </LinkButton>
-            </div>
-          </Reveal>
-
-          <Reveal delay={80}>
-            <figure className="aspect-square overflow-hidden rounded-sm bg-champagne/20">
-              <EditorialImage
-                src="/images/gaviota/products/tonico-para-barba-studio.jpg"
-                alt={pick(
-                  locale,
-                  'Gaviota by Lia Beard Tonic bottle',
-                  'Frasco del Tónico Para Barba Gaviota by Lia',
-                )}
-                width={1200}
-                height={1200}
-                sizes="(max-width: 639px) 100vw, 50vw"
-                focal="50% 50%"
-                fit="contain"
-              />
-            </figure>
-            <div className="mt-5 text-center">
-              <LinkButton href={localizedHref(locale, '/categories/cuidado-masculino')} variant="secondary">
-                {pick(locale, "Shop men's care", 'Ver cuidado masculino')}
-              </LinkButton>
-            </div>
-          </Reveal>
-        </div>
+        <Reveal className="mx-auto max-w-md">
+          {/*
+            Recorte propio de la foto de sesión (`journal-tras-camaras-cropped.jpg`,
+            generado desde el original en `originales/LeslieEstevezPhotographyGA15.jpg`),
+            no la versión publicada anteriormente: esa mostraba el borde del papel de
+            fondo, el piso y el estante de telones enrollados en el margen — una toma
+            de detrás de cámaras, no una foto terminada. El recorte deja solo el fondo
+            rosa limpio y a las dos modelos, sin tocar facciones, cuerpos ni color.
+          */}
+          <figure className="aspect-[4/5] overflow-hidden rounded-sm bg-powder/20">
+            <EditorialImage
+              src="/images/gaviota/editorial/journal-tras-camaras-cropped.jpg"
+              alt={pick(
+                locale,
+                'Gaviota by Lia product being applied to skin during a photoshoot',
+                'Producto Gaviota by Lia aplicándose sobre la piel durante una sesión de fotos',
+              )}
+              width={1600}
+              height={1923}
+              sizes="(max-width: 639px) 100vw, 28rem"
+              focal="50% 42%"
+            />
+          </figure>
+          <div className="mt-5 text-center">
+            <LinkButton href={localizedHref(locale, '/shop')} variant="secondary">
+              {pick(locale, 'Shop the collection', 'Ver la colección')}
+            </LinkButton>
+          </div>
+        </Reveal>
       </Container>
     </Section>
   );

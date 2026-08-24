@@ -7,6 +7,24 @@ import { cn } from '@/lib/utils/cn';
    Tres anchos, y un padding lateral que crece con el viewport. El padding es el
    MISMO en todas las secciones: es lo que hace que la columna de texto de una
    sección se alinee con la rejilla de producto de la siguiente.
+
+   SISTEMA DE ANCHOS DEL HOME — cuándo usar cada `size`:
+     · `narrow` (44rem) — SOLO secciones de una columna, puramente de texto,
+       sin rejilla ni foto grande (Ingredientes, Newsletter). El ancho corto
+       es lo que hace legible un párrafo centrado.
+     · `default` (75rem) — todo lo demás que no sea explícitamente ancho o a
+       sangre: Beneficios, Ritual en 3 pasos, Build your ritual, franja de
+       campaña, Fundadora, Sets. Es el ancho por defecto y debe seguir
+       siéndolo — no se le pasa un `className` con otro `max-w-*` suelto.
+     · `wide` (90rem) — SOLO rejillas de 4 columnas de tarjetas o fotografía
+       (Colección, Comunidad). Nunca un tercer valor de ancho inventado a
+       medio camino entre `default` y `wide`.
+     · Sin `Container` (a sangre completa) — reservado para el hero y el
+       bloque editorial de campaña (`Campaign`, tono vino). Son los dos únicos
+       momentos del home sin contenedor, y ambos son deliberados: el hero
+       porque la fotografía 4:5 necesita su propia composición dividida, la
+       campaña porque es el único bloque de foto+texto a página completa.
+       Ningún otro componente de sección debe omitir `Container`.
    =========================================================================== */
 
 const CONTAINER_WIDTHS = {
