@@ -134,7 +134,7 @@ export default async function ProductPage({ params }: Props) {
               {product.usageInstructions ? (
                 <div className="p-6 sm:p-7">
                   <dt className="eyebrow text-rose">{pick(lang, 'How to use', 'Modo de uso')}</dt>
-                  <dd className="mt-3 text-[0.9375rem] leading-relaxed text-body">
+                  <dd className="mt-3 text-body-sm leading-relaxed text-body">
                     {product.usageInstructions}
                   </dd>
                 </div>
@@ -142,13 +142,13 @@ export default async function ProductPage({ params }: Props) {
               {product.ingredients ? (
                 <div className="p-6 sm:p-7">
                   <dt className="eyebrow text-rose">{pick(lang, 'Ingredients', 'Ingredientes')}</dt>
-                  <dd className="mt-3 text-[0.9375rem] leading-relaxed text-body">{product.ingredients}</dd>
+                  <dd className="mt-3 text-body-sm leading-relaxed text-body">{product.ingredients}</dd>
                 </div>
               ) : null}
               {product.precautions ? (
                 <div className="p-6 sm:p-7">
                   <dt className="eyebrow text-rose">{pick(lang, 'Precautions', 'Precauciones')}</dt>
-                  <dd className="mt-3 text-[0.9375rem] leading-relaxed text-body">{product.precautions}</dd>
+                  <dd className="mt-3 text-body-sm leading-relaxed text-body">{product.precautions}</dd>
                 </div>
               ) : null}
             </dl>

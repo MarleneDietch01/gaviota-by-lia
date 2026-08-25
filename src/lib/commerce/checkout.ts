@@ -113,8 +113,14 @@ function fallbackFreeShippingThresholdCents(): Cents | null {
   return cents(value);
 }
 
+export interface ShippingConfig {
+  readonly rateCents: Cents;
+  readonly freeAboveCents: Cents | null;
+}
+
 /**
- * Calcula el costo de envío para un subtotal, SIEMPRE en servidor.
+ * Resuelve la tarifa de envío y el umbral de envío gratis vigentes, SIEMPRE
+ * en servidor.
  *
  * Prioridad: una fila activa de `shipping_rates` (EE. UU., sin estado
  * específico, sin recogida local) manda sobre todo lo demás — trae su propia
@@ -123,11 +129,14 @@ function fallbackFreeShippingThresholdCents(): Cents | null {
  * entorno de arriba. Esto permite pasar a tarifas reales gestionadas desde
  * una fila de base de datos más adelante sin tocar código — hoy no se
  * construye ningún selector de zonas, solo el punto de entrada para uno.
+ *
+ * Compartida entre el cálculo real del checkout (`computeShipping`) y
+ * cualquier mensaje de cara al cliente (barra de progreso del carrito,
+ * anuncio del sitio): así el umbral que se muestra es SIEMPRE el mismo que
+ * el que se cobra, sin una segunda copia del número que se pueda
+ * desincronizar.
  */
-export async function computeShipping(
-  admin: SupabaseClient<Database>,
-  subtotal: Cents,
-): Promise<ShippingResult> {
+export async function getShippingConfig(admin: SupabaseClient<Database>): Promise<ShippingConfig> {
   const { data: rateRow } = await admin
     .from('shipping_rates')
     .select('rate, free_above')
@@ -139,14 +148,30 @@ export async function computeShipping(
     .limit(1)
     .maybeSingle();
 
-  const rate = rateRow ? cents(rateRow.rate) : fallbackFlatShippingCents();
-  const freeAbove = rateRow ? (rateRow.free_above !== null ? cents(rateRow.free_above) : null) : fallbackFreeShippingThresholdCents();
+  return {
+    rateCents: rateRow ? cents(rateRow.rate) : fallbackFlatShippingCents(),
+    freeAboveCents: rateRow
+      ? rateRow.free_above !== null
+        ? cents(rateRow.free_above)
+        : null
+      : fallbackFreeShippingThresholdCents(),
+  };
+}
 
-  if (freeAbove !== null && subtotal >= freeAbove) {
+/**
+ * Calcula el costo de envío para un subtotal, SIEMPRE en servidor.
+ */
+export async function computeShipping(
+  admin: SupabaseClient<Database>,
+  subtotal: Cents,
+): Promise<ShippingResult> {
+  const { rateCents, freeAboveCents } = await getShippingConfig(admin);
+
+  if (freeAboveCents !== null && subtotal >= freeAboveCents) {
     return { shippingCents: cents(0), freeShippingApplied: true };
   }
 
-  return { shippingCents: rate, freeShippingApplied: false };
+  return { shippingCents: rateCents, freeShippingApplied: false };
 }
 
 /**

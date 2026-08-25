@@ -83,6 +83,16 @@
   --text-lead: clamp(1rem, 0.96rem + 0.2vw, 1.125rem);
   --text-lead--line-height: 1.62;
 
+  /* Pasos finos de UI que la escala de Tailwind no cubre (10/11/13/15/17px):
+     badges, eyebrows, nav, precios secundarios. Se añaden aquí para que un
+     mismo tamaño no quede repetido como `text-[0.9375rem]` suelto por el
+     código — ver `design-system-enforcer`. */
+  --text-2xs: 0.625rem;
+  --text-caption: 0.6875rem;
+  --text-meta: 0.8125rem;
+  --text-body-sm: 0.9375rem;
+  --text-md: 1.0625rem;
+
   /* --- Radios ---------------------------------------------------------------
      Casi rectos. El único gesto curvo es `--radius-arch`, y se usa contado.    */
   --radius-xs: 2px;

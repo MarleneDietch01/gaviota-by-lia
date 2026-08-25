@@ -361,7 +361,7 @@ export const COMMUNITY_PHOTOS: readonly CommunityPhoto[] = [
    Ninguna sección de placeholder inventa un testimonio, un nombre ni un
    resultado: solo declara qué dato falta y quién debe aportarlo.
    =========================================================================== */
-export const SHOW_PLACEHOLDERS = true;
+export const SHOW_PLACEHOLDERS = false;
 
 export const PLACEHOLDER_NOTE: Bilingual = {
   en: '[PLACEHOLDER] This section is built and waiting for real content. It will show verified customer reviews once they exist — no sample testimonials are displayed.',

@@ -85,7 +85,7 @@ export function ProductCard({
       </div>
 
       <div className="px-4 pt-4 sm:px-5 sm:pt-5">
-        <h3 className="font-sans text-[1.0625rem] font-semibold leading-snug tracking-[-0.01em]">
+        <h3 className="font-sans text-md font-semibold leading-snug tracking-[-0.01em]">
           {/* Stretched link: el `after` cubre toda la tarjeta, así que la
               fotografía también es clicable, pero solo hay UNA parada de teclado
               y el nombre del producto es el nombre accesible del enlace. Los
@@ -109,7 +109,7 @@ export function ProductCard({
             menos información se lea como "en curso", no como una tarjeta
             rota o más pobre sin explicación. */}
         {product.contentComplete === false ? (
-          <span className="mt-2 inline-flex items-center gap-1 rounded-pill border border-dashed border-line-strong px-2 py-0.5 text-[0.625rem] font-bold uppercase tracking-[0.1em] text-muted">
+          <span className="mt-2 inline-flex items-center gap-1 rounded-pill border border-dashed border-line-strong px-2 py-0.5 text-2xs font-bold uppercase tracking-[0.1em] text-muted">
             <Clock className="size-2.5" strokeWidth={2} aria-hidden="true" />
             {pick(locale, 'More detail coming', 'Ficha en ampliación')}
           </span>
@@ -119,7 +119,7 @@ export function ProductCard({
       {/* Fila de acciones, siempre al fondo. */}
       <div className="px-4 pb-4 pt-3 sm:px-5 sm:pb-5">
         <p className="flex items-baseline gap-2">
-          <span className="tabular text-[1.0625rem] font-semibold tracking-[-0.01em]">
+          <span className="tabular text-md font-semibold tracking-[-0.01em]">
             {formatMoney(product.price, 'USD', locale === 'en' ? 'en-US' : 'es-US')}
           </span>
           <span className="text-xs text-muted">{product.sizeLabel}</span>

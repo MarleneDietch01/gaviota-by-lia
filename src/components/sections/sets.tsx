@@ -71,7 +71,7 @@ export async function Sets({ locale }: { locale: Locale }) {
                     strokeWidth={2.25}
                     aria-hidden="true"
                   />
-                  <span className="text-[0.9375rem] leading-snug">
+                  <span className="text-body-sm leading-snug">
                     <strong className="font-semibold">{t(step.verb, locale)}</strong>
                     <span className="text-body"> — {t(step.product, locale)}</span>
                   </span>

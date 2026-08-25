@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState, useSyncExternalStore } from 'react';
 import type { Product } from '@/lib/catalog/products';
-import { cents, formatMoney } from '@/lib/commerce/money';
+import { cents, formatMoney, type Cents } from '@/lib/commerce/money';
 import {
   getBag,
   getFavorites,
@@ -24,10 +24,12 @@ export function SavedList({
   kind,
   products,
   locale,
+  freeShippingThresholdCents = null,
 }: {
   kind: 'cart' | 'wishlist';
   products: readonly Product[];
   locale: Locale;
+  freeShippingThresholdCents?: Cents | null;
 }) {
   const router = useRouter();
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
@@ -187,6 +189,19 @@ export function SavedList({
             <span>{pick(locale, 'Estimated subtotal', 'Subtotal estimado')}</span>
             <strong>{formatMoney(cents(subtotal), 'USD', locale === 'es' ? 'es-US' : 'en-US')}</strong>
           </p>
+
+          {freeShippingThresholdCents !== null ? (
+            <p className="mt-3 text-sm font-medium text-rose-deep">
+              {subtotal >= freeShippingThresholdCents
+                ? pick(locale, "You've unlocked free shipping.", 'Desbloqueaste el envío gratis.')
+                : pick(
+                    locale,
+                    `You're ${formatMoney(cents(freeShippingThresholdCents - subtotal), 'USD', 'en-US')} away from free shipping.`,
+                    `Te faltan ${formatMoney(cents(freeShippingThresholdCents - subtotal), 'USD', 'es-US')} para el envío gratis.`,
+                  )}
+            </p>
+          ) : null}
+
           <p className="mt-4 text-xs leading-relaxed text-body">
             {pick(
               locale,

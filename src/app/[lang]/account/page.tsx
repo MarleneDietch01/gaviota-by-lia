@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { getCurrentUser } from '@/lib/auth/guards';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
@@ -51,6 +52,15 @@ export default async function AccountPage({ params }: Props) {
           {user.firstName ?? user.email}
         </h1>
         <p className="mt-4 text-lead text-body">{user.email}</p>
+
+        {user.role === 'admin' || user.role === 'super_admin' ? (
+          <Link
+            href="/admin"
+            className="mt-5 inline-flex min-h-11 items-center rounded-xs border border-ink/25 px-5 text-sm font-semibold text-ink transition-colors hover:border-ink hover:bg-ink hover:text-ivory"
+          >
+            {pick(lang, 'Go to admin panel', 'Ir al panel de administración')}
+          </Link>
+        ) : null}
 
         <Rule className="my-8" />
 

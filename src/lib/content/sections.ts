@@ -31,7 +31,7 @@ export interface ContentSection {
 const DEFAULTS_ES: Record<string, ContentSection> = {
   'home.announcement': {
     key: 'home.announcement',
-    title: 'Envíos con seguimiento en todos los pedidos',
+    title: 'Envío gratis en pedidos de $100 o más',
     status: 'active',
   },
 
@@ -145,7 +145,7 @@ const DEFAULTS_ES: Record<string, ContentSection> = {
 };
 
 const DEFAULTS_EN: Record<string, ContentSection> = {
-  'home.announcement': { key: 'home.announcement', title: 'Tracked shipping on every U.S. order', status: 'active' },
+  'home.announcement': { key: 'home.announcement', title: 'Free shipping on orders over $100', status: 'active' },
   'home.hero': { key: 'home.hero', eyebrow: 'Dominican-inspired body care', title: 'Your skin. Your ritual. Your moment.', body: 'Body care made to hydrate, soften, and turn every application into a moment of your own.', buttonLabel: 'Shop the collection', buttonUrl: '/shop', status: 'active' },
   'home.bestsellers': { key: 'home.bestsellers', eyebrow: 'The collection', title: 'The favorites your routine will love.', subtitle: 'Meet the community favorites made for everyday body care.', buttonLabel: 'Shop all products', buttonUrl: '/shop', status: 'active' },
   'home.needs': { key: 'home.needs', eyebrow: 'Find your ritual', title: 'What does your skin need today?', subtitle: 'Every skin is different. Start with what you want to care for today.', status: 'active' },

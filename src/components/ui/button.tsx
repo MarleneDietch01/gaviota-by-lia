@@ -28,9 +28,9 @@ const VARIANTS = {
 
 /** Alturas 44/48/52px. 44 es el mínimo táctil accesible; en móvil se sube. */
 const SIZES = {
-  sm: 'min-h-11 px-5 text-[0.8125rem]',
+  sm: 'min-h-11 px-5 text-meta',
   md: 'min-h-12 px-7 text-sm',
-  lg: 'min-h-13 px-9 text-[0.9375rem]',
+  lg: 'min-h-13 px-9 text-body-sm',
 } as const;
 
 export type ButtonVariant = keyof typeof VARIANTS;

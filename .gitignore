@@ -50,3 +50,6 @@ yarn-error.log*
 # TypeScript
 *.tsbuildinfo
 .firecrawl/
+
+# Claude Code — config personal, no compartida con el equipo
+.claude/settings.local.json

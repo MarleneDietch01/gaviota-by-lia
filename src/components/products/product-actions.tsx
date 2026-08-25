@@ -75,7 +75,7 @@ export function QuickAdd({
         }
         className={cn(
           'inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xs px-4',
-          'text-[0.8125rem] font-semibold tracking-[0.02em]',
+          'text-meta font-semibold tracking-[0.02em]',
           'transition-colors duration-300 ease-soft',
           // Borde a 0.55 y no a 0.25: sobre la tarjeta marfil el trazo anterior
           // quedaba casi invisible y la acción principal de la tarjeta no se
