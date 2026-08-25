@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { cents, formatMoney } from '@/lib/commerce/money';
 
@@ -18,8 +19,12 @@ const STATUS_LABEL: Record<string, string> = {
 const STATUS_TONE: Record<string, string> = {
   pending_payment: 'bg-line text-body',
   paid: 'bg-success/15 text-success',
-  processing: 'bg-champagne/25 text-ink',
-  ready_to_ship: 'bg-champagne/25 text-ink',
+  // `champagne` es decorativo/aria-hidden por sistema de diseño (nunca se
+  // midió como par de contraste de texto); un badge de estado sí es texto con
+  // significado, así que usa el mismo `powder`/`rose-deep` ya medido (5.24:1)
+  // que usan Reseñas y el resto del panel para "en progreso".
+  processing: 'bg-powder/40 text-rose-deep',
+  ready_to_ship: 'bg-powder/40 text-rose-deep',
   shipped: 'bg-rose/15 text-rose-deep',
   delivered: 'bg-success/15 text-success',
   cancelled: 'bg-danger/10 text-danger',
@@ -63,7 +68,11 @@ export default async function AdminOrdersPage() {
                 const disputed = order.payments?.some((payment) => payment.status === 'disputed') ?? false;
                 return (
                 <tr key={order.id} className="border-b border-line last:border-0">
-                  <td className="tabular px-4 py-3 font-medium">{order.order_number}</td>
+                  <td className="tabular px-4 py-3 font-medium">
+                    <Link href={`/admin/orders/${order.id}`} className="hover:text-rose">
+                      {order.order_number}
+                    </Link>
+                  </td>
                   <td className="px-4 py-3 text-body">{order.customer_email}</td>
                   <td className="px-4 py-3">
                     <span

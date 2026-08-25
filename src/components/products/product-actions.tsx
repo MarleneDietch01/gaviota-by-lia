@@ -25,10 +25,18 @@ export function QuickAdd({
   slug,
   productName,
   locale,
+  inStock = true,
 }: {
   slug: string;
   productName: string;
   locale: Locale;
+  /**
+   * `false` cuando `stockAvailable` de la variante principal llegó a 0 (dato
+   * real de `product_variants`, no una estimación). Deshabilita el botón y
+   * cambia su texto en vez de dejar que "añada" un producto que el checkout
+   * rechazará de todas formas.
+   */
+  inStock?: boolean;
 }) {
   const [added, setAdded] = useState(false);
 
@@ -39,6 +47,18 @@ export function QuickAdd({
     const timer = window.setTimeout(() => setAdded(false), 2400);
     return () => window.clearTimeout(timer);
   }, [added]);
+
+  if (!inStock) {
+    // Texto visible en vez de `aria-label`: un `aria-label` distinto del texto
+    // que se ve rompería la coincidencia nombre-accesible/texto-visible que
+    // exige WCAG 2.1 (2.5.3). El nombre de producto ya lo da el `<h3>`/enlace
+    // contiguo de la tarjeta o de la ficha, así que no hace falta repetirlo.
+    return (
+      <span className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xs border border-dashed border-line-strong px-4 text-[0.8125rem] font-semibold tracking-[0.02em] text-muted">
+        {pick(locale, 'Out of stock', 'Agotado')}
+      </span>
+    );
+  }
 
   return (
     <>

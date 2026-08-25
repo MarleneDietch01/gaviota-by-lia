@@ -118,7 +118,7 @@ export default async function ProductPage({ params }: Props) {
                 className="hero-rise mt-7 flex max-w-md gap-3"
                 style={{ '--rise-delay': '340ms' } as React.CSSProperties}
               >
-                <QuickAdd slug={product.slug} productName={product.name} locale={lang} />
+                <QuickAdd slug={product.slug} productName={product.name} locale={lang} inStock={product.inStock} />
                 <FavoriteToggle slug={product.slug} productName={product.name} locale={lang} />
               </div>
             </div>

@@ -5,14 +5,13 @@ import type { Locale } from '@/lib/i18n';
 /**
  * `Product` JSON-LD for one product page.
  *
- * `availability` is hardcoded to InStock for every product, not derived from
- * `product_variants.stock_quantity` in Supabase: checkout doesn't enforce or
- * decrement inventory today (see `src/lib/commerce/checkout.ts`), and the
- * `stock_quantity` values currently in the database are seed/test numbers,
- * not a real count — reporting those to Google as this product's live stock
- * would be a worse kind of wrong than a fixed value. InStock reflects the
- * site's actual behavior: nothing is blocked from purchase today. Revisit
- * once the store has real inventory tracking.
+ * `availability` is derived from `product.inStock`, which is `stock_quantity -
+ * reserved_quantity > 0` on the product's primary variant (from
+ * `product_variants` in Supabase, admin-editable via `/admin/products`).
+ * Now that checkout also rejects an out-of-stock line (see
+ * `src/lib/commerce/checkout.ts`), reporting InStock unconditionally would be
+ * actively misleading — a shopper could land here from Google, click through,
+ * and be turned away at checkout.
  *
  * No `aggregateRating`/`review` — there are no real reviews yet, and a
  * fabricated rating in structured data risks a manual Google penalty.
@@ -30,7 +29,9 @@ export function productJsonLd(product: Product, lang: Locale, siteUrl: string) {
       '@type': 'Offer',
       price: toUnits(product.price).toFixed(2),
       priceCurrency: 'USD',
-      availability: 'https://schema.org/InStock',
+      availability: product.inStock
+        ? 'https://schema.org/InStock'
+        : 'https://schema.org/OutOfStock',
       url: `${siteUrl}/${lang}/products/${product.slug}`,
     },
   };

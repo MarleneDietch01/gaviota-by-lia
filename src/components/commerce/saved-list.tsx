@@ -123,6 +123,11 @@ export function SavedList({
   }
 
   const subtotal = lines.reduce((total, line) => total + Number(line.product.price) * line.quantity, 0);
+  // Un producto puede agotarse mientras ya estaba en la bolsa (localStorage
+  // persiste entre visitas). `validateCheckoutLines` ya lo rechazaría en
+  // servidor, pero avisar aquí evita el viaje redondo a un checkout que
+  // fallará y deja claro qué línea hay que quitar.
+  const hasOutOfStockLine = kind === 'cart' && lines.some(({ product, quantity }) => !product.inStock || (product.stockAvailable !== null && product.stockAvailable < quantity));
 
   return (
     <div className="grid gap-8 lg:grid-cols-[1fr_20rem]">
@@ -139,6 +144,11 @@ export function SavedList({
               <p className="mt-1 text-sm text-body">
                 {product.sizeLabel} · {formatMoney(product.price, 'USD', locale === 'es' ? 'es-US' : 'en-US')}
               </p>
+              {kind === 'cart' && (!product.inStock || (product.stockAvailable !== null && product.stockAvailable < quantity)) ? (
+                <p className="mt-1 text-sm font-semibold text-danger">
+                  {pick(locale, 'Out of stock', 'Agotado')}
+                </p>
+              ) : null}
             </div>
             {kind === 'cart' ? (
               <div className="flex items-center gap-2">
@@ -185,6 +195,16 @@ export function SavedList({
             )}
           </p>
 
+          {hasOutOfStockLine ? (
+            <p role="alert" className="mt-4 text-sm font-medium text-danger">
+              {pick(
+                locale,
+                'One or more items in your bag are out of stock. Remove them to continue.',
+                'Uno o más productos de tu bolsa están agotados. Quítalos para continuar.',
+              )}
+            </p>
+          ) : null}
+
           {checkoutError ? (
             <p role="alert" className="mt-4 text-sm font-medium text-danger">
               {checkoutError}
@@ -194,7 +214,7 @@ export function SavedList({
           <button
             type="button"
             onClick={handleCheckout}
-            disabled={checkoutPending}
+            disabled={checkoutPending || hasOutOfStockLine}
             className="mt-6 min-h-12 w-full rounded-xs bg-ink px-5 text-sm font-semibold text-white-warm transition-colors hover:bg-wine disabled:pointer-events-none disabled:opacity-55"
           >
             {checkoutPending
@@ -202,6 +222,7 @@ export function SavedList({
               : pick(locale, 'Checkout', 'Ir a pagar')}
           </button>
 
+          {hasOutOfStockLine ? null : (
           <PayPalButton
             lines={bag.map((line) => ({ slug: line.slug, quantity: line.quantity }))}
             locale={locale}
@@ -218,6 +239,7 @@ export function SavedList({
               )
             }
           />
+          )}
         </aside>
       ) : null}
     </div>

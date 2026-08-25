@@ -127,7 +127,7 @@ export function ProductCard({
 
         {/* `relative z-10` los saca de debajo del stretched link. */}
         <div className="relative z-10 mt-3 flex items-stretch gap-2">
-          <QuickAdd slug={product.slug} productName={product.name} locale={locale} />
+          <QuickAdd slug={product.slug} productName={product.name} locale={locale} inStock={product.inStock} />
           <FavoriteToggle slug={product.slug} productName={product.name} locale={locale} />
         </div>
       </div>

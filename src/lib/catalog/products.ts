@@ -3,39 +3,51 @@ import type { Cents } from '@/lib/commerce/money';
 import { cents } from '@/lib/commerce/money';
 import type { Locale } from '@/lib/i18n';
 import { filterCatalogProducts } from '@/lib/catalog/query';
+import { createServerSupabaseClient } from '@/lib/supabase/server';
+import type { Database } from '@/types/database.types';
 
 /**
  * Catálogo.
  *
  * -----------------------------------------------------------------------------
- * ESTADO: leyendo de datos verificados en la auditoría.
+ * ESTADO: leyendo de Supabase (`products`/`product_variants`/`product_images`).
  *
- * La lectura real de Supabase se conecta en cuanto exista el proyecto. La firma
- * de las funciones no cambiará.
+ * Migrado desde el array estático que vivía en este archivo (ver historial de
+ * git para el comentario original y la procedencia de cada dato). El array
+ * seguía comentando "la lectura real de Supabase se conecta en cuanto exista
+ * el proyecto" mucho después de que el proyecto existiera y de que el checkout
+ * ya escribiera pedidos reales — esta migración cierra esa brecha para que
+ * `/admin/products` tenga efecto real en lo que ve la clienta.
  *
- * PROCEDENCIA DE CADA DATO — nada aquí está inventado:
- *   · nombres y precios     -> /products.json del sitio Shopify actual
- *   · tamaños (115/236/59 mL) -> lectura directa de las etiquetas en GA9.jpg
- *   · shortDescription      -> claims IMPRESOS EN EL ENVASE, que son cosméticos
- *                              y están mejor redactados que la web actual
- *   · ingredients/precautions/usageInstructions -> transcritos de las
- *     etiquetas físicas fotografiadas (bilingües de origen; el inglés no lo
- *     tradujo esta aplicación). Resuelve CONTENT_TODO.md C1/C2/C3 para los
- *     4 productos que ya tienen etiqueta: aceite, exfoliante, crema
- *     hidratante y sérum. `aceite-anti-estrias-masculino` y
- *     `tonico-para-barba` siguen sin este dato — C16 no está resuelto (no se
- *     confirma que el masculino comparta fórmula con el femenino) y el
- *     tónico no tiene etiqueta fotografiada todavía.
+ * Las firmas de `getFeaturedProducts`/`getAllProducts`/`queryProducts`/
+ * `getProductBySlug` NO cambian: todo el resto del código (storefront,
+ * checkout, sitemap) sigue llamándolas igual.
  *
- * DELIBERADAMENTE AUSENTES, porque no existe el dato:
- *   · compareAtPrice  -> los 8 productos del sitio actual tienen descuento
- *                        permanente sin vigencia. No se replica.
- *   · rating / reviewCount -> el sitio actual no tiene NI UNA reseña.
- *   · peso -> pendiente (CONTENT_TODO.md C7)
+ * SIMPLIFICACIONES DELIBERADAS (documentadas también en el informe de
+ * entrega del rediseño de /admin):
+ *
+ *   · i18n: la tabla `products` no tiene columnas de idioma (un solo
+ *     `name`/`short_description`/`description`/... en español). El español de
+ *     la base de datos es la fuente de verdad editable desde /admin; el
+ *     override en inglés que ya existía en el array estático (`ENGLISH`,
+ *     abajo) se conserva tal cual como capa de traducción manual sobre esos
+ *     campos. No se añaden columnas `*_en` — eso es una decisión de producto
+ *     mayor (¿quién traduce cuando se edita el español?) que no corresponde
+ *     tomar en silencio.
+ *
+ *   · `imageBackground` (color del ciclorama bajo el packshot): no existe
+ *     columna equivalente en `product_images`, y no hay pipeline de muestreo
+ *     de píxel conectado a la subida desde admin. Los 6 productos ya
+ *     fotografiados conservan su color exacto vía `LEGACY_IMAGE_BACKGROUND`
+ *     (mapa local, no editable desde admin). Cualquier producto nuevo dado de
+ *     alta por admin recibe el valor por defecto del token `white-warm`. Ver
+ *     el informe de entrega para la recomendación de construir el pipeline
+ *     real más adelante.
  * -----------------------------------------------------------------------------
  */
 
 export interface Product {
+  readonly id: string;
   readonly slug: string;
   readonly name: string;
   readonly shortDescription: string;
@@ -45,46 +57,27 @@ export interface Product {
   readonly imageAlt: string;
   readonly imageWidth: number;
   readonly imageHeight: number;
-  /**
-   * Color del ciclorama sobre el que se fotografió el envase.
-   *
-   * La tarjeta pinta su tile con este color exacto para que el borde del JPEG
-   * sea invisible y el producto quede sobre un campo continuo. Sin esto, un
-   * rectángulo rosa flota dentro de un tile de otro tono y se lee como imagen
-   * rota — que es lo que ocurría antes.
-   *
-   * Valor generado por `scripts/process-images.mjs`; ver la clave
-   * `product.<slug>.background` de `public/images/gaviota/image-manifest.json`.
-   * Si se regeneran los recortes, hay que copiar el valor nuevo aquí.
-   */
+  /** Ver nota de simplificación arriba: `LEGACY_IMAGE_BACKGROUND` o el token `white-warm`. */
   readonly imageBackground: string;
   readonly featured: boolean;
-  /** Se muestran estrellas solo si es > 0. Hoy siempre es 0. */
+  /** Se muestran estrellas solo si es > 0. Hoy siempre es 0 (sin sistema de agregación todavía). */
   readonly reviewCount: number;
-  /**
-   * `false` cuando la ficha tiene menos información que el resto del catálogo
-   * (ver `CONTENT_TODO.md` C15 para el Tónico, L2 para el Sunscreen) — nunca se
-   * inventa contenido para igualarla, pero la tarjeta sí avisa de que hay menos
-   * detalle, en vez de dejar que se vea simplemente "más pobre" sin explicación.
-   * Por defecto `true`: la mayoría del catálogo está completo.
-   */
   readonly contentComplete?: boolean;
-  /** Taxonomía verificada/propuesta en PRODUCT_INVENTORY.md §6. */
   readonly categorySlug: CategorySlug;
   readonly needSlugs: readonly NeedSlug[];
+  readonly ingredients?: string | undefined;
+  readonly precautions?: string | undefined;
+  readonly usageInstructions?: string | undefined;
   /**
-   * Lista INCI tal cual aparece en la etiqueta física. Nomenclatura
-   * internacional estandarizada: no se traduce entre idiomas.
-   * Resuelve CONTENT_TODO.md C1 para los productos que ya tienen etiqueta
-   * fotografiada — los que no la tienen se quedan sin este campo (`tonico-para-barba`,
-   * `aceite-anti-estrias-masculino`: C16 sigue sin resolver si es la misma
-   * fórmula que la versión femenina o no, así que no se asume).
+   * Unidades disponibles (`stock_quantity - reserved_quantity`) de la
+   * variante principal del producto. `null` cuando `track_inventory = false`
+   * (sin control de inventario: siempre comprable).
    */
-  readonly ingredients?: string;
-  /** Bloque "PRECAUCIONES" de la etiqueta. Resuelve C2. */
-  readonly precautions?: string;
-  /** Bloque "MODO DE USO" de la etiqueta. Resuelve C3. */
-  readonly usageInstructions?: string;
+  readonly stockAvailable: number | null;
+  /** Derivado de `stockAvailable`: `false` bloquea la compra en el checkout. */
+  readonly inStock: boolean;
+  /** Id de la variante principal — lo necesita el checkout para reservar inventario. */
+  readonly variantId: string | null;
 }
 
 export const CATEGORIES = [
@@ -104,162 +97,80 @@ export interface CatalogQuery {
   readonly sort?: CatalogSort;
 }
 
-const CATALOG: readonly Product[] = [
-  {
-    slug: 'aceite-anti-estrias',
-    name: 'Aceite Anti-Estrías',
-    shortDescription: 'Reafirmante, hidratante y aporta brillo.',
-    price: cents(5000),
-    sizeLabel: '115 mL',
-    image: '/images/gaviota/products/aceite-anti-estrias-studio.jpg',
-    imageAlt: 'Frasco con gotero del Aceite Anti-Estrías Gaviota by Lia de 115 mL',
-    imageWidth: 1200,
-    imageHeight: 1200,
-    imageBackground: '#ffffff',
-    featured: true,
-    reviewCount: 0,
-    categorySlug: 'aceites-y-serums',
-    needSlugs: ['hidratacion', 'estrias'],
-    ingredients:
-      'Paraffinum Liquidum, Mineral Oil, Cocos Nucifera (Coconut) Oil, Rosa Moschata (Rosehip) Seed Oil, Prunus Dulcis (Almond) Oil, Tocopherol Acetate, Isopropyl Myristate, Fragance/Parfum, Glycine Soja Oil.',
-    precautions:
-      'Mantener fuera del alcance de los niños. En caso de irritación, descontinuar su uso. Evite contacto con los ojos. Uso externo.',
-    usageInstructions:
-      'Aplicar en la zona deseada y masajear con movimientos circulares por unos minutos. Para óptimos resultados, aplicar después del baño, dos veces al día.',
-  },
-  {
-    slug: 'exfoliante-de-coco',
-    name: 'Exfoliante de Coco',
-    shortDescription: 'Exfoliación suave con aroma a coco.',
-    price: cents(4000),
-    sizeLabel: '236 mL',
-    image: '/images/gaviota/products/exfoliante-de-coco-studio.jpg',
-    imageAlt: 'Tarro del Exfoliante de Coco Gaviota by Lia de 236 mL',
-    imageWidth: 1200,
-    imageHeight: 1200,
-    imageBackground: '#ffffff',
-    featured: true,
-    reviewCount: 0,
-    categorySlug: 'exfoliacion',
-    needSlugs: ['textura'],
-    ingredients:
-      'Sacarosa, Prunus Amygdalus Dulcis Oil, Simmondsia Chinensis Seed Oil, Fragance/Parfum, Cocos Nucifera Oil, Phenoxyethanol, Benzoato De Sosa.',
-    precautions:
-      'Mantener fuera del alcance de los niños. En caso de irritación, descontinuar su uso. Evite contacto con los ojos. Uso externo.',
-    usageInstructions:
-      'Aplicar en la piel húmeda una cantidad moderada y dar masajes circulares durante unos 3-5 minutos en el área deseada. Luego retirar con abundante agua. Para óptimos resultados, utilizar dos veces por semana.',
-  },
-  {
-    slug: 'crema-hidratante',
-    name: 'Crema Hidratante',
-    shortDescription: 'Hidratación profunda de rápida absorción.',
-    price: cents(4000),
-    sizeLabel: '236 mL',
-    image: '/images/gaviota/products/crema-hidratante-studio.jpg',
-    imageAlt: 'Tarro de la Crema Hidratante Gaviota by Lia de 236 mL',
-    imageWidth: 1200,
-    imageHeight: 1200,
-    imageBackground: '#ffffff',
-    featured: true,
-    reviewCount: 0,
-    categorySlug: 'cremas-e-hidratacion',
-    needSlugs: ['hidratacion'],
-    ingredients:
-      'Aqua, Stearic Acid, Isopropyl Myristate, Paraffinum Liquidum, Glyceryl Stearate, Ethylhexyl Methoxycinnamate, Morus Nigra Fruit Extract, Hydrogenated Castor Oil, Glycerin, Cocos Nucifera Fruit Extract, Triethanolamine, Cetyl Alcohol, Carbomer, Phenoxyethanol, Parfum, Sodium PCA, Hydroxystearic Acid, Sodium Hydroxide, Disodium EDTA, Sodium Ascorbyl Phosphate, Alpha-Isomethyl Ionone, Benzyl Benzoate, Butylphenyl Methylpropional.',
-    precautions:
-      'Mantener fuera del alcance de los niños. En caso de irritación, descontinuar su uso. Evite contacto con los ojos. Uso externo.',
-    usageInstructions:
-      'Aplicar una moderada cantidad en el área a tratar, dando suaves masajes circulares hasta que la piel absorba por completo. Se recomienda utilizar en las noches.',
-  },
-  {
-    slug: 'serum-vellos-encarnados',
-    name: 'Sérum Vellos Encarnados',
-    shortDescription: 'Cuidado de la piel después de la depilación.',
-    price: cents(4000),
-    sizeLabel: '59 mL',
-    image: '/images/gaviota/products/serum-vellos-encarnados-studio.jpg',
-    imageAlt: 'Frasco del Sérum Vellos Encarnados Gaviota by Lia de 59 mL',
-    imageWidth: 1200,
-    imageHeight: 1200,
-    imageBackground: '#ffffff',
-    featured: true,
-    reviewCount: 0,
-    categorySlug: 'aceites-y-serums',
-    needSlugs: ['post-depilacion'],
-    ingredients:
-      'Aqua, Propylene Glycol, 3-O-Ethyl Ascorbic Acid, Tocopheryl Acetate, Polyisobutene, Polysorbate 20, Sorbitan Isostearate, Hyaluronic Acid, Xanthan Gum, Benzoic Acid, Sorbic Acid, Salicylic Acid, Lactic Acid, Citric Acid, Benzyl Alcohol, Sodium Polyacrylate.',
-    precautions:
-      'Mantener fuera del alcance de los niños. En caso de irritación, suspender su uso. Evitar el contacto con los ojos. Uso externo.',
-    usageInstructions:
-      'Aplique el producto después de la depilación para calmar la piel y prevenir los pelos encarnados.',
-  },
-  {
-    slug: 'aceite-anti-estrias-masculino',
-    name: 'Aceite Anti-Estrías Masculino',
-    shortDescription: 'Reafirmante, hidratante y aporta brillo.',
-    price: cents(5000),
-    sizeLabel: '115 mL',
-    image: '/images/gaviota/products/aceite-anti-estrias-masculino-studio.jpg',
-    imageAlt: 'Frasco con gotero del Aceite Anti-Estrías Masculino Gaviota by Lia de 115 mL',
-    imageWidth: 1200,
-    imageHeight: 1200,
-    imageBackground: '#ffffff',
-    featured: true,
-    reviewCount: 0,
-    categorySlug: 'cuidado-masculino',
-    needSlugs: ['hidratacion', 'estrias'],
-  },
-  {
-    slug: 'tonico-para-barba',
-    name: 'Tónico Para Barba',
-    // Del propio envase: "USO DIARIO". Los claims impresos en la etiqueta
-    // ("Rellena los vacíos", "Estimula y acelera el crecimiento", "Combatiendo
-    // las caídas") NO se reproducen aquí ni en ningún otro texto del sitio: son
-    // claims de crecimiento/anticaída capilar, categoría de medicamento en
-    // EE. UU., no cosmético. Reescrito con vocabulario cosmético (acondiciona,
-    // suaviza, aroma) — decisión y vocabulario permitido confirmados por la
-    // propietaria. Resuelve CONTENT_TODO C15 y la fila del tónico en
-    // LEGAL_TODO L8. Ingredientes, precauciones y modo de uso son datos
-    // factuales de la etiqueta, sin ese problema.
-    shortDescription: 'Acondiciona, suaviza y ayuda a domar la barba, con un aroma fresco de uso diario.',
-    price: cents(4000),
-    sizeLabel: '115 mL',
-    image: '/images/gaviota/products/tonico-para-barba-studio.jpg',
-    imageAlt: 'Tónico Para Barba Gaviota by Lia junto a su estuche',
-    imageWidth: 1200,
-    imageHeight: 1200,
-    imageBackground: '#f0eeee',
-    featured: true,
-    reviewCount: 0,
-    categorySlug: 'cuidado-masculino',
-    needSlugs: [],
-    ingredients:
-      'Paraffinum Liquidum, Mineral Oil, Cocos Nucifera (Coconut) Oil, Rosa Moschata (Rosehip) Seed Oil, Prunus Dulcis (Almond) Oil, Tocopherol Acetate, Isopropyl Myristate, Fragance/Parfum, Glycine Soja Oil.',
-    precautions:
-      'Mantener fuera del alcance de los niños. En caso de irritación, descontinuar su uso. Evite contacto con los ojos. Uso externo.',
-    usageInstructions:
-      'Aplicar el spray sobre la barba limpia y seca, masajeando suavemente la piel para favorecer la absorción. Usar 1-2 veces al día de forma constante para mejores resultados.',
-  },
-];
+/**
+ * `needSlugs` no tiene columna en el esquema (era metadata de recomendación
+ * puramente editorial, sin uso comercial hoy más allá de `/rituals`). Se
+ * mantiene como mapa local por slug — no es un dato que la dueña necesite
+ * editar desde /admin, es taxonomía de contenido fijada por el equipo.
+ */
+const NEED_SLUGS_BY_PRODUCT: Record<string, readonly NeedSlug[]> = {
+  'aceite-anti-estrias': ['hidratacion', 'estrias'],
+  'exfoliante-de-coco': ['textura'],
+  'crema-hidratante': ['hidratacion'],
+  'serum-vellos-encarnados': ['post-depilacion'],
+  'aceite-anti-estrias-masculino': ['hidratacion', 'estrias'],
+  'tonico-para-barba': [],
+};
 
-// SIGUEN FUERA, por falta de dato o por decisión:
-//   · Sunscreen           -> RETIRADO A PROPÓSITO. Decisión explícita de la
-//     propietaria: no se vende protector solar en la web (evita por completo
-//     el riesgo de LEGAL_TODO.md L2 — en EE. UU. un SPF es medicamento OTC,
-//     no cosmético).
-//   · Crema Anti-Estrías -> hay packshot (recortado de GA9) pero no existe
-//     precio en ninguna parte: nunca se vendió online. Falta precio y descripción.
-//   · Producto labial    -> ni packshot ni precio ni nombre confirmado.
-//   · Kit                -> su única fotografía lleva "KIT ANTI-ESTRÍAS Y
-//     ACLARACIÓN" quemado en la imagen, y "aclaración" es justamente el término
-//     regulado que se decidió retirar del nombre comercial.
+/** Packshots existentes en `public/`, hasta que existan uploads reales via admin. */
+const LEGACY_IMAGE: Record<string, { path: string; alt: string; width: number; height: number }> = {
+  'aceite-anti-estrias': {
+    path: '/images/gaviota/products/aceite-anti-estrias-studio.jpg',
+    alt: 'Frasco con gotero del Aceite Anti-Estrías Gaviota by Lia de 115 mL',
+    width: 1200,
+    height: 1200,
+  },
+  'exfoliante-de-coco': {
+    path: '/images/gaviota/products/exfoliante-de-coco-studio.jpg',
+    alt: 'Tarro del Exfoliante de Coco Gaviota by Lia de 236 mL',
+    width: 1200,
+    height: 1200,
+  },
+  'crema-hidratante': {
+    path: '/images/gaviota/products/crema-hidratante-studio.jpg',
+    alt: 'Tarro de la Crema Hidratante Gaviota by Lia de 236 mL',
+    width: 1200,
+    height: 1200,
+  },
+  'serum-vellos-encarnados': {
+    path: '/images/gaviota/products/serum-vellos-encarnados-studio.jpg',
+    alt: 'Frasco del Sérum Vellos Encarnados Gaviota by Lia de 59 mL',
+    width: 1200,
+    height: 1200,
+  },
+  'aceite-anti-estrias-masculino': {
+    path: '/images/gaviota/products/aceite-anti-estrias-masculino-studio.jpg',
+    alt: 'Frasco con gotero del Aceite Anti-Estrías Masculino Gaviota by Lia de 115 mL',
+    width: 1200,
+    height: 1200,
+  },
+  'tonico-para-barba': {
+    path: '/images/gaviota/products/tonico-para-barba-studio.jpg',
+    alt: 'Tónico Para Barba Gaviota by Lia junto a su estuche',
+    width: 1200,
+    height: 1200,
+  },
+};
+
+/** Color del ciclorama de las 6 fotos ya existentes. Ver nota de simplificación arriba. */
+const LEGACY_IMAGE_BACKGROUND: Record<string, string> = {
+  'aceite-anti-estrias': '#ffffff',
+  'exfoliante-de-coco': '#ffffff',
+  'crema-hidratante': '#ffffff',
+  'serum-vellos-encarnados': '#ffffff',
+  'aceite-anti-estrias-masculino': '#ffffff',
+  'tonico-para-barba': '#f0eeee',
+};
+
+/** Fallback para productos dados de alta desde admin sin foto todavía (token `white-warm`). */
+const DEFAULT_IMAGE_BACKGROUND = '#ffffff';
 
 // `ingredients` no se traduce (nomenclatura INCI internacional) — solo
 // `precautions`/`usageInstructions`, tomados literalmente del lado inglés de
 // la misma etiqueta bilingüe, no traducidos por esta aplicación.
 const ENGLISH: Record<
   string,
-  Pick<Product, 'name' | 'shortDescription' | 'imageAlt' | 'precautions' | 'usageInstructions'>
+  Partial<Pick<Product, 'name' | 'shortDescription' | 'imageAlt' | 'precautions' | 'usageInstructions'>>
 > = {
   'aceite-anti-estrias': {
     name: 'Stretch Mark Body Oil',
@@ -307,12 +218,104 @@ function localizeProduct(product: Product, locale: Locale): Product {
   return locale === 'en' ? { ...product, ...ENGLISH[product.slug] } : product;
 }
 
+type ProductRow = Database['public']['Tables']['products']['Row'] & {
+  categories: { slug: string } | null;
+  product_variants: Array<Pick<Database['public']['Tables']['product_variants']['Row'],
+    'id' | 'stock_quantity' | 'reserved_quantity' | 'status'>>;
+  product_images: Array<Pick<Database['public']['Tables']['product_images']['Row'],
+    'storage_path' | 'alt_text' | 'width' | 'height' | 'is_primary'>>;
+};
+
+const PRODUCT_SELECT = `
+  id, slug, name, short_description, base_price, size_label, status, featured,
+  ingredients_text, precautions, usage_instructions, track_inventory,
+  categories:category_id ( slug ),
+  product_variants ( id, stock_quantity, reserved_quantity, status ),
+  product_images ( storage_path, alt_text, width, height, is_primary )
+`;
+
+const STORAGE_BUCKET = 'products';
+
+function publicImageUrl(supabaseUrl: string, storagePath: string): string {
+  return `${supabaseUrl}/storage/v1/object/public/${STORAGE_BUCKET}/${storagePath}`;
+}
+
+/** Convierte una fila de `products` (con sus joins) al `Product` de dominio. */
+function toProduct(row: ProductRow, supabaseUrl: string): Product {
+  const primaryVariant = row.product_variants.find((v) => v.status === 'active') ?? row.product_variants[0] ?? null;
+  const stockAvailable = row.track_inventory && primaryVariant
+    ? Math.max(0, primaryVariant.stock_quantity - primaryVariant.reserved_quantity)
+    : null;
+
+  const primaryImage = row.product_images.find((img) => img.is_primary) ?? row.product_images[0] ?? null;
+  const legacy = LEGACY_IMAGE[row.slug];
+  const image = primaryImage
+    ? {
+        path: publicImageUrl(supabaseUrl, primaryImage.storage_path),
+        alt: primaryImage.alt_text,
+        width: primaryImage.width,
+        height: primaryImage.height,
+      }
+    : legacy ?? {
+        // Sin foto todavía: no se inventa una imagen. El componente de
+        // packshot debe tolerar esto (placeholder de marca), no romperse.
+        path: '/images/gaviota/products/placeholder.jpg',
+        alt: row.name,
+        width: 1200,
+        height: 1200,
+      };
+
+  return {
+    id: row.id,
+    slug: row.slug,
+    name: row.name,
+    shortDescription: row.short_description ?? '',
+    price: cents(row.base_price),
+    sizeLabel: row.size_label ?? '',
+    image: image.path,
+    imageAlt: image.alt,
+    imageWidth: image.width,
+    imageHeight: image.height,
+    imageBackground: LEGACY_IMAGE_BACKGROUND[row.slug] ?? DEFAULT_IMAGE_BACKGROUND,
+    featured: row.featured,
+    reviewCount: 0,
+    categorySlug: (row.categories?.slug as CategorySlug) ?? 'aceites-y-serums',
+    needSlugs: NEED_SLUGS_BY_PRODUCT[row.slug] ?? [],
+    ingredients: row.ingredients_text ?? undefined,
+    precautions: row.precautions ?? undefined,
+    usageInstructions: row.usage_instructions ?? undefined,
+    stockAvailable,
+    inStock: stockAvailable === null || stockAvailable > 0,
+    variantId: primaryVariant?.id ?? null,
+  };
+}
+
+async function fetchActiveProducts(): Promise<Product[]> {
+  const supabase = await createServerSupabaseClient();
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
+
+  const { data, error } = await supabase
+    .from('products')
+    .select(PRODUCT_SELECT)
+    .eq('status', 'active')
+    .order('created_at', { ascending: true });
+
+  if (error || !data) {
+    console.error('[catalog] failed to load products:', error);
+    return [];
+  }
+
+  return (data as unknown as ProductRow[]).map((row) => toProduct(row, supabaseUrl));
+}
+
 export async function getFeaturedProducts(locale: Locale = 'en'): Promise<readonly Product[]> {
-  return CATALOG.filter((p) => p.featured).map((p) => localizeProduct(p, locale));
+  const products = await fetchActiveProducts();
+  return products.filter((p) => p.featured).map((p) => localizeProduct(p, locale));
 }
 
 export async function getAllProducts(locale: Locale = 'en'): Promise<readonly Product[]> {
-  return CATALOG.map((p) => localizeProduct(p, locale));
+  const products = await fetchActiveProducts();
+  return products.map((p) => localizeProduct(p, locale));
 }
 
 export function isCategorySlug(value: string): value is CategorySlug {
@@ -327,13 +330,32 @@ export async function queryProducts(
   query: CatalogQuery,
   locale: Locale = 'en',
 ): Promise<readonly Product[]> {
+  const products = await fetchActiveProducts();
   return filterCatalogProducts(
-    CATALOG.map((product) => localizeProduct(product, locale)),
+    products.map((product) => localizeProduct(product, locale)),
     query,
   );
 }
 
+/**
+ * Busca por slug entre los productos publicados (`status = 'active'`). Un
+ * producto despublicado deja de resolverse aquí — el checkout y la ficha de
+ * producto lo tratan igual que "no existe" (404 / línea rechazada), que es el
+ * comportamiento correcto: despublicar debe impedir la compra.
+ */
 export async function getProductBySlug(slug: string, locale: Locale = 'en'): Promise<Product | null> {
-  const product = CATALOG.find((p) => p.slug === slug);
-  return product ? localizeProduct(product, locale) : null;
+  const supabase = await createServerSupabaseClient();
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
+
+  const { data, error } = await supabase
+    .from('products')
+    .select(PRODUCT_SELECT)
+    .eq('slug', slug)
+    .eq('status', 'active')
+    .maybeSingle();
+
+  if (error || !data) return null;
+
+  const product = toProduct(data as unknown as ProductRow, supabaseUrl);
+  return localizeProduct(product, locale);
 }

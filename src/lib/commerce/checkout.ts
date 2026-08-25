@@ -48,6 +48,18 @@ export async function validateCheckoutLines(
     return { ok: false, error: 'unknown_product', slugs: missing.map((m) => m.line.slug) };
   }
 
+  // Un producto en cero no puede comprarse. `stockAvailable === null` significa
+  // "sin control de inventario" (siempre comprable); cualquier otro valor debe
+  // cubrir la cantidad pedida. Esta es la comprobación de servidor que faltaba:
+  // hasta esta migración, `Product` no traía dato de stock, así que ningún
+  // punto del checkout podía rechazar un producto agotado.
+  const outOfStock = resolved.filter(
+    ({ line, product }) => product!.stockAvailable !== null && product!.stockAvailable < line.quantity,
+  );
+  if (outOfStock.length > 0) {
+    return { ok: false, error: 'out_of_stock', slugs: outOfStock.map((m) => m.line.slug) };
+  }
+
   const items: CheckoutItem[] = resolved.map(({ line, product }) => ({
     slug: line.slug,
     name: product!.name,
