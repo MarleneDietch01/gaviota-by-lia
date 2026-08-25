@@ -7,9 +7,11 @@ import { Container, Rule, Section } from '@/components/ui/layout-primitives';
 import { Reveal } from '@/components/ui/reveal';
 import { SavedList } from '@/components/commerce/saved-list';
 import { getAllProducts } from '@/lib/catalog/products';
+import { getShippingConfig } from '@/lib/commerce/checkout';
 import { RITUAL_NEEDS } from '@/lib/content/home-data';
 import { ROUTE_PAGES, localizedCopy, type RoutePage } from '@/lib/content/route-pages';
 import { isLocale, localizedHref, pageAlternates, socialMeta, type Locale } from '@/lib/i18n';
+import { createServerSupabaseClient } from '@/lib/supabase/server';
 
 /**
  * Botones al pie de una página de contenido.
@@ -82,6 +84,8 @@ export default async function CatchAllPage({ params }: Props) {
 
   if (key === 'cart' || key === 'wishlist') {
     const products = await getAllProducts(lang);
+    const freeShippingThresholdCents =
+      key === 'cart' ? (await getShippingConfig(await createServerSupabaseClient())).freeAboveCents : null;
     return (
       <Section tone="ivory">
         <Container>
@@ -92,7 +96,7 @@ export default async function CatchAllPage({ params }: Props) {
             {key === 'cart' ? (lang === 'es' ? 'Tu bolsa' : 'Your bag') : (lang === 'es' ? 'Favoritos' : 'Favorites')}
           </h1>
           <Rule className="my-8" />
-          <SavedList kind={key} products={products} locale={lang} />
+          <SavedList kind={key} products={products} locale={lang} freeShippingThresholdCents={freeShippingThresholdCents} />
         </Container>
       </Section>
     );
