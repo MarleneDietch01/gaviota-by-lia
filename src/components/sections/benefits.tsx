@@ -40,7 +40,7 @@ export function Benefits({ locale }: { locale: Locale }) {
                   strokeWidth={1.5}
                   aria-hidden="true"
                 />
-                <h3 className="mt-3 font-sans text-[0.9375rem] font-semibold leading-snug tracking-[-0.01em]">
+                <h3 className="mt-3 font-sans text-body-sm font-semibold leading-snug tracking-[-0.01em]">
                   {t(benefit.title, locale)}
                 </h3>
                 <p className="mt-1.5 text-sm leading-snug text-body">

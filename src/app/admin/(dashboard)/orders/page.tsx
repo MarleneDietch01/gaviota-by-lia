@@ -18,8 +18,8 @@ const STATUS_LABEL: Record<string, string> = {
 const STATUS_TONE: Record<string, string> = {
   pending_payment: 'bg-line text-body',
   paid: 'bg-success/15 text-success',
-  processing: 'bg-champagne/25 text-ink',
-  ready_to_ship: 'bg-champagne/25 text-ink',
+  processing: 'bg-powder/40 text-rose-deep',
+  ready_to_ship: 'bg-powder/40 text-rose-deep',
   shipped: 'bg-rose/15 text-rose-deep',
   delivered: 'bg-success/15 text-success',
   cancelled: 'bg-danger/10 text-danger',

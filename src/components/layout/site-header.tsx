@@ -185,7 +185,7 @@ export function SiteHeader({ locale }: { locale: Locale }) {
                 // Oculto por debajo de `sm`: con tres iconos a la derecha, el
                 // grupo invadía el logotipo centrado a 360px. El cambio de
                 // idioma sigue disponible en el drawer.
-                className="hidden min-h-11 min-w-11 place-items-center rounded-pill text-[0.6875rem] font-bold tracking-[0.14em] transition-colors duration-300 hover:bg-ink/[0.06] sm:grid"
+                className="hidden min-h-11 min-w-11 place-items-center rounded-pill text-caption font-bold tracking-[0.14em] transition-colors duration-300 hover:bg-ink/[0.06] sm:grid"
               >
                 {otherLocale.toUpperCase()}
               </Link>
@@ -230,7 +230,7 @@ export function SiteHeader({ locale }: { locale: Locale }) {
                 {bagCount > 0 ? (
                   <span
                     aria-hidden="true"
-                    className="tabular absolute right-1 top-1 grid min-w-[1.125rem] place-items-center rounded-pill bg-rose px-1 text-[0.625rem] font-bold leading-[1.125rem] text-white-warm"
+                    className="tabular absolute right-1 top-1 grid min-w-[1.125rem] place-items-center rounded-pill bg-rose px-1 text-2xs font-bold leading-[1.125rem] text-white-warm"
                   >
                     {bagCount > 9 ? '9+' : bagCount}
                   </span>
@@ -364,7 +364,7 @@ function HeaderLink({
         // `min-w-11` + `px-3` para que hasta la entrada más corta ("Kits")
         // alcance los 44px de ancho de objetivo táctil. El filete va en el
         // <span>, así que el padding no lo estira.
-        'group flex min-h-11 min-w-11 items-center justify-center px-3 text-[0.8125rem] font-medium tracking-[0.03em] transition-colors duration-300',
+        'group flex min-h-11 min-w-11 items-center justify-center px-3 text-meta font-medium tracking-[0.03em] transition-colors duration-300',
         active ? 'text-rose' : 'text-ink hover:text-rose',
       )}
     >
@@ -407,7 +407,7 @@ function DrawerGroup({
                 prefetch={false}
                 aria-current={active ? 'page' : undefined}
                 className={cn(
-                  'flex min-h-11 items-center text-[0.9375rem] transition-colors',
+                  'flex min-h-11 items-center text-body-sm transition-colors',
                   active
                     ? 'font-semibold text-rose'
                     : muted
@@ -436,7 +436,7 @@ function LocaleChip({ locale, current, href }: { locale: Locale; current: Locale
       hrefLang={locale === 'en' ? 'en-US' : 'es'}
       aria-current={active ? 'true' : undefined}
       className={cn(
-        'grid min-h-11 min-w-11 place-items-center rounded-xs border text-[0.6875rem] font-bold tracking-[0.12em] transition-colors',
+        'grid min-h-11 min-w-11 place-items-center rounded-xs border text-caption font-bold tracking-[0.12em] transition-colors',
         active
           ? 'border-rose bg-rose text-white-warm'
           : 'border-line-strong text-body hover:border-ink hover:text-ink',

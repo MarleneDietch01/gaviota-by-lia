@@ -123,7 +123,7 @@ export async function Hero({ locale }: { locale: Locale }) {
             ) : null}
 
             <p
-              className="hero-rise mt-8 flex items-center gap-3 text-[0.6875rem] font-semibold uppercase tracking-[0.16em] text-muted lg:mt-10"
+              className="hero-rise mt-8 flex items-center gap-3 text-caption font-semibold uppercase tracking-[0.16em] text-muted lg:mt-10"
               style={{ '--rise-delay': '320ms' } as React.CSSProperties}
             >
               <span aria-hidden="true" className="h-px w-8 bg-champagne" />
@@ -132,7 +132,7 @@ export async function Hero({ locale }: { locale: Locale }) {
 
             <a
               href="#collection"
-              className="hero-rise mt-9 hidden min-h-11 items-center gap-3 text-[0.6875rem] font-semibold uppercase tracking-[0.16em] text-body transition-colors hover:text-rose lg:inline-flex"
+              className="hero-rise mt-9 hidden min-h-11 items-center gap-3 text-caption font-semibold uppercase tracking-[0.16em] text-body transition-colors hover:text-rose lg:inline-flex"
               style={{ '--rise-delay': '400ms' } as React.CSSProperties}
             >
               {pick(locale, 'Explore the collection', 'Explorar la colección')}

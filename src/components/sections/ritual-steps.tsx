@@ -60,7 +60,7 @@ export async function RitualSteps({ locale }: { locale: Locale }) {
 
                 <h3 className="mt-6 font-display text-h3">{t(step.verb, locale)}</h3>
 
-                <p className="mt-2 text-[0.9375rem] leading-relaxed text-body">
+                <p className="mt-2 text-body-sm leading-relaxed text-body">
                   {t(step.body, locale)}
                 </p>
 

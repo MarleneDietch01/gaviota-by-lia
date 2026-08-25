@@ -51,10 +51,10 @@ export async function Ingredients({ locale }: { locale: Locale }) {
           <dl className="mx-auto flex max-w-md flex-col items-center gap-1.5">
             {verifiedIngredients.map((ingredient) => (
               <div key={ingredient.key}>
-                <dt className="font-sans text-[0.9375rem] font-semibold tracking-[-0.01em]">
+                <dt className="font-sans text-body-sm font-semibold tracking-[-0.01em]">
                   {t(ingredient.name, locale)}
                 </dt>
-                <dd className="mt-1 text-[0.9375rem] leading-relaxed text-body">
+                <dd className="mt-1 text-body-sm leading-relaxed text-body">
                   {t(ingredient.body, locale)}
                 </dd>
               </div>

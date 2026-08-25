@@ -84,13 +84,13 @@ export async function ProductReviews({ slug, locale }: { slug: string; locale: L
                 <div className="flex flex-wrap items-center gap-2.5">
                   <Stars rating={review.rating} />
                   {review.verified_purchase ? (
-                    <span className="rounded-pill bg-success/15 px-2 py-0.5 text-[0.6875rem] font-semibold uppercase tracking-wide text-success">
+                    <span className="rounded-pill bg-success/15 px-2 py-0.5 text-caption font-semibold uppercase tracking-wide text-success">
                       {locale === 'es' ? 'Compra verificada' : 'Verified purchase'}
                     </span>
                   ) : null}
                 </div>
                 {review.title ? <p className="mt-2.5 font-semibold text-ink">{review.title}</p> : null}
-                <p className="mt-2 text-[0.9375rem] leading-relaxed text-body">{review.content}</p>
+                <p className="mt-2 text-body-sm leading-relaxed text-body">{review.content}</p>
               </li>
             ))}
           </ul>

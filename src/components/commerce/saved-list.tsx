@@ -181,7 +181,7 @@ export function SavedList({
           </p>
 
           {freeShippingThresholdCents !== null ? (
-            <p className="mt-3 text-sm font-medium text-rose">
+            <p className="mt-3 text-sm font-medium text-rose-deep">
               {subtotal >= freeShippingThresholdCents
                 ? pick(locale, "You've unlocked free shipping.", 'Desbloqueaste el envío gratis.')
                 : pick(

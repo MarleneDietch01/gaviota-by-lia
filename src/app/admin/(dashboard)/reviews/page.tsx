@@ -30,7 +30,7 @@ export default async function AdminReviewsPage() {
                   </p>
                   <p className="text-xs text-muted">{review.profiles?.email ?? 'Clienta sin correo'}</p>
                 </div>
-                <span className="rounded-pill bg-champagne/25 px-2.5 py-1 text-xs font-semibold text-ink">
+                <span className="rounded-pill bg-powder/40 px-2.5 py-1 text-xs font-semibold text-rose-deep">
                   {review.rating} / 5
                 </span>
               </div>

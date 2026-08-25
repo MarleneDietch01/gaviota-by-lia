@@ -65,7 +65,7 @@ export default async function AdminDashboardLayout({ children }: { children: Rea
           </Link>
 
           <p className="truncate text-xs text-muted">{user.email}</p>
-          <p className="mb-3 text-[0.6875rem] uppercase tracking-[0.1em] text-muted">
+          <p className="mb-3 text-caption uppercase tracking-[0.1em] text-muted">
             {user.role === 'super_admin' ? 'Super admin' : 'Admin'}
           </p>
           <form action={signOutAdmin}>

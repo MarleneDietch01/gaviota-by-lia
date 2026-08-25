@@ -14,7 +14,7 @@ export async function AnnouncementBar({ locale }: { locale: Locale }) {
 
   return (
     <div className="bg-wine text-center text-on-dark">
-      <p className="px-4 py-2.5 text-[0.6875rem] font-medium tracking-[0.08em] sm:text-xs">
+      <p className="px-4 py-2.5 text-caption font-medium tracking-[0.08em] sm:text-xs">
         {section.title}
       </p>
     </div>
