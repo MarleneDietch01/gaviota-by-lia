@@ -1,15 +1,14 @@
 import { EditorialImage } from '@/components/media/site-image';
-import { LinkButton } from '@/components/ui/button';
 import { Container, Section, SectionHeader } from '@/components/ui/layout-primitives';
 import { Reveal } from '@/components/ui/reveal';
-import { localizedHref, pick, type Locale } from '@/lib/i18n';
+import { pick, type Locale } from '@/lib/i18n';
 
 const RESULTS = [
-  'ChatGPT Image 26 ago 2026, 04_49_09 p.m.png',
-  'ChatGPT Image 26 ago 2026, 04_50_45 p.m.png',
-  'ChatGPT Image 26 ago 2026, 04_55_24 p.m. (1).png',
-  'ChatGPT Image 26 ago 2026, 04_55_24 p.m. (2).png',
-  'ChatGPT Image 26 ago 2026, 04_57_15 p.m.png',
+  'concepts/ritual-01.jpg',
+  'concepts/ritual-02.jpg',
+  'concepts/ritual-03.jpg',
+  'concepts/ritual-04.jpg',
+  'concepts/ritual-05.jpg',
 ] as const;
 
 const RESULTS_PATH = '/images/gaviota/results/';
@@ -17,37 +16,34 @@ const RESULTS_PATH = '/images/gaviota/results/';
 /**
  * Galería editorial conceptual.
  *
- * Los archivos proceden de imágenes generadas con IA; por eso se muestra solo
- * su lado derecho, sin construir una comparación ni sugerir un resultado de
- * producto. La atribución visible protege a la clienta de confundir estas
- * composiciones con testimonios o pruebas clínicas.
+ * Cada visual se sirve en su composición vertical editorial. La nota final
+ * aclara su naturaleza conceptual sin competir con la galería.
  */
 export function ResultsGallery({ locale }: { locale: Locale }) {
   return (
-    <Section tone="powder" labelledBy="results-title">
+    <Section tone="ivory" padding="compact" labelledBy="results-title">
       <Container size="wide">
         <SectionHeader
           id="results-title"
-          eyebrow={pick(locale, 'The feeling of a ritual', 'La sensación de un ritual')}
+          eyebrow={pick(locale, 'A moment for your skin', 'Un momento para tu piel')}
           title={
             <>
-              {pick(locale, 'Care that feels ', 'Cuidado que se siente ')}
-              <span className="accent-word">{pick(locale, 'like yours', 'tuyo')}</span>.
+              {pick(locale, 'A ritual made ', 'Un ritual hecho ')}
+              <span className="accent-word">{pick(locale, 'for you', 'para ti')}</span>.
             </>
           }
           subtitle={pick(
             locale,
-            'Softness, presence and a few intentional minutes for yourself.',
-            'Suavidad, presencia y unos minutos intencionales para ti.',
+            'Small gestures of care, made part of your day.',
+            'Pequeños gestos de cuidado para hacer parte de tu día.',
           )}
-          tone="powder"
         />
 
         <Reveal>
-          <ul className="-mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 lg:grid-cols-5">
+          <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-5 lg:grid-cols-5 lg:gap-6">
             {RESULTS.map((image, index) => (
-              <li key={image} className="w-[84%] shrink-0 snap-start sm:w-auto sm:shrink">
-                <figure className="relative aspect-[4/5] overflow-hidden rounded-sm bg-white-warm shadow-subtle">
+              <li key={image} className="first:col-span-2 sm:first:col-span-1">
+                <figure className="relative aspect-[3/4] overflow-hidden rounded-sm bg-white-warm shadow-subtle">
                   <EditorialImage
                     src={`${RESULTS_PATH}${image}`}
                     alt={pick(
@@ -55,10 +51,10 @@ export function ResultsGallery({ locale }: { locale: Locale }) {
                       `Conceptual body-care visual ${index + 1}`,
                       `Visual conceptual de cuidado corporal ${index + 1}`,
                     )}
-                    width={1536}
+                    width={768}
                     height={1024}
-                    sizes="(max-width: 639px) 84vw, (max-width: 1023px) 46vw, 18vw"
-                    focal="100% 50%"
+                    sizes="(max-width: 639px) 50vw, (max-width: 1023px) 31vw, 19vw"
+                    focal="50% 50%"
                   />
                 </figure>
               </li>
@@ -66,20 +62,13 @@ export function ResultsGallery({ locale }: { locale: Locale }) {
           </ul>
         </Reveal>
 
-        <div className="mx-auto mt-8 max-w-2xl text-center">
-          <p className="text-sm leading-relaxed text-body">
+        <p className="mx-auto mt-6 max-w-xl text-center text-caption leading-relaxed text-muted">
             {pick(
               locale,
-              'Conceptual visuals created with AI for artistic inspiration. They do not depict product results or real customer experiences.',
-              'Visuales conceptuales creados con IA como inspiración artística. No representan resultados de producto ni experiencias reales de clientas.',
+              'Conceptual visuals created with AI. They do not depict product results or customer experiences.',
+              'Visuales conceptuales creados con IA. No representan resultados de producto ni experiencias de clientas.',
             )}
-          </p>
-          <div className="mt-6">
-            <LinkButton href={localizedHref(locale, '/products/exfoliante-de-coco')} variant="secondary">
-              {pick(locale, 'Explore the Coconut Body Scrub', 'Conoce el Exfoliante de Coco')}
-            </LinkButton>
-          </div>
-        </div>
+        </p>
       </Container>
     </Section>
   );
