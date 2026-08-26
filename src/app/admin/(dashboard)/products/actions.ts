@@ -97,6 +97,13 @@ export async function updateProduct(productId: string, formData: FormData): Prom
       ingredients_text: data.ingredientsText ?? null,
       usage_instructions: data.usageInstructions ?? null,
       precautions: data.precautions ?? null,
+      // El inglés que ve la clienta viene de un mapa fijo en código (ver
+      // `ENGLISH` en `lib/catalog/products.ts`), no de esta tabla — así que
+      // cualquier guardado de estos campos en español deja esa traducción
+      // desactualizada EN SILENCIO si nadie lo marca. Se enciende siempre,
+      // sin comparar campo por campo: es más seguro avisar de más que dejar
+      // pasar una edición real por un diff mal hecho.
+      translation_stale: true,
     })
     .eq('id', productId);
 
@@ -122,6 +129,25 @@ export async function setProductStatus(productId: string, status: 'active' | 'dr
   const { error } = await supabase.from('products').update({ status }).eq('id', productId);
   if (error) throw new Error(`No se pudo cambiar el estado: ${error.message}`);
   revalidatePath('/admin/products');
+}
+
+/**
+ * Confirma a mano que el override en inglés (`ENGLISH`, en
+ * `lib/catalog/products.ts`) ya se actualizó y desplegó para reflejar el
+ * español actual. No hay forma de que esto se apague solo: el texto en
+ * inglés vive en código, no en esta fila, así que solo una persona puede
+ * confirmar que ambos ya dicen lo mismo.
+ */
+export async function markTranslationReviewed(productId: string): Promise<void> {
+  await requireAdmin();
+  const supabase = await createServerSupabaseClient();
+  const { error } = await supabase
+    .from('products')
+    .update({ translation_stale: false })
+    .eq('id', productId);
+  if (error) throw new Error(`No se pudo marcar la traducción como al día: ${error.message}`);
+  revalidatePath('/admin/products');
+  revalidatePath(`/admin/products/${productId}`);
 }
 
 /**

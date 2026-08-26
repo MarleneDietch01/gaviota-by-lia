@@ -7,6 +7,10 @@ import { markOrderShipped, saveOrderNotes } from '../actions';
 
 export const metadata = { title: 'Pedido' };
 
+// Ver el mismo comentario en `orders/page.tsx`: correo de relleno de
+// checkout cuando no hubo email real, no una clienta.
+const PLACEHOLDER_EMAIL = 'sin-correo@pendiente.gaviotabylia.com';
+
 const STATUS_LABEL: Record<string, string> = {
   pending_payment: 'Pago pendiente',
   paid: 'Pagado',
@@ -67,7 +71,14 @@ export default async function AdminOrderDetailPage({
           {STATUS_LABEL[order.order_status] ?? order.order_status}
         </span>
       </div>
-      <p className="mt-1 text-sm text-body">{order.customer_email}{order.customer_phone ? ` · ${order.customer_phone}` : ''}</p>
+      <p className="mt-1 text-sm text-body">
+        {order.customer_email === PLACEHOLDER_EMAIL ? (
+          <span className="italic text-muted">Sin datos de clienta</span>
+        ) : (
+          order.customer_email
+        )}
+        {order.customer_phone ? ` · ${order.customer_phone}` : ''}
+      </p>
       <p className="text-xs text-muted">{formatDate(order.created_at)}</p>
 
       {disputed ? (

@@ -1199,6 +1199,7 @@ export type Database = {
           slug: string
           status: Database["public"]["Enums"]["entity_status"]
           track_inventory: boolean
+          translation_stale: boolean
           updated_at: string
           usage_instructions: string | null
           weight_grams: number | null
@@ -1227,6 +1228,7 @@ export type Database = {
           slug: string
           status?: Database["public"]["Enums"]["entity_status"]
           track_inventory?: boolean
+          translation_stale?: boolean
           updated_at?: string
           usage_instructions?: string | null
           weight_grams?: number | null
@@ -1255,6 +1257,7 @@ export type Database = {
           slug?: string
           status?: Database["public"]["Enums"]["entity_status"]
           track_inventory?: boolean
+          translation_stale?: boolean
           updated_at?: string
           usage_instructions?: string | null
           weight_grams?: number | null

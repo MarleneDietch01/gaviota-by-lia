@@ -4,7 +4,14 @@ import { notFound, redirect } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { cents, toUnits } from '@/lib/commerce/money';
-import { adjustStock, deleteProductImage, listCategories, updateProduct, uploadProductImage } from '../actions';
+import {
+  adjustStock,
+  deleteProductImage,
+  listCategories,
+  markTranslationReviewed,
+  updateProduct,
+  uploadProductImage,
+} from '../actions';
 
 export const metadata = { title: 'Editar producto' };
 
@@ -38,7 +45,7 @@ export default async function AdminProductEditPage({
       .select(
         `id, name, slug, short_description, description, base_price, compare_at_price,
          compare_at_starts_at, compare_at_ends_at, size_label, status, featured, category_id,
-         ingredients_text, usage_instructions, precautions, track_inventory,
+         ingredients_text, usage_instructions, precautions, track_inventory, translation_stale,
          product_variants ( id, stock_quantity, reserved_quantity, low_stock_threshold ),
          product_images ( storage_path, alt_text, is_primary, width, height )`,
       )
@@ -92,6 +99,12 @@ export default async function AdminProductEditPage({
     redirect(`/admin/products/${id}?saved=1`);
   }
 
+  async function markTranslationReviewedAction(): Promise<void> {
+    'use server';
+    await markTranslationReviewed(id);
+    redirect(`/admin/products/${id}?saved=1`);
+  }
+
   return (
     <div className="max-w-3xl">
       <Link href="/admin/products" className="inline-flex items-center gap-1.5 text-sm font-medium text-body hover:text-rose">
@@ -116,6 +129,29 @@ export default async function AdminProductEditPage({
         <p role="status" className="mt-4 rounded-sm border border-success/40 bg-success/10 p-3 text-sm font-medium text-success">
           Cambios guardados.
         </p>
+      ) : null}
+
+      {/* -------------------------------------------------------------- */}
+      {/* Traducción — el inglés vive en un mapa fijo en código, no en esta
+          fila, así que editar el español de abajo no lo actualiza solo.   */}
+      {/* -------------------------------------------------------------- */}
+      {product.translation_stale ? (
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-sm border border-dashed border-line-strong bg-ivory p-4">
+          <p className="text-sm text-body">
+            <strong className="text-ink">Traducción pendiente.</strong> El español se editó después de la última
+            revisión del inglés — mientras tanto, la ficha en inglés muestra el aviso de &ldquo;más detalle en
+            camino&rdquo; en vez de texto desactualizado. Actualiza el override en inglés en el código y despliega
+            antes de confirmar aquí.
+          </p>
+          <form action={markTranslationReviewedAction}>
+            <button
+              type="submit"
+              className="min-h-10 shrink-0 rounded-xs border border-ink/25 px-4 text-sm font-semibold transition-colors hover:border-ink"
+            >
+              Marcar traducción al día
+            </button>
+          </form>
+        </div>
       ) : null}
 
       {/* -------------------------------------------------------------- */}

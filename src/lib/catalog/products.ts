@@ -62,7 +62,6 @@ export interface Product {
   readonly featured: boolean;
   /** Se muestran estrellas solo si es > 0. Hoy siempre es 0 (sin sistema de agregación todavía). */
   readonly reviewCount: number;
-  readonly contentComplete?: boolean;
   readonly categorySlug: CategorySlug;
   readonly needSlugs: readonly NeedSlug[];
   readonly ingredients?: string | undefined;
@@ -78,6 +77,16 @@ export interface Product {
   readonly inStock: boolean;
   /** Id de la variante principal — lo necesita el checkout para reservar inventario. */
   readonly variantId: string | null;
+  /**
+   * `true` cuando el español se editó desde /admin/products después de la
+   * última confirmación de que el override en inglés (`ENGLISH`, abajo) sigue
+   * vigente. Solo importa en locale `en`: en español la base de datos es la
+   * fuente de verdad, así que nunca puede estar "desactualizada" respecto a
+   * sí misma. `localizeProduct()` la usa para apagar `contentComplete` en
+   * inglés en vez de servir texto viejo sin avisar.
+   */
+  readonly translationStale: boolean;
+  readonly contentComplete?: boolean;
 }
 
 export const CATEGORIES = [
@@ -215,7 +224,19 @@ const ENGLISH: Record<
 };
 
 function localizeProduct(product: Product, locale: Locale): Product {
-  return locale === 'en' ? { ...product, ...ENGLISH[product.slug] } : product;
+  if (locale !== 'en') return product;
+
+  return {
+    ...product,
+    ...ENGLISH[product.slug],
+    // El español se editó y nadie confirmó todavía que el inglés de arriba
+    // sigue vigente: no se sirve tal cual sin avisar. Reutiliza el mismo
+    // aviso "ficha en ampliación" que ya existe para contenido incompleto,
+    // en vez de inventar un elemento visual nuevo para este caso. La clave
+    // solo se incluye cuando aplica: con `exactOptionalPropertyTypes`, escribir
+    // `contentComplete: undefined` no es lo mismo que omitir la clave.
+    ...(product.translationStale ? { contentComplete: false as const } : {}),
+  };
 }
 
 type ProductRow = Database['public']['Tables']['products']['Row'] & {
@@ -228,7 +249,7 @@ type ProductRow = Database['public']['Tables']['products']['Row'] & {
 
 const PRODUCT_SELECT = `
   id, slug, name, short_description, base_price, size_label, status, featured,
-  ingredients_text, precautions, usage_instructions, track_inventory,
+  ingredients_text, precautions, usage_instructions, track_inventory, translation_stale,
   categories:category_id ( slug ),
   product_variants ( id, stock_quantity, reserved_quantity, status ),
   product_images ( storage_path, alt_text, width, height, is_primary )
@@ -287,6 +308,7 @@ function toProduct(row: ProductRow, supabaseUrl: string): Product {
     stockAvailable,
     inStock: stockAvailable === null || stockAvailable > 0,
     variantId: primaryVariant?.id ?? null,
+    translationStale: row.translation_stale,
   };
 }
 

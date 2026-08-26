@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import { Clock } from 'lucide-react';
 import { Breadcrumbs } from '@/components/navigation/breadcrumbs';
 import { ProductCard } from '@/components/products/product-card';
 import { QuickAdd, FavoriteToggle } from '@/components/products/product-actions';
@@ -97,6 +98,12 @@ export default async function ProductPage({ params }: Props) {
               >
                 {product.shortDescription}
               </p>
+              {product.contentComplete === false ? (
+                <span className="hero-rise mt-2 inline-flex items-center gap-1 rounded-pill border border-dashed border-line-strong px-2 py-0.5 text-2xs font-bold uppercase tracking-[0.1em] text-muted">
+                  <Clock className="size-2.5" strokeWidth={2} aria-hidden="true" />
+                  {pick(lang, 'More detail coming', 'Ficha en ampliación')}
+                </span>
+              ) : null}
               <p
                 className="hero-rise mt-6 text-xl font-semibold"
                 style={{ '--rise-delay': '220ms' } as React.CSSProperties}

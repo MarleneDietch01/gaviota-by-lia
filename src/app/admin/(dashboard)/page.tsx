@@ -41,6 +41,9 @@ export const metadata = { title: 'Panel' };
  */
 
 const TEST_EMAIL_SUFFIX = '@gaviotabylia.test';
+// Ver el mismo comentario en `orders/page.tsx`: correo de relleno de checkout,
+// no una clienta real.
+const PLACEHOLDER_EMAIL = 'sin-correo@pendiente.gaviotabylia.com';
 
 export default async function AdminDashboardPage() {
   const supabase = await createServerSupabaseClient();
@@ -66,12 +69,17 @@ export default async function AdminDashboardPage() {
       .eq('payment_status', 'paid')
       .not('customer_email', 'ilike', `%${TEST_EMAIL_SUFFIX}`),
     // Pendientes de enviar: pagados que aún no salieron de la tienda. Es la
-    // cifra que dice qué hacer HOY, no cuánto se vendió en total.
+    // cifra que dice qué hacer HOY, no cuánto se vendió en total. Misma
+    // exclusión de `.test` que "Pedidos pagados" — de lo contrario la fila de
+    // prueba marcada `paid` aparece aquí como un pedido real por despachar
+    // mientras "Pedidos pagados" ya la excluye, y las dos cifras se
+    // contradicen en la primera pantalla que ella ve.
     supabase
       .from('orders')
       .select('id', { count: 'exact', head: true })
       .eq('payment_status', 'paid')
-      .in('order_status', ['paid', 'processing', 'ready_to_ship']),
+      .in('order_status', ['paid', 'processing', 'ready_to_ship'])
+      .not('customer_email', 'ilike', `%${TEST_EMAIL_SUFFIX}`),
     // Carritos abandonados: `pending_payment`, etiquetados como tal y APARTE
     // de cualquier cifra de venta — nunca se suman a "pagados".
     supabase
@@ -85,7 +93,13 @@ export default async function AdminDashboardPage() {
       .gte('created_at', startOfMonth.toISOString()),
     // Ver el comentario en el dashboard original: sigue siendo el respaldo
     // dentro del sitio, no el mecanismo principal de gestión de disputas.
-    supabase.from('payments').select('id', { count: 'exact', head: true }).eq('status', 'disputed'),
+    // Mismo criterio de exclusión que el resto de las métricas: una disputa
+    // en un pedido `.test` no es una disputa real.
+    supabase
+      .from('payments')
+      .select('id, orders!inner(customer_email)', { count: 'exact', head: true })
+      .eq('status', 'disputed')
+      .not('orders.customer_email', 'ilike', `%${TEST_EMAIL_SUFFIX}`),
     supabase.from('reviews').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
     supabase
       .from('products')
@@ -242,7 +256,13 @@ export default async function AdminDashboardPage() {
                   className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 transition-colors hover:bg-ivory"
                 >
                   <span className="tabular font-medium">{order.order_number}</span>
-                  <span className="text-sm text-body">{order.customer_email}</span>
+                  <span className="text-sm text-body">
+                    {order.customer_email === PLACEHOLDER_EMAIL ? (
+                      <span className="italic text-muted">— Sin datos de clienta</span>
+                    ) : (
+                      order.customer_email
+                    )}
+                  </span>
                   <span className="tabular text-sm font-semibold">
                     {formatMoney(cents(order.grand_total), 'USD', 'es-US')}
                   </span>

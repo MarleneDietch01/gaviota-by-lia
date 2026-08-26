@@ -50,7 +50,7 @@ export default async function AdminProductsPage({
   let query = supabase
     .from('products')
     .select(
-      'id, name, slug, base_price, status, featured, size_label, product_variants(stock_quantity, reserved_quantity, low_stock_threshold, status)',
+      'id, name, slug, base_price, status, featured, size_label, translation_stale, product_variants(stock_quantity, reserved_quantity, low_stock_threshold, status)',
       { count: 'exact' },
     )
     .order('created_at', { ascending: true })
@@ -123,6 +123,11 @@ export default async function AdminProductsPage({
                           {product.name}
                         </Link>
                         <p className="text-xs text-muted">{product.size_label}</p>
+                        {product.translation_stale ? (
+                          <span className="mt-1 inline-flex items-center rounded-pill border border-dashed border-line-strong px-2 py-0.5 text-2xs font-bold uppercase tracking-[0.1em] text-muted">
+                            Traducción pendiente
+                          </span>
+                        ) : null}
                       </td>
                       <td className="tabular px-4 py-3">
                         {formatMoney(cents(product.base_price), 'USD', 'es-US')}

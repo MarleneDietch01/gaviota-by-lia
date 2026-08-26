@@ -16,6 +16,12 @@ const STATUS_LABEL: Record<string, string> = {
   partially_refunded: 'Reembolso parcial',
 };
 
+// Correo de relleno que `createPendingOrder()` escribe cuando el checkout no
+// recibió un email real (ver `src/lib/commerce/checkout.ts`). No es una
+// clienta real — mostrarlo tal cual en la tabla lee como un dato roto, y
+// quince filas seguidas con el mismo "correo" son ruido, no información.
+const PLACEHOLDER_EMAIL = 'sin-correo@pendiente.gaviotabylia.com';
+
 const STATUS_TONE: Record<string, string> = {
   pending_payment: 'bg-line text-body',
   paid: 'bg-success/15 text-success',
@@ -66,14 +72,24 @@ export default async function AdminOrdersPage() {
             <tbody>
               {orders.map((order) => {
                 const disputed = order.payments?.some((payment) => payment.status === 'disputed') ?? false;
+                const hasNoRealCustomer = order.customer_email === PLACEHOLDER_EMAIL;
                 return (
-                <tr key={order.id} className="border-b border-line last:border-0">
+                <tr
+                  key={order.id}
+                  className={`border-b border-line last:border-0 ${hasNoRealCustomer ? 'bg-ivory/60' : ''}`}
+                >
                   <td className="tabular px-4 py-3 font-medium">
                     <Link href={`/admin/orders/${order.id}`} className="hover:text-rose">
                       {order.order_number}
                     </Link>
                   </td>
-                  <td className="px-4 py-3 text-body">{order.customer_email}</td>
+                  <td className="px-4 py-3">
+                    {hasNoRealCustomer ? (
+                      <span className="italic text-muted">— Sin datos de clienta</span>
+                    ) : (
+                      <span className="text-body">{order.customer_email}</span>
+                    )}
+                  </td>
                   <td className="px-4 py-3">
                     <span
                       className={`inline-flex rounded-pill px-2.5 py-1 text-xs font-semibold ${STATUS_TONE[order.order_status] ?? 'bg-line text-body'}`}
