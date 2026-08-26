@@ -45,6 +45,23 @@ const TEST_EMAIL_SUFFIX = '@gaviotabylia.test';
 // no una clienta real.
 const PLACEHOLDER_EMAIL = 'sin-correo@pendiente.gaviotabylia.com';
 
+// "Pedidos recientes" es "los últimos por fecha", no "los que necesitan
+// atención" — para eso están las tarjetas de arriba. Sin el estado visible,
+// un pedido cancelado (p. ej. los carritos de prueba, que no se pueden
+// borrar por el trigger de auditoría) se lee como actividad real sin
+// explicación. Mismo mapa que `orders/page.tsx`.
+const STATUS_LABEL: Record<string, string> = {
+  pending_payment: 'Pago pendiente',
+  paid: 'Pagado',
+  processing: 'En proceso',
+  ready_to_ship: 'Listo para enviar',
+  shipped: 'Enviado',
+  delivered: 'Entregado',
+  cancelled: 'Cancelado',
+  refunded: 'Reembolsado',
+  partially_refunded: 'Reembolso parcial',
+};
+
 export default async function AdminDashboardPage() {
   const supabase = await createServerSupabaseClient();
   const startOfMonth = new Date();
@@ -262,6 +279,9 @@ export default async function AdminDashboardPage() {
                     ) : (
                       order.customer_email
                     )}
+                  </span>
+                  <span className="rounded-pill bg-line px-2 py-0.5 text-2xs font-semibold uppercase tracking-[0.06em] text-muted">
+                    {STATUS_LABEL[order.order_status] ?? order.order_status}
                   </span>
                   <span className="tabular text-sm font-semibold">
                     {formatMoney(cents(order.grand_total), 'USD', 'es-US')}
