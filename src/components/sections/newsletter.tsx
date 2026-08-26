@@ -19,7 +19,7 @@ export async function Newsletter({ locale }: { locale: Locale }) {
   if (!c) return null;
 
   return (
-    <Section tone="ivory" labelledBy="newsletter-title">
+    <Section tone="ivory" padding="compact" labelledBy="newsletter-title">
       <Container size="narrow">
         <Reveal className="text-center">
           {c.eyebrow ? <p className="eyebrow mb-3 text-rose">{c.eyebrow}</p> : null}

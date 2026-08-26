@@ -17,7 +17,7 @@ export async function Founder({ locale }: { locale: Locale }) {
   if (!c) return null;
 
   return (
-    <Section tone="white" labelledBy="story-title">
+    <Section tone="white" padding="compact" labelledBy="story-title">
       <Container>
         <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-16 xl:gap-20">
           <Reveal className="frame-arch">

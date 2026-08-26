@@ -34,7 +34,7 @@ export async function Ingredients({ locale }: { locale: Locale }) {
   if (!verifiedIngredients.length) return null;
 
   return (
-    <Section tone="ivory" labelledBy="ingredients-title">
+    <Section tone="ivory" padding="compact" labelledBy="ingredients-title">
       <Container size="narrow">
         <Reveal className="text-center">
           <p className="eyebrow mb-4 text-rose">

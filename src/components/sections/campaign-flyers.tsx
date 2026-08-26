@@ -40,7 +40,7 @@ import { localizedHref, pick, type Locale } from '@/lib/i18n';
  */
 export function CampaignFlyers({ locale }: { locale: Locale }) {
   return (
-    <Section tone="ivory" labelledBy="campaign-flyers-title">
+    <Section tone="ivory" padding="compact" labelledBy="campaign-flyers-title">
       <Container>
         <SectionHeader
           id="campaign-flyers-title"

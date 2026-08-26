@@ -51,26 +51,59 @@ export function SiteFooter({ locale }: { locale: Locale }) {
               </a>
             </div>
 
-            {COLUMNS.map((column) => (
-              <nav key={column.title.en} aria-label={pick(locale, column.title.en, column.title.es)}>
-                <h2 className="eyebrow mb-4 text-on-dark-soft">
-                  {pick(locale, column.title.en, column.title.es)}
-                </h2>
-                <ul className="space-y-1">
-                  {column.items.map((item) => (
-                    <li key={`${column.title.en}-${item.href}`}>
-                      <Link
-                        href={localizedHref(locale, item.href)}
-                        prefetch={false}
-                        className="flex min-h-11 items-center text-sm text-on-dark-soft transition-colors hover:text-on-dark"
-                      >
-                        {label(item, locale)}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </nav>
-            ))}
+            <div className="contents sm:hidden">
+              {COLUMNS.map((column) => (
+                <details key={column.title.en} className="group border-b border-line-dark">
+                  <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between text-sm font-semibold text-on-dark [&::-webkit-details-marker]:hidden">
+                    {pick(locale, column.title.en, column.title.es)}
+                    <span aria-hidden="true" className="text-lg transition-transform duration-200 group-open:rotate-45">
+                      +
+                    </span>
+                  </summary>
+                  <nav
+                    aria-label={pick(locale, column.title.en, column.title.es)}
+                    className="pb-3"
+                  >
+                    <ul className="space-y-1">
+                      {column.items.map((item) => (
+                        <li key={`${column.title.en}-${item.href}`}>
+                          <Link
+                            href={localizedHref(locale, item.href)}
+                            prefetch={false}
+                            className="flex min-h-10 items-center text-sm text-on-dark-soft transition-colors hover:text-on-dark"
+                          >
+                            {label(item, locale)}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </nav>
+                </details>
+              ))}
+            </div>
+
+            <div className="hidden sm:contents">
+              {COLUMNS.map((column) => (
+                <nav key={column.title.en} aria-label={pick(locale, column.title.en, column.title.es)}>
+                  <h2 className="eyebrow mb-4 text-on-dark-soft">
+                    {pick(locale, column.title.en, column.title.es)}
+                  </h2>
+                  <ul className="space-y-1">
+                    {column.items.map((item) => (
+                      <li key={`${column.title.en}-${item.href}`}>
+                        <Link
+                          href={localizedHref(locale, item.href)}
+                          prefetch={false}
+                          className="flex min-h-11 items-center text-sm text-on-dark-soft transition-colors hover:text-on-dark"
+                        >
+                          {label(item, locale)}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </nav>
+              ))}
+            </div>
           </div>
 
           <Rule className="my-12 opacity-45" />

@@ -50,7 +50,7 @@ export default async function ProductPage({ params }: Props) {
   ];
 
   return (
-    <>
+    <div className="pb-24 lg:pb-0">
       {/* JSON estático generado en servidor, sin datos de usuario — no hay
           riesgo de inyección al usar dangerouslySetInnerHTML aquí. */}
       <script
@@ -178,6 +178,20 @@ export default async function ProductPage({ params }: Props) {
           </div>
         </Container>
       </Section>
-    </>
+      {/* La acción sigue disponible después de explorar ingredientes y productos
+          relacionados. Solo aparece en móvil, donde el CTA de la ficha deja de
+          estar visible al avanzar por la página. */}
+      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-ivory/95 px-5 py-3 shadow-drawer backdrop-blur-sm lg:hidden [padding-bottom:max(0.75rem,env(safe-area-inset-bottom))]">
+        <div className="mx-auto flex max-w-md items-center gap-3">
+          <div className="min-w-0 shrink">
+            <p className="truncate text-meta font-semibold text-ink">{product.name}</p>
+            <p className="text-caption text-body">
+              {formatMoney(product.price, 'USD', lang === 'es' ? 'es-US' : 'en-US')}
+            </p>
+          </div>
+          <QuickAdd slug={product.slug} productName={product.name} locale={lang} inStock={product.inStock} />
+        </div>
+      </div>
+    </div>
   );
 }

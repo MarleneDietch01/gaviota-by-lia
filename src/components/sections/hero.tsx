@@ -67,7 +67,7 @@ export async function Hero({ locale }: { locale: Locale }) {
             Primero en el DOM: el h1 no debe ir después de la imagen. En móvil
             se reordena visualmente con `order`, y como la fotografía no es
             focalizable el orden de tabulación no se ve afectado. */}
-        <div className="order-2 flex items-center px-5 pb-14 pt-10 sm:px-8 lg:order-1 lg:px-12 lg:py-24 xl:pl-16 xl:pr-14">
+        <div className="order-2 flex items-center px-5 pb-12 pt-7 sm:px-8 lg:order-1 lg:px-12 lg:py-24 xl:pl-16 xl:pr-14">
           <div className="w-full max-w-[34rem] lg:max-w-[32rem]">
             {c.eyebrow ? (
               <p className="eyebrow hero-rise mb-4 text-rose lg:mb-5">{c.eyebrow}</p>
@@ -90,7 +90,7 @@ export async function Hero({ locale }: { locale: Locale }) {
 
             {c.body ? (
               <p
-                className="hero-rise mt-6 max-w-[30rem] text-lead text-body lg:mt-7"
+                className="hero-rise mt-5 max-w-[30rem] text-lead text-body lg:mt-7"
                 style={{ '--rise-delay': '160ms' } as React.CSSProperties}
               >
                 {c.body}
@@ -159,7 +159,9 @@ export async function Hero({ locale }: { locale: Locale }) {
               // debajo del pliegue. Con 48 la fotografía sigue siendo la
               // protagonista y el botón asoma sin necesidad de scroll.
               className={
-                'h-[clamp(17rem,48svh,26rem)] w-full object-cover ' +
+                // En 390×844 deja el CTA primario completo dentro del primer
+                // pliegue, sin quitar protagonismo a la fotografía.
+                'h-[clamp(15rem,38svh,20rem)] w-full object-cover ' +
                 'object-[50%_30%] sm:h-[clamp(22rem,50svh,32rem)] sm:object-[50%_26%] ' +
                 'lg:h-full lg:rounded-bl-[3rem] lg:object-[50%_34%]'
               }
