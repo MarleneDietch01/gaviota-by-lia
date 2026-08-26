@@ -37,6 +37,13 @@ import type { NextConfig } from 'next';
  *     no pasa por el servidor. Sin este dominio, restablecer la contraseña se
  *     rompería en silencio (la petición fallaría por CSP, no por un error de
  *     Supabase) — se detectó probando la propia CSP, no antes.
+ *   · *.supabase.co en `img-src` -> el catálogo (`lib/catalog/products.ts`)
+ *     sirve las fotos subidas desde /admin/products directo del bucket
+ *     público de Storage (`https://<proyecto>.supabase.co/storage/v1/...`),
+ *     no de `public/`. Sin este dominio la imagen se pide igual pero el
+ *     navegador la bloquea por CSP — se ve como una foto rota en la tienda,
+ *     no como un error de subida. Detectado subiendo una foto real y
+ *     comprobando el resultado en /shop, no asumido.
  * -----------------------------------------------------------------------------
  */
 const isDev = process.env.NODE_ENV === 'development';
@@ -45,7 +52,7 @@ const cspDirectives = [
   `default-src 'self'`,
   `script-src 'self' 'unsafe-inline' https://js.stripe.com https://www.paypal.com https://www.paypalobjects.com${isDev ? " 'unsafe-eval'" : ''}`,
   `style-src 'self' 'unsafe-inline'`,
-  `img-src 'self' blob: data: https://www.paypalobjects.com`,
+  `img-src 'self' blob: data: https://www.paypalobjects.com https://*.supabase.co`,
   `font-src 'self' data:`,
   `connect-src 'self' https://api.stripe.com https://*.paypal.com https://*.paypalobjects.com https://*.supabase.co`,
   `frame-src 'self' https://js.stripe.com https://*.paypal.com`,
@@ -121,6 +128,18 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
 
   images: {
+    // Fotos de producto subidas desde /admin/products viven en el bucket
+    // público de Supabase Storage, no en `public/` — sin esto, `next/image`
+    // rechaza la URL entera y la foto sale rota en la tienda (ver el
+    // comentario de `img-src` en la CSP de arriba: es el mismo bug con dos
+    // capas, next/image y CSP, y hay que arreglar ambas).
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '*.supabase.co',
+        pathname: '/storage/v1/object/public/**',
+      },
+    ],
     formats: ['image/avif', 'image/webp'],
     // Ajustados a los puntos de ruptura reales del diseño (360/390/430/768/
     // 1024/1280/1536), no a los valores por defecto.
