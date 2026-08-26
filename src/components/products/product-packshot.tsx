@@ -99,7 +99,7 @@ export function ProductPackshot({
             className="pointer-events-none absolute inset-0 mix-blend-overlay"
             style={{
               background:
-                'linear-gradient(115deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0.08) 26%, rgba(0,0,0,0) 52%, rgba(75,32,45,0.10) 82%, rgba(75,32,45,0.20) 100%)',
+                'linear-gradient(115deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0.08) 26%, rgba(0,0,0,0) 52%, rgba(110,34,57,0.10) 82%, rgba(110,34,57,0.20) 100%)',
             }}
           />
         </div>
@@ -112,7 +112,7 @@ export function ProductPackshot({
         style={{
           transform: 'translateX(-50%) rotateX(85deg)',
           background:
-            'radial-gradient(ellipse at center, rgb(75 32 45 / 0.4) 0%, rgb(75 32 45 / 0.16) 45%, rgb(75 32 45 / 0) 75%)',
+            'radial-gradient(ellipse at center, rgb(110 34 57 / 0.4) 0%, rgb(110 34 57 / 0.16) 45%, rgb(110 34 57 / 0) 75%)',
         }}
       />
       {/* Sombra ambiental: más grande, más suave, más clara — refuerza el asiento en el suelo. */}
@@ -122,7 +122,7 @@ export function ProductPackshot({
         style={{
           transform: 'translateX(-50%) rotateX(85deg)',
           background:
-            'radial-gradient(ellipse at center, rgb(75 32 45 / 0.16) 0%, rgb(75 32 45 / 0) 70%)',
+            'radial-gradient(ellipse at center, rgb(110 34 57 / 0.16) 0%, rgb(110 34 57 / 0) 70%)',
         }}
       />
     </div>

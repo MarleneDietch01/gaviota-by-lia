@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils/cn';
  * Contraste medido:
  *   primary   texto blanco sobre rose #A83D60 ....... 5.91:1  AA
  *   secondary texto ink sobre marfil, borde ink ..... 14.27:1 AA
- *   onDark    texto wine sobre blanco cálido ........ 13.41:1 AA
+ *   onDark    texto wine (= rose-ink) sobre blanco cálido .. 10.61:1 AA
  *   quiet     rose sobre marfil ...................... 5.59:1 AA
  *
  * `active:scale` se aplica solo con motion-safe: en reduced-motion el botón

@@ -16,14 +16,26 @@
   --color-ivory: #fbf6f2; /* marfil cálido — superficie por defecto */
   --color-white-warm: #fffdfc; /* blanco cálido — respiro entre marfiles */
   --color-powder: #ebc4cb; /* rosa empolvado — acento, nunca 2 seguidas */
-  --color-wine: #4b202d; /* vino oscuro — bloques de contraste */
+  /* Superficie profunda de contraste (footer, Comunidad, bloque editorial).
+     Corregida: el valor anterior (#4b202d, "vino"/"ciruela") venía de una
+     síntesis de dirección de arte (docs/DESIGN_DIRECTION.md §2/§4) que nunca
+     se cerró contra la fuente que manda — el packaging físico es rosa/dorado/
+     blanco (docs/AUDIT.md §13: "la paleta propuesta para la web nace del
+     envase real"). Ahora es exactamente `rose-ink` (mismo matiz de marca, solo
+     oscurecido): sigue dando el contraste "profundo" que pedía la síntesis,
+     pero sin inventar un color ajeno al envase. 10.61:1 sobre `on-dark`,
+     6.81:1 sobre `on-dark-soft` — ambos AA. */
+  --color-wine: #6e2239;
 
   /* --- Marca ----------------------------------------------------------------
      rose ...... 5.59:1 sobre marfil, 5.91:1 sobre blanco. Texto normal OK.
                  3.80:1 sobre rosa empolvado -> NO usar ahí en texto pequeño.
      rose-deep . 5.24:1 sobre rosa empolvado. Es la variante para eyebrows y
                  enlaces cuando la superficie es `powder`.
-     rose-ink .. estado :active y hover del botón primario.                    */
+     rose-ink .. estado :active y hover del botón primario, y el mismo valor
+                 que `wine` (ver arriba) — es a propósito, no una duplicación
+                 accidental: la superficie profunda del sitio ahora es
+                 literalmente este mismo tono de marca, no un color aparte.  */
   --color-rose: #a83d60;
   --color-rose-deep: #8a2c49;
   --color-rose-ink: #6e2239;
@@ -42,7 +54,7 @@
   --color-body: #5e434d;
   --color-muted: #7a5c67;
 
-  /* Sobre vino: polvo 8.61:1, blanco 13.41:1. Ambos AA holgado. */
+  /* Sobre vino (ahora `rose-ink`): polvo 6.81:1, blanco 10.61:1. Ambos AA holgado. */
   --color-on-dark: #fffdfc;
   --color-on-dark-soft: #ebc4cb;
 
@@ -102,9 +114,10 @@
   --radius-arch: 20px;
 
   /* --- Sombras --------------------------------------------------------------
-     Muy bajas y teñidas de vino: una sombra gris sobre marfil se ve sucia.     */
-  --shadow-subtle: 0 1px 2px rgb(75 32 45 / 0.05);
-  --shadow-lift: 0 10px 30px -12px rgb(75 32 45 / 0.18);
+     Muy bajas y teñidas de vino (ahora `rose-ink`): una sombra gris sobre
+     marfil se ve sucia.                                                       */
+  --shadow-subtle: 0 1px 2px rgb(110 34 57 / 0.05);
+  --shadow-lift: 0 10px 30px -12px rgb(110 34 57 / 0.18);
   --shadow-drawer: 0 0 60px rgb(48 33 38 / 0.28);
 
   /* --- Anchos máximos ------------------------------------------------------- */
