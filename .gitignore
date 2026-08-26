@@ -28,6 +28,7 @@ coverage/
 test-results/
 playwright-report/
 playwright/.cache/
+.visual-check/
 
 # Supabase
 supabase/.branches/

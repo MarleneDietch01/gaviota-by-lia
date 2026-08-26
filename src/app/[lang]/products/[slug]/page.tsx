@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { Clock } from 'lucide-react';
+import { Clock, ShieldCheck, Sparkles, Truck } from 'lucide-react';
 import { Breadcrumbs } from '@/components/navigation/breadcrumbs';
 import { ProductCard } from '@/components/products/product-card';
 import { QuickAdd, FavoriteToggle } from '@/components/products/product-actions';
@@ -48,6 +48,23 @@ export default async function ProductPage({ params }: Props) {
     { label: categoryName, href: `/categories/${category.slug}` },
     { label: product.name },
   ];
+  const trustPoints = [
+    {
+      icon: ShieldCheck,
+      title: pick(lang, 'Secure purchase', 'Compra segura'),
+      body: pick(lang, 'Protected checkout', 'Pago protegido'),
+    },
+    {
+      icon: Truck,
+      title: pick(lang, 'Tracked shipping', 'Envíos con seguimiento'),
+      body: pick(lang, 'Estimated 5–6 business days', 'Estimado: 5–6 días hábiles'),
+    },
+    {
+      icon: Sparkles,
+      title: pick(lang, 'Made for ritual', 'Hecho para tu ritual'),
+      body: pick(lang, 'Body care, at your pace', 'Cuidado corporal a tu ritmo'),
+    },
+  ] as const;
 
   return (
     <div className="pb-24 lg:pb-0">
@@ -73,7 +90,7 @@ export default async function ProductPage({ params }: Props) {
       <Section tone="ivory" padding="compact">
         <Container>
           <Breadcrumbs items={breadcrumbItems} locale={lang} />
-          <div className="mt-6 grid gap-10 lg:grid-cols-2 lg:items-center lg:gap-16">
+          <div className="mt-6 grid gap-10 lg:grid-cols-2 lg:items-center lg:gap-20">
             <ProductPackshot
               src={product.image}
               alt={product.imageAlt}
@@ -82,7 +99,7 @@ export default async function ProductPage({ params }: Props) {
               priority
             />
 
-            <div className="self-center">
+            <div className="self-center lg:py-5">
               <p className="eyebrow hero-rise text-rose">
                 {pick(lang, 'Body care', 'Cuidado corporal')}
               </p>
@@ -128,37 +145,66 @@ export default async function ProductPage({ params }: Props) {
                 <QuickAdd slug={product.slug} productName={product.name} locale={lang} inStock={product.inStock} />
                 <FavoriteToggle slug={product.slug} productName={product.name} locale={lang} />
               </div>
+
+              {/* Prueba de compra: datos operativos reales, visibles antes de
+                  pedir la acción. No se añaden urgencias ni inventario falso. */}
+              <ul className="mt-8 grid max-w-xl gap-4 border-y border-line py-5 sm:grid-cols-3 sm:gap-0">
+                {trustPoints.map((point) => {
+                  const Icon = point.icon;
+                  return (
+                    <li key={point.title} className="flex gap-3 sm:px-4 sm:first:pl-0 sm:not-last:border-r sm:not-last:border-line">
+                      <Icon className="mt-0.5 size-4 shrink-0 text-rose" aria-hidden="true" />
+                      <div>
+                        <p className="text-meta font-semibold leading-snug text-ink">{point.title}</p>
+                        <p className="mt-0.5 text-caption leading-snug text-body">{point.body}</p>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
             </div>
           </div>
         </Container>
       </Section>
       {product.ingredients || product.precautions || product.usageInstructions ? (
         <Section tone="powder">
-          <Container size="narrow">
-            <h2 className="text-h2">{pick(lang, 'Good to know', 'Lo que debes saber')}</h2>
-            <Rule className="my-8" />
-            <dl className="divide-y divide-line-strong/60 rounded-sm bg-white-warm">
-              {product.usageInstructions ? (
-                <div className="p-6 sm:p-7">
-                  <dt className="eyebrow text-rose">{pick(lang, 'How to use', 'Modo de uso')}</dt>
-                  <dd className="mt-3 text-body-sm leading-relaxed text-body">
-                    {product.usageInstructions}
-                  </dd>
-                </div>
-              ) : null}
-              {product.ingredients ? (
-                <div className="p-6 sm:p-7">
-                  <dt className="eyebrow text-rose">{pick(lang, 'Ingredients', 'Ingredientes')}</dt>
-                  <dd className="mt-3 text-body-sm leading-relaxed text-body">{product.ingredients}</dd>
-                </div>
-              ) : null}
-              {product.precautions ? (
-                <div className="p-6 sm:p-7">
-                  <dt className="eyebrow text-rose">{pick(lang, 'Precautions', 'Precauciones')}</dt>
-                  <dd className="mt-3 text-body-sm leading-relaxed text-body">{product.precautions}</dd>
-                </div>
-              ) : null}
-            </dl>
+          <Container>
+            <div className="grid gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-20">
+              <div className="max-w-md">
+                <p className="eyebrow mb-4 text-rose-deep">{pick(lang, 'The ritual', 'El ritual')}</p>
+                <h2 className="text-h2">{pick(lang, 'Make time for your skin.', 'Haz espacio para tu piel.')}</h2>
+                <p className="mt-5 text-lead text-body">
+                  {pick(
+                    lang,
+                    'A few intentional minutes can turn everyday body care into a moment of your own.',
+                    'Unos minutos intencionales pueden convertir el cuidado corporal de cada día en un momento tuyo.',
+                  )}
+                </p>
+              </div>
+
+              <dl className="divide-y divide-line-strong/60 rounded-sm bg-white-warm shadow-subtle">
+                {product.usageInstructions ? (
+                  <div className="p-6 sm:p-8">
+                    <dt className="eyebrow text-rose">{pick(lang, 'How to use', 'Modo de uso')}</dt>
+                    <dd className="mt-3 text-body-sm leading-relaxed text-body">
+                      {product.usageInstructions}
+                    </dd>
+                  </div>
+                ) : null}
+                {product.ingredients ? (
+                  <div className="p-6 sm:p-8">
+                    <dt className="eyebrow text-rose">{pick(lang, 'Ingredients', 'Ingredientes')}</dt>
+                    <dd className="mt-3 text-body-sm leading-relaxed text-body">{product.ingredients}</dd>
+                  </div>
+                ) : null}
+                {product.precautions ? (
+                  <div className="p-6 sm:p-8">
+                    <dt className="eyebrow text-rose">{pick(lang, 'Precautions', 'Precauciones')}</dt>
+                    <dd className="mt-3 text-body-sm leading-relaxed text-body">{product.precautions}</dd>
+                  </div>
+                ) : null}
+              </dl>
+            </div>
           </Container>
         </Section>
       ) : null}
@@ -169,7 +215,15 @@ export default async function ProductPage({ params }: Props) {
       </Section>
       <Section tone="white">
         <Container>
-          <h2 className="text-h2">{pick(lang, 'You may also like', 'También puede gustarte')}</h2>
+          <p className="eyebrow text-rose">{pick(lang, 'Your next step', 'Tu siguiente paso')}</p>
+          <h2 className="mt-4 text-h2">{pick(lang, 'Complete your ritual.', 'Completa tu ritual.')}</h2>
+          <p className="mt-4 max-w-xl text-lead text-body">
+            {pick(
+              lang,
+              'Pair it with other body-care essentials, chosen to accompany your routine.',
+              'Acompáñalo con otros esenciales de cuidado corporal para seguir construyendo tu rutina.',
+            )}
+          </p>
           <Rule className="my-8" />
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {related.map((item) => (
