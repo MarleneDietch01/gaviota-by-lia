@@ -186,6 +186,14 @@ const STATIC_SECONDARY_IMAGES: Record<string, { path: string; alt: string; width
       height: 1402,
     },
   ],
+  'aceite-anti-estrias': [
+    {
+      path: '/images/gaviota/products/modelo.png',
+      alt: 'Mujer aplicándose el Aceite Anti-Estrías Gaviota by Lia en el brazo',
+      width: 1003,
+      height: 1568,
+    },
+  ],
 };
 
 /** Color del ciclorama de las 6 fotos ya existentes. Ver nota de simplificación arriba. */
