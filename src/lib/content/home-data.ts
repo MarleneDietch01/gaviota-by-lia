@@ -183,55 +183,87 @@ export interface RitualStep {
   readonly image: string;
   readonly alt: Bilingual;
   readonly focal: string;
+  /** `contain` + `bg`: para un packshot de estudio en vez de una foto de estilo
+   *  de vida a sangre (ver nota de la Fase 3 más abajo). Por defecto `cover`. */
+  readonly fit?: 'cover' | 'contain';
+  readonly bg?: string;
 }
 
+/**
+ * FASE 3 — Corrección de fotos, agosto 2026.
+ *
+ * Las tres fotos de estilo de vida disponibles (`ritual-exfolia.jpg`,
+ * `ritual-hidrata.jpg`, `ritual-labios.jpg`) NO mostraban el producto que su
+ * paso llevaba asignado — verificado leyendo la etiqueta de cada frasco en la
+ * foto, no asumido por el nombre del archivo:
+ *   · `ritual-exfolia.jpg` (asignada a "Exfolia") muestra el frasco de
+ *     CREMA HIDRATANTE aplicado en la pierna.
+ *   · `ritual-hidrata.jpg` (asignada a "Hidrata") muestra un frasco de
+ *     CREMA ANTI-ESTRIAS aplicado en el hombro.
+ *   · `ritual-labios.jpg` (asignada a "Nutre" / Aceite Anti-Estrías) muestra
+ *     un producto para labios — ninguna relación con un aceite corporal.
+ *
+ * Ninguna de las tres foto realmente el Exfoliante de Coco. Reasignación:
+ *   · "Exfolia" pasa a usar el packshot de estudio del Exfoliante de Coco
+ *     (`object-contain`, no recorta el tarro) — decisión explícita de la
+ *     dueña: no había foto de estilo de vida real del exfoliante, y prefirió
+ *     el packshot correcto a mantener el frasco equivocado.
+ *   · "Hidrata" pasa a `ritual-exfolia.jpg`, que sí muestra Crema Hidratante.
+ *   · "Nutre" pasa a `ritual-hidrata.jpg` (frasco de estrías, aunque en crema
+ *     y no en el aceite real) — mismo criterio ya aprobado por la dueña para
+ *     `modelo.png` en la galería de Aceite Anti-Estrías.
+ *   · `ritual-labios.jpg` deja de usarse aquí: no hay ningún producto labial
+ *     en el catálogo (verificado), así que no se inventa uno.
+ */
 export const RITUAL_STEPS: readonly RitualStep[] = [
   {
     n: '01',
     verb: { en: 'Exfoliate', es: 'Exfolia' },
     body: {
-      en: 'Massage onto damp skin in circular motions, two or three times a week.',
-      es: 'Sobre la piel húmeda, en movimientos circulares. Dos o tres veces por semana.',
+      en: 'Massage onto damp skin using gentle circular motions, then rinse thoroughly.',
+      es: 'Masajea sobre la piel húmeda con movimientos circulares suaves y enjuaga bien.',
     },
     product: { en: 'Coconut Body Scrub', es: 'Exfoliante de Coco' },
     href: '/products/exfoliante-de-coco',
-    image: '/images/gaviota/editorial/ritual-exfolia.jpg',
-    focal: '50% 55%',
+    image: '/images/gaviota/products/exfoliante-de-coco-studio.jpg',
+    focal: '50% 50%',
+    fit: 'contain',
+    bg: '#ffffff',
     alt: {
-      en: 'Woman applying Gaviota by Lia scrub to her leg',
-      es: 'Mujer aplicando exfoliante Gaviota by Lia en su pierna',
+      en: 'Jar of Gaviota by Lia Coconut Body Scrub',
+      es: 'Tarro del Exfoliante de Coco Gaviota by Lia',
     },
   },
   {
     n: '02',
     verb: { en: 'Hydrate', es: 'Hidrata' },
     body: {
-      en: 'Apply while skin is still warm, so hydration stays where it belongs.',
-      es: 'Con la piel aún templada, para que la hidratación se quede donde tiene que estar.',
+      en: 'Smooth onto clean skin and massage gently until fully absorbed.',
+      es: 'Aplica sobre la piel limpia y masajea suavemente hasta su total absorción.',
     },
     product: { en: 'Hydrating Body Cream', es: 'Crema Hidratante' },
     href: '/products/crema-hidratante',
-    image: '/images/gaviota/editorial/ritual-hidrata.jpg',
-    focal: '45% 42%',
+    image: '/images/gaviota/editorial/ritual-exfolia.jpg',
+    focal: '50% 55%',
     alt: {
-      en: 'Woman applying Gaviota by Lia body cream to her shoulder',
-      es: 'Mujer aplicando crema hidratante Gaviota by Lia sobre su hombro',
+      en: 'Woman applying Gaviota by Lia Hydrating Body Cream to her leg',
+      es: 'Mujer aplicando la Crema Hidratante Gaviota by Lia en la pierna',
     },
   },
   {
     n: '03',
     verb: { en: 'Nourish', es: 'Nutre' },
     body: {
-      en: 'A few drops wherever your skin asks for them — the step that turns routine into ritual.',
-      es: 'Unas gotas donde la piel lo pida. El paso que convierte la rutina en ritual.',
+      en: 'Massage a few drops onto clean skin, focusing on areas that need extra care.',
+      es: 'Masajea unas gotas sobre la piel limpia, especialmente en las zonas que necesitan mayor cuidado.',
     },
     product: { en: 'Stretch Mark Body Oil', es: 'Aceite Anti-Estrías' },
     href: '/products/aceite-anti-estrias',
-    image: '/images/gaviota/editorial/ritual-labios.jpg',
-    focal: '52% 38%',
+    image: '/images/gaviota/editorial/ritual-hidrata.jpg',
+    focal: '45% 42%',
     alt: {
-      en: 'Woman holding a Gaviota by Lia product',
-      es: 'Mujer sosteniendo un producto Gaviota by Lia',
+      en: 'Woman applying a Gaviota by Lia stretch-mark care product to her shoulder',
+      es: 'Mujer aplicándose un producto de cuidado para estrías Gaviota by Lia en el hombro',
     },
   },
 ];

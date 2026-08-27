@@ -46,7 +46,7 @@ export async function RitualSteps({ locale }: { locale: Locale }) {
 
               <div className="relative z-10">
                 <div className="frame-arch">
-                  <div className="aspect-[4/5]">
+                  <div className="aspect-[4/5]" style={step.bg ? { backgroundColor: step.bg } : undefined}>
                     <EditorialImage
                       src={step.image}
                       alt={t(step.alt, locale)}
@@ -54,6 +54,7 @@ export async function RitualSteps({ locale }: { locale: Locale }) {
                       height={2000}
                       sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 31vw"
                       focal={step.focal}
+                      {...(step.fit ? { fit: step.fit } : {})}
                     />
                   </div>
                 </div>
