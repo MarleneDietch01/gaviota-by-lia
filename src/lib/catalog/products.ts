@@ -203,7 +203,10 @@ const LEGACY_IMAGE_BACKGROUND: Record<string, string> = {
   'crema-hidratante': '#ffffff',
   'serum-vellos-encarnados': '#ffffff',
   'aceite-anti-estrias-masculino': '#ffffff',
-  'tonico-para-barba': '#f0eeee',
+  // La foto principal actual viene de Storage sobre lienzo blanco. El gris
+  // heredado del packshot anterior quedaba visible arriba y abajo dentro del
+  // tile 4:5, creando dos franjas que hacían parecer la imagen recortada.
+  'tonico-para-barba': '#ffffff',
 };
 
 /** Fallback para productos dados de alta desde admin sin foto todavía (token `white-warm`). */
