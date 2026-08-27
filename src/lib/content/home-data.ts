@@ -190,30 +190,13 @@ export interface RitualStep {
 }
 
 /**
- * FASE 3 — Corrección de fotos, agosto 2026.
+ * FASE 3 — Mapeo aprobado de ritual, agosto 2026.
  *
- * Las tres fotos de estilo de vida disponibles (`ritual-exfolia.jpg`,
- * `ritual-hidrata.jpg`, `ritual-labios.jpg`) NO mostraban el producto que su
- * paso llevaba asignado — verificado leyendo la etiqueta de cada frasco en la
- * foto, no asumido por el nombre del archivo:
- *   · `ritual-exfolia.jpg` (asignada a "Exfolia") muestra el frasco de
- *     CREMA HIDRATANTE aplicado en la pierna.
- *   · `ritual-hidrata.jpg` (asignada a "Hidrata") muestra un frasco de
- *     CREMA ANTI-ESTRIAS aplicado en el hombro.
- *   · `ritual-labios.jpg` (asignada a "Nutre" / Aceite Anti-Estrías) muestra
- *     un producto para labios — ninguna relación con un aceite corporal.
- *
- * Ninguna de las tres foto realmente el Exfoliante de Coco. Reasignación:
- *   · "Exfolia" pasa a usar el packshot de estudio del Exfoliante de Coco
- *     (`object-contain`, no recorta el tarro) — decisión explícita de la
- *     dueña: no había foto de estilo de vida real del exfoliante, y prefirió
- *     el packshot correcto a mantener el frasco equivocado.
- *   · "Hidrata" pasa a `ritual-exfolia.jpg`, que sí muestra Crema Hidratante.
- *   · "Nutre" pasa a `ritual-hidrata.jpg` (frasco de estrías, aunque en crema
- *     y no en el aceite real) — mismo criterio ya aprobado por la dueña para
- *     `modelo.png` en la galería de Aceite Anti-Estrías.
- *   · `ritual-labios.jpg` deja de usarse aquí: no hay ningún producto labial
- *     en el catálogo (verificado), así que no se inventa uno.
+ * Las rutas y las mayúsculas son contractuales. Se inspeccionaron visualmente
+ * antes de asignarlas; no se mueven ni renombran los archivos:
+ *   · modelo3.png → Exfoliate → Coconut Body Scrub
+ *   · Modelo4.png → Hydrate → Hydrating Body Cream
+ *   · Modelo5.png → Nourish → Stretch Mark Body Oil
  */
 export const RITUAL_STEPS: readonly RitualStep[] = [
   {
@@ -221,17 +204,15 @@ export const RITUAL_STEPS: readonly RitualStep[] = [
     verb: { en: 'Exfoliate', es: 'Exfolia' },
     body: {
       en: 'Massage onto damp skin using gentle circular motions, then rinse thoroughly.',
-      es: 'Masajea sobre la piel húmeda con movimientos circulares suaves y enjuaga bien.',
+      es: 'Masajea sobre la piel húmeda con movimientos circulares suaves y luego enjuaga completamente.',
     },
     product: { en: 'Coconut Body Scrub', es: 'Exfoliante de Coco' },
     href: '/products/exfoliante-de-coco',
-    image: '/images/gaviota/products/exfoliante-de-coco-studio.jpg',
+    image: '/images/gaviota/products/modelo3.png',
     focal: '50% 50%',
-    fit: 'contain',
-    bg: '#ffffff',
     alt: {
-      en: 'Jar of Gaviota by Lia Coconut Body Scrub',
-      es: 'Tarro del Exfoliante de Coco Gaviota by Lia',
+      en: 'Woman applying Gaviota by Lia Coconut Body Scrub to her leg',
+      es: 'Mujer aplicando el exfoliante corporal de coco de Gaviota by Lia en su pierna.',
     },
   },
   {
@@ -239,15 +220,15 @@ export const RITUAL_STEPS: readonly RitualStep[] = [
     verb: { en: 'Hydrate', es: 'Hidrata' },
     body: {
       en: 'Smooth onto clean skin and massage gently until fully absorbed.',
-      es: 'Aplica sobre la piel limpia y masajea suavemente hasta su total absorción.',
+      es: 'Aplica sobre la piel limpia y masajea suavemente hasta que se absorba por completo.',
     },
     product: { en: 'Hydrating Body Cream', es: 'Crema Hidratante' },
     href: '/products/crema-hidratante',
-    image: '/images/gaviota/editorial/ritual-exfolia.jpg',
-    focal: '50% 55%',
+    image: '/images/gaviota/products/Modelo4.png',
+    focal: '50% 48%',
     alt: {
-      en: 'Woman applying Gaviota by Lia Hydrating Body Cream to her leg',
-      es: 'Mujer aplicando la Crema Hidratante Gaviota by Lia en la pierna',
+      en: 'Woman applying Gaviota by Lia Hydrating Body Cream to her upper arm.',
+      es: 'Mujer aplicando la crema corporal hidratante de Gaviota by Lia en su brazo.',
     },
   },
   {
@@ -259,11 +240,11 @@ export const RITUAL_STEPS: readonly RitualStep[] = [
     },
     product: { en: 'Stretch Mark Body Oil', es: 'Aceite Anti-Estrías' },
     href: '/products/aceite-anti-estrias',
-    image: '/images/gaviota/editorial/ritual-hidrata.jpg',
-    focal: '45% 42%',
+    image: '/images/gaviota/products/Modelo5.png',
+    focal: '50% 48%',
     alt: {
-      en: 'Woman applying a Gaviota by Lia stretch-mark care product to her shoulder',
-      es: 'Mujer aplicándose un producto de cuidado para estrías Gaviota by Lia en el hombro',
+      en: 'Woman applying Gaviota by Lia Stretch Mark Body Oil to her forearm with a dropper.',
+      es: 'Mujer aplicando el aceite antiestrías de Gaviota by Lia en su antebrazo con un gotero.',
     },
   },
 ];
