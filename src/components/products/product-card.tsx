@@ -99,7 +99,7 @@ export function ProductCard({
             width={secondImage.width}
             height={secondImage.height}
             sizes="(max-width: 639px) 85vw, (max-width: 1023px) 44vw, 23vw"
-            className="absolute inset-0 opacity-0 transition-opacity duration-300 ease-editorial motion-safe:group-hover:opacity-100"
+            className="absolute inset-0 object-cover! opacity-0 transition-opacity duration-300 ease-editorial motion-safe:group-hover:opacity-100"
           />
         ) : null}
 

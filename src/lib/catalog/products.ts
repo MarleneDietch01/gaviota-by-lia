@@ -178,6 +178,22 @@ const LEGACY_IMAGE: Record<string, { path: string; alt: string; width: number; h
  * cuando el producto ya tiene fotos reales en `product_images`.
  */
 const STATIC_SECONDARY_IMAGES: Record<string, { path: string; alt: string; width: number; height: number }[]> = {
+  'exfoliante-de-coco': [
+    {
+      path: '/images/gaviota/products/modelo3.png',
+      alt: 'Mujer utilizando el Exfoliante de Coco Gaviota by Lia en la pierna',
+      width: 1122,
+      height: 1402,
+    },
+  ],
+  'crema-hidratante': [
+    {
+      path: '/images/gaviota/products/Modelo4.png',
+      alt: 'Mujer aplicándose la Crema Hidratante Gaviota by Lia en el brazo',
+      width: 1122,
+      height: 1402,
+    },
+  ],
   'tonico-para-barba': [
     {
       path: '/images/gaviota/products/modelo2.png',
@@ -188,10 +204,10 @@ const STATIC_SECONDARY_IMAGES: Record<string, { path: string; alt: string; width
   ],
   'aceite-anti-estrias': [
     {
-      path: '/images/gaviota/products/modelo.png',
+      path: '/images/gaviota/products/Modelo5.png',
       alt: 'Mujer aplicándose el Aceite Anti-Estrías Gaviota by Lia en el brazo',
-      width: 1003,
-      height: 1568,
+      width: 1122,
+      height: 1402,
     },
   ],
 };
