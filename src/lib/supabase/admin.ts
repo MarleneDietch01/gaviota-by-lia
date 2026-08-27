@@ -18,6 +18,7 @@ import type { Database } from '@/types/database.types';
  *   - Tareas cron (liberar reservas, caducar carritos)
  *   - Creación de pedidos (escribe en tablas donde el cliente no tiene INSERT)
  *   - Carrito anónimo (identificado por cookie httpOnly, no por sesión)
+ *   - Formularios públicos mediados por servidor y protegidos contra abuso
  *
  * Para todo lo demás se usa `createServerSupabaseClient()`, que respeta RLS.
  */

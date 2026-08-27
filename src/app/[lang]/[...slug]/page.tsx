@@ -6,6 +6,8 @@ import { LinkButton } from '@/components/ui/button';
 import { Container, Rule, Section } from '@/components/ui/layout-primitives';
 import { Reveal } from '@/components/ui/reveal';
 import { SavedList } from '@/components/commerce/saved-list';
+import { ContactForm } from '@/components/contact/contact-form';
+import { Clock3, Mail, Phone } from 'lucide-react';
 import { getAllProducts } from '@/lib/catalog/products';
 import { getShippingConfig } from '@/lib/commerce/checkout';
 import { RITUAL_NEEDS } from '@/lib/content/home-data';
@@ -126,6 +128,85 @@ export default async function CatchAllPage({ params }: Props) {
                 <NeedCard need={need} locale={lang} />
               </Reveal>
             ))}
+          </div>
+        </Container>
+      </Section>
+    );
+  }
+
+  if (key === 'contact') {
+    const page = ROUTE_PAGES[key]!;
+    return (
+      <Section tone="ivory">
+        <Container>
+          <header className="mx-auto mb-10 max-w-2xl text-center sm:mb-14">
+            <p className="eyebrow text-rose">{localizedCopy(page.eyebrow, lang)}</p>
+            <h1 className="mt-4 text-h1">{localizedCopy(page.title, lang)}</h1>
+            <p className="mt-4 text-lead text-body">{localizedCopy(page.body[0]!, lang)}</p>
+          </header>
+
+          <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1.35fr)_minmax(19rem,0.65fr)] lg:gap-8">
+            <Reveal className="rounded-md border border-line bg-white-warm p-5 shadow-subtle sm:p-8">
+              <ContactForm locale={lang} />
+            </Reveal>
+
+            <Reveal delay={80}>
+              <aside className="on-dark rounded-md bg-wine p-6 text-on-dark sm:p-8">
+                <p className="eyebrow text-on-dark-soft">
+                  {lang === 'es' ? 'Contacto directo' : 'Direct contact'}
+                </p>
+                <h2 className="mt-3 text-h3 text-on-dark">
+                  {lang === 'es' ? 'Estamos para ayudarte' : 'We are here to help'}
+                </h2>
+                <p className="mt-4 text-sm leading-relaxed text-on-dark-soft">
+                  {lang === 'es'
+                    ? 'Si prefieres hablar directamente, también puedes llamarnos, escribirnos o usar el botón de WhatsApp.'
+                    : 'If you prefer direct support, you can also call, email, or use the WhatsApp button.'}
+                </p>
+
+                <ul className="mt-7 space-y-5 text-sm">
+                  <li className="flex gap-3">
+                    <Phone className="mt-0.5 size-5 shrink-0 text-on-dark-soft" aria-hidden="true" />
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-[0.1em] text-on-dark-soft">
+                        {lang === 'es' ? 'Teléfono / WhatsApp' : 'Phone / WhatsApp'}
+                      </p>
+                      <a className="mt-1 inline-block font-semibold hover:underline" href="tel:+14013058713">
+                        +1 401 305 8713
+                      </a>
+                    </div>
+                  </li>
+                  <li className="flex gap-3">
+                    <Mail className="mt-0.5 size-5 shrink-0 text-on-dark-soft" aria-hidden="true" />
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-[0.1em] text-on-dark-soft">
+                        {lang === 'es' ? 'Correo' : 'Email'}
+                      </p>
+                      <a className="mt-1 inline-block break-all font-semibold hover:underline" href="mailto:gaviotabylia@gmail.com">
+                        gaviotabylia@gmail.com
+                      </a>
+                    </div>
+                  </li>
+                  <li className="flex gap-3">
+                    <Clock3 className="mt-0.5 size-5 shrink-0 text-on-dark-soft" aria-hidden="true" />
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-[0.1em] text-on-dark-soft">
+                        {lang === 'es' ? 'Tiempo de respuesta' : 'Response time'}
+                      </p>
+                      <p className="mt-1 font-semibold">
+                        {lang === 'es' ? '1–2 días laborables' : '1–2 business days'}
+                      </p>
+                    </div>
+                  </li>
+                </ul>
+
+                <address className="mt-8 border-t border-line-dark pt-6 text-sm not-italic leading-relaxed text-on-dark-soft">
+                  Gaviota By Lia LLC<br />
+                  5 Rangeley Avenue<br />
+                  Providence, RI 02908
+                </address>
+              </aside>
+            </Reveal>
           </div>
         </Container>
       </Section>
