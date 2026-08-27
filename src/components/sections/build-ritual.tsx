@@ -94,7 +94,7 @@ export function NeedCard({
         }
       >
         <EditorialImage
-          src={need.image}
+          src={locale === 'en' && need.imageEn ? need.imageEn : need.image}
           alt={t(need.alt, locale)}
           width={1600}
           height={2000}

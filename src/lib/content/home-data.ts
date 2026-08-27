@@ -86,6 +86,8 @@ export interface RitualNeed {
   readonly title: Bilingual;
   readonly body: Bilingual;
   readonly image: string;
+  /** Packshot con la etiqueta en inglés, cuando existe. Solo se usa en `en`. */
+  readonly imageEn?: string;
   readonly alt: Bilingual;
   readonly focal: string;
   readonly fit?: 'cover' | 'contain';
@@ -114,6 +116,7 @@ export const RITUAL_NEEDS: readonly RitualNeed[] = [
       es: 'Aceites que ayudan a mejorar su apariencia.',
     },
     image: '/images/gaviota/products/aceite-anti-estrias-studio.jpg',
+    imageEn: '/images/gaviota/products/aceite-anti-estrias-en.png',
     focal: '50% 50%',
     fit: 'contain',
     alt: {
@@ -129,6 +132,7 @@ export const RITUAL_NEEDS: readonly RitualNeed[] = [
       es: 'Prepara la piel para todo lo que viene después.',
     },
     image: '/images/gaviota/products/exfoliante-de-coco-studio.jpg',
+    imageEn: '/images/gaviota/products/exfoliante-de-coco-en.png',
     focal: '50% 50%',
     fit: 'contain',
     alt: {
