@@ -48,9 +48,9 @@ const DEFAULTS_ES: Record<string, ContentSection> = {
   'home.bestsellers': {
     key: 'home.bestsellers',
     eyebrow: 'La colección',
-    title: 'Los que todas quieren en su rutina.',
+    title: 'Tus favoritos del cuidado corporal',
     subtitle:
-      'Descubre los favoritos que se han convertido en parte del cuidado diario de nuestra comunidad.',
+      'Esenciales de cada día, creados para nutrir, suavizar y celebrar tu piel.',
     buttonLabel: 'Ver todos los productos',
     buttonUrl: '/shop',
     status: 'active',
@@ -142,12 +142,34 @@ const DEFAULTS_ES: Record<string, ContentSection> = {
     buttonUrl: 'https://www.instagram.com/gaviotabylia/',
     status: 'draft',
   },
+  // No hay fotografía "antes/después" real ni consentida todavía. NUNCA se
+  // activa esto con imágenes generadas o sin consentimiento explícito de la
+  // clienta fotografiada — ver el incidente documentado en la sesión de
+  // rediseño: dos intentos de publicar comparativas generadas por IA con
+  // claims sin sustento fueron rechazados. Cuando exista material real y
+  // aprobado, activar aquí con copy revisado contra LEGAL_TODO.md/CONTENT_TODO.md.
+  'home.beforeAfter': {
+    key: 'home.beforeAfter',
+    eyebrow: 'Comparativas visuales',
+    title: 'Cuidado que se nota',
+    subtitle: 'Antes y después reales del ritual de cuidado. Los resultados pueden variar.',
+    status: 'draft',
+  },
+  // `/faq` hoy es un párrafo genérico esperando políticas aprobadas (ver
+  // route-pages.ts), no preguntas y respuestas reales. Esta sección espera lo
+  // mismo: activar solo con Q&A real, no inventada.
+  'home.faq': {
+    key: 'home.faq',
+    eyebrow: 'Ayuda',
+    title: 'Preguntas frecuentes',
+    status: 'draft',
+  },
 };
 
 const DEFAULTS_EN: Record<string, ContentSection> = {
   'home.announcement': { key: 'home.announcement', title: 'Free shipping on orders over $100', status: 'active' },
   'home.hero': { key: 'home.hero', eyebrow: 'Dominican-inspired body care', title: 'Your skin. Your ritual. Your moment.', body: 'Body care made to hydrate, soften, and turn every application into a moment of your own.', buttonLabel: 'Shop the collection', buttonUrl: '/shop', status: 'active' },
-  'home.bestsellers': { key: 'home.bestsellers', eyebrow: 'The collection', title: 'The favorites your routine will love.', subtitle: 'Meet the community favorites made for everyday body care.', buttonLabel: 'Shop all products', buttonUrl: '/shop', status: 'active' },
+  'home.bestsellers': { key: 'home.bestsellers', eyebrow: 'The collection', title: 'Your body-care favorites', subtitle: 'Everyday essentials created to nourish, soften and celebrate your skin.', buttonLabel: 'Shop all products', buttonUrl: '/shop', status: 'active' },
   'home.needs': { key: 'home.needs', eyebrow: 'Find your ritual', title: 'What does your skin need today?', subtitle: 'Every skin is different. Start with what you want to care for today.', status: 'active' },
   'home.campaign': { key: 'home.campaign', eyebrow: 'Coconut Body Scrub', title: 'Softness, made into a ritual.', body: 'Fine coconut granules and an irresistible scent turn two minutes in the shower into your favorite moment of the day.', buttonLabel: 'Discover the product', buttonUrl: '/products/exfoliante-de-coco', status: 'active' },
   'home.ritual': { key: 'home.ritual', eyebrow: 'Three steps', title: 'Your ritual starts here.', subtitle: 'It does not have to be complicated to feel special.', status: 'active' },
@@ -158,6 +180,8 @@ const DEFAULTS_EN: Record<string, ContentSection> = {
   'home.testimonials': { key: 'home.testimonials', title: 'What our customers say', status: 'draft' },
   'home.ugc': { key: 'home.ugc', title: 'From our community', status: 'draft' },
   'home.instagram': { key: 'home.instagram', title: 'Follow us on Instagram', buttonLabel: 'See more on Instagram', buttonUrl: 'https://www.instagram.com/gaviotabylia/', status: 'draft' },
+  'home.beforeAfter': { key: 'home.beforeAfter', eyebrow: 'Visual comparisons', title: 'Care you can see', subtitle: 'Real before-and-after from the care ritual. Results may vary.', status: 'draft' },
+  'home.faq': { key: 'home.faq', eyebrow: 'Help', title: 'Frequently asked questions', status: 'draft' },
 };
 
 /**

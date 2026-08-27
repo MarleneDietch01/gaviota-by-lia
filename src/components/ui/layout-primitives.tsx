@@ -75,6 +75,10 @@ const TONES = {
   ivory: 'bg-ivory text-ink',
   white: 'bg-white-warm text-ink',
   powder: 'bg-powder text-ink',
+  /** Crema rosado muy claro — ver `--color-blush` en globals.css. Para
+   *  rejillas de producto grandes donde `powder` a plena saturación pesa
+   *  demasiado (Colección). */
+  blush: 'bg-blush text-ink',
   wine: 'on-dark bg-wine text-on-dark',
 } as const;
 

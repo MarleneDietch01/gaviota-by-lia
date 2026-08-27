@@ -28,6 +28,11 @@ export default defineConfig([
     '.visual-check/**',
     'supabase/**',
     'originales/**',
+    // Worktrees de agentes (`git worktree add .claude/worktrees/...`) traen su
+    // propio `.next` anidado, que el glob `.next/**` de arriba no cubre por
+    // no estar en la raíz. Sin esto, `npm run lint` reporta decenas de
+    // errores falsos sobre código compilado que no es el del repo.
+    '.claude/**',
   ]),
 
   {

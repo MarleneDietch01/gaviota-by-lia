@@ -1,19 +1,9 @@
-import { Star } from 'lucide-react';
 import { getCurrentUser } from '@/lib/auth/guards';
 import { getProductIdBySlug } from '@/lib/catalog/product-ids';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import type { Locale } from '@/lib/i18n';
+import { Stars } from '@/components/ui/stars';
 import { ReviewForm } from './review-form';
-
-function Stars({ rating }: { rating: number }) {
-  return (
-    <div className="flex gap-0.5" aria-hidden="true">
-      {[1, 2, 3, 4, 5].map((n) => (
-        <Star key={n} className={`size-4 ${n <= rating ? 'fill-rose text-rose' : 'text-line-strong'}`} />
-      ))}
-    </div>
-  );
-}
 
 /**
  * Sección de reseñas de la ficha de producto.

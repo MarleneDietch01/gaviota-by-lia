@@ -1,11 +1,12 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { Clock, ShieldCheck, Sparkles, Truck } from 'lucide-react';
+import { Clock } from 'lucide-react';
 import { Breadcrumbs } from '@/components/navigation/breadcrumbs';
 import { ProductCard } from '@/components/products/product-card';
 import { QuickAdd, FavoriteToggle } from '@/components/products/product-actions';
-import { ProductPackshot } from '@/components/products/product-packshot';
+import { ProductGallery } from '@/components/products/product-gallery';
 import { ProductReviews } from '@/components/products/product-reviews';
+import { getTrustPoints } from '@/components/sections/trust-strip';
 import { Container, Rule, Section } from '@/components/ui/layout-primitives';
 import { CATEGORIES, getAllProducts, getProductBySlug } from '@/lib/catalog/products';
 import { formatMoney } from '@/lib/commerce/money';
@@ -38,7 +39,14 @@ export default async function ProductPage({ params }: Props) {
   if (!isLocale(lang)) notFound();
   const product = await getProductBySlug(slug, lang);
   if (!product) notFound();
-  const related = (await getAllProducts(lang)).filter((item) => item.slug !== slug).slice(0, 3);
+  // Prioriza la misma categoría; si no alcanza para 3, rellena con el resto
+  // del catálogo — nunca al revés, para que "también puede gustarte" de
+  // verdad recomiende lo más parecido primero.
+  const RELATED_COUNT = 3;
+  const otherProducts = (await getAllProducts(lang)).filter((item) => item.slug !== slug);
+  const sameCategory = otherProducts.filter((item) => item.categorySlug === product.categorySlug);
+  const otherCategory = otherProducts.filter((item) => item.categorySlug !== product.categorySlug);
+  const related = [...sameCategory, ...otherCategory].slice(0, RELATED_COUNT);
 
   const siteUrl = getSiteUrl();
   const category = CATEGORIES.find((item) => item.slug === product.categorySlug)!;
@@ -48,23 +56,7 @@ export default async function ProductPage({ params }: Props) {
     { label: categoryName, href: `/categories/${category.slug}` },
     { label: product.name },
   ];
-  const trustPoints = [
-    {
-      icon: ShieldCheck,
-      title: pick(lang, 'Secure purchase', 'Compra segura'),
-      body: pick(lang, 'Protected checkout', 'Pago protegido'),
-    },
-    {
-      icon: Truck,
-      title: pick(lang, 'Tracked shipping', 'Envíos con seguimiento'),
-      body: pick(lang, 'Estimated 5–6 business days', 'Estimado: 5–6 días hábiles'),
-    },
-    {
-      icon: Sparkles,
-      title: pick(lang, 'Made for ritual', 'Hecho para tu ritual'),
-      body: pick(lang, 'Body care, at your pace', 'Cuidado corporal a tu ritmo'),
-    },
-  ] as const;
+  const trustPoints = getTrustPoints(lang);
 
   return (
     <div className="pb-24 lg:pb-0">
@@ -91,13 +83,7 @@ export default async function ProductPage({ params }: Props) {
         <Container>
           <Breadcrumbs items={breadcrumbItems} locale={lang} />
           <div className="mt-6 grid gap-10 lg:grid-cols-2 lg:items-center lg:gap-20">
-            <ProductPackshot
-              src={product.image}
-              alt={product.imageAlt}
-              width={product.imageWidth}
-              height={product.imageHeight}
-              priority
-            />
+            <ProductGallery images={product.images} priority />
 
             <div className="self-center lg:py-5">
               <p className="eyebrow hero-rise text-rose">
@@ -182,28 +168,41 @@ export default async function ProductPage({ params }: Props) {
                 </p>
               </div>
 
-              <dl className="divide-y divide-line-strong/60 rounded-sm bg-white-warm shadow-subtle">
+              {/* Acordeones nativos, mismo patrón que el footer móvil
+                  (`site-footer.tsx`): sin JS de cliente, `[&::-webkit-details-marker]:hidden`
+                  para el icono propio. El primero abierto por defecto — es el
+                  que más se consulta antes de comprar. */}
+              <div className="divide-y divide-line-strong/60 rounded-sm bg-white-warm shadow-subtle">
                 {product.usageInstructions ? (
-                  <div className="p-6 sm:p-8">
-                    <dt className="eyebrow text-rose">{pick(lang, 'How to use', 'Modo de uso')}</dt>
-                    <dd className="mt-3 text-body-sm leading-relaxed text-body">
+                  <details className="group p-6 sm:p-8" open>
+                    <summary className="flex cursor-pointer list-none items-center justify-between gap-4 [&::-webkit-details-marker]:hidden">
+                      <span className="eyebrow text-rose">{pick(lang, 'How to use', 'Modo de uso')}</span>
+                      <span aria-hidden="true" className="text-lg text-rose transition-transform duration-200 group-open:rotate-45">+</span>
+                    </summary>
+                    <p className="mt-3 text-body-sm leading-relaxed text-body">
                       {product.usageInstructions}
-                    </dd>
-                  </div>
+                    </p>
+                  </details>
                 ) : null}
                 {product.ingredients ? (
-                  <div className="p-6 sm:p-8">
-                    <dt className="eyebrow text-rose">{pick(lang, 'Ingredients', 'Ingredientes')}</dt>
-                    <dd className="mt-3 text-body-sm leading-relaxed text-body">{product.ingredients}</dd>
-                  </div>
+                  <details className="group p-6 sm:p-8">
+                    <summary className="flex cursor-pointer list-none items-center justify-between gap-4 [&::-webkit-details-marker]:hidden">
+                      <span className="eyebrow text-rose">{pick(lang, 'Ingredients', 'Ingredientes')}</span>
+                      <span aria-hidden="true" className="text-lg text-rose transition-transform duration-200 group-open:rotate-45">+</span>
+                    </summary>
+                    <p className="mt-3 text-body-sm leading-relaxed text-body">{product.ingredients}</p>
+                  </details>
                 ) : null}
                 {product.precautions ? (
-                  <div className="p-6 sm:p-8">
-                    <dt className="eyebrow text-rose">{pick(lang, 'Precautions', 'Precauciones')}</dt>
-                    <dd className="mt-3 text-body-sm leading-relaxed text-body">{product.precautions}</dd>
-                  </div>
+                  <details className="group p-6 sm:p-8">
+                    <summary className="flex cursor-pointer list-none items-center justify-between gap-4 [&::-webkit-details-marker]:hidden">
+                      <span className="eyebrow text-rose">{pick(lang, 'Precautions', 'Precauciones')}</span>
+                      <span aria-hidden="true" className="text-lg text-rose transition-transform duration-200 group-open:rotate-45">+</span>
+                    </summary>
+                    <p className="mt-3 text-body-sm leading-relaxed text-body">{product.precautions}</p>
+                  </details>
                 ) : null}
-              </dl>
+              </div>
             </div>
           </Container>
         </Section>
@@ -213,6 +212,7 @@ export default async function ProductPage({ params }: Props) {
           <ProductReviews slug={product.slug} locale={lang} />
         </Container>
       </Section>
+      {related.length > 0 ? (
       <Section tone="white">
         <Container>
           <p className="eyebrow text-rose">{pick(lang, 'Your next step', 'Tu siguiente paso')}</p>
@@ -232,6 +232,7 @@ export default async function ProductPage({ params }: Props) {
           </div>
         </Container>
       </Section>
+      ) : null}
       {/* La acción sigue disponible después de explorar ingredientes y productos
           relacionados. Solo aparece en móvil, donde el CTA de la ficha deja de
           estar visible al avanzar por la página. */}

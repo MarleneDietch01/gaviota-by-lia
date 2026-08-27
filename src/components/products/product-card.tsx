@@ -6,47 +6,53 @@ import { cn } from '@/lib/utils/cn';
 import { localizedHref, pick, type Locale } from '@/lib/i18n';
 import { QuickAdd, FavoriteToggle } from '@/components/products/product-actions';
 import { ProductImage } from '@/components/media/site-image';
+import { Stars } from '@/components/ui/stars';
 
 /**
  * Tarjeta de producto.
  *
  * -----------------------------------------------------------------------------
- * SEPARACIÓN EN TRES CAPAS
+ * SEPARACIÓN EN CAPAS
  *
- * La versión anterior era rosa sobre rosa sobre rosa: sección `powder`, tile con
- * el color muestreado de cada foto, y foto rosa dentro. Los tres tonos eran
- * parecidos pero distintos, así que el borde del JPEG se veía como un rectángulo
- * flotando — la tarjeta se leía como imagen rota.
+ * Tres capas con contraste real: sección (crema/rosa/blanco, según dónde se
+ * monte) → TARJETA MARFIL con borde propio → packshot sobre su fondo. La
+ * franja marfil separa el fondo de la sección del fondo de la fotografía, y
+ * el envase queda enmarcado en vez de diluido.
  *
- * Ahora hay tres capas con contraste real:
- *     sección rosa empolvado  →  TARJETA MARFIL  →  packshot sobre fondo propio
- *
- * La franja marfil separa el rosa del fondo del rosa de la fotografía, y el
- * envase queda enmarcado en vez de diluido.
- *
- * La foto va `object-contain` en un tile cuadrado porque los packshots se
- * generan ya a 1:1 con el envase completo y aire óptico normalizado (ver
- * scripts/crops.mjs). Así nunca se recortan tapa, gotero, laterales o base.
+ * La foto va `object-contain`: nunca se recorta tapa, gotero, laterales o
+ * base, pase lo que pase con la proporción del tile.
  * -----------------------------------------------------------------------------
  *
  * LO QUE SIGUE SIN RENDERIZARSE, Y POR QUÉ:
- *   · Estrellas — el catálogo tiene `reviewCount: 0` en todos los productos.
+ *   · Estrellas/reseñas — solo si `reviewCount` (dato real de
+ *     `product_review_stats`, ver `getReviewSummaries`) es > 0. La mayoría de
+ *     productos siguen sin reseñas todavía.
  *   · Precio anterior y % de ahorro — no existe un precio anterior con vigencia.
- *   · Badges "Más vendido" / "Pocas unidades" — sin histórico ni stock real.
- *   · Segunda foto al hover — solo hay una fotografía por producto.
+ *   · Segunda foto al hover — solo si `product.images[1]` existe de verdad.
+ *   · Badge — es contenido editorial que decide quien llama a la tarjeta
+ *     (ver `FEATURED_BADGES` en `collection.tsx`), no un dato del catálogo.
  */
 export function ProductCard({
   product,
   priority = false,
   className,
   locale,
+  badge,
+  averageRating,
+  reviewCount,
 }: {
   product: Product;
   priority?: boolean;
   className?: string;
   locale: Locale;
+  /** Etiqueta editorial opcional ("Best seller", "For him"...), ya traducida. */
+  badge?: string;
+  /** De `product_review_stats`. Solo se pinta si `reviewCount` es > 0. */
+  averageRating?: number;
+  reviewCount?: number;
 }) {
   const href = localizedHref(locale, `/products/${product.slug}`);
+  const secondImage = product.images[1];
 
   return (
     <article
@@ -55,32 +61,61 @@ export function ProductCard({
         // La fila central es la única elástica (`1fr`), así que el precio y los
         // botones quedan clavados al fondo en las cuatro tarjetas sin depender
         // de que las descripciones midan lo mismo.
-        'group relative grid h-full grid-rows-[auto_1fr_auto] overflow-hidden rounded-sm bg-white-warm',
-        'transition-shadow duration-500 ease-soft hover:shadow-lift',
+        'group relative grid h-full grid-rows-[auto_1fr_auto] overflow-hidden rounded-[12px] border border-line bg-white-warm',
+        'shadow-subtle transition-[box-shadow,transform] duration-300 ease-soft',
+        'motion-safe:hover:-translate-y-1 hover:shadow-lift',
         className,
       )}
     >
-      {/* Área fotográfica CUADRADA e idéntica en las cuatro tarjetas.
-          Antes era 4:5 y producía tarjetas altas y estrechas en las que los
-          tarros —anchos y bajos— se ampliaban hasta parecer una macro. */}
-      <div className="aspect-square" style={{ backgroundColor: product.imageBackground }}>
+      {/* Área fotográfica 4:5. Sin padding interno: con `object-contain` nada
+          se recorta, así que el único margen entre el envase y el borde del
+          tile es el que ya trae la foto — reducirlo a cero es lo que hace que
+          el producto se vea lo más grande posible dentro de esta proporción. */}
+      <div className="relative aspect-[4/5]" style={{ backgroundColor: product.imageBackground }}>
         <ProductImage
           src={product.image}
           alt={product.imageAlt}
           width={product.imageWidth}
           height={product.imageHeight}
           priority={priority}
-          sizes="(max-width: 639px) 72vw, (max-width: 1023px) 44vw, 23vw"
-          // `object-contain`: el packshot ya se genera cuadrado con el envase
-          // completo y su aire alrededor, así que no hay nada que recortar — y
-          // si el tile cambiara de proporción, seguiría sin cortar tapas ni bases.
-          //
-          // El hover ya no es un `scale` plano: es la misma idea de
+          sizes="(max-width: 639px) 85vw, (max-width: 1023px) 44vw, 23vw"
+          // El hover no es un `scale` plano: es la misma idea de
           // `product-packshot.tsx` (foto como objeto en el espacio, no
           // sticker) en dosis mínima — `perspective()` inline evita tener que
           // envolver el tile en un contenedor 3D aparte. Solo con
-          // `motion-safe`, igual que el resto del sitio.
-          className="transition-transform duration-500 ease-editorial motion-safe:group-hover:[transform:perspective(900px)_rotateX(3deg)_rotateY(-5deg)_scale(1.03)]"
+          // `motion-safe`, igual que el resto del sitio. Si hay segunda foto,
+          // esta se desvanece para dejarla ver (`secondImage &&` abajo); si
+          // no la hay, se queda tal cual con su propio tilt.
+          className={cn(
+            'transition-[transform,opacity] duration-300 ease-editorial motion-safe:group-hover:[transform:perspective(900px)_rotateX(3deg)_rotateY(-5deg)_scale(1.03)]',
+            secondImage && 'motion-safe:group-hover:opacity-0',
+          )}
+        />
+
+        {secondImage ? (
+          <ProductImage
+            src={secondImage.src}
+            alt={secondImage.alt}
+            width={secondImage.width}
+            height={secondImage.height}
+            sizes="(max-width: 639px) 85vw, (max-width: 1023px) 44vw, 23vw"
+            className="absolute inset-0 opacity-0 transition-opacity duration-300 ease-editorial motion-safe:group-hover:opacity-100"
+          />
+        ) : null}
+
+        {badge ? (
+          <span className="absolute left-3 top-3 z-10 rounded-pill bg-rose-deep px-2.5 py-1 text-2xs font-bold uppercase tracking-[0.1em] text-white-warm">
+            {badge}
+          </span>
+        ) : null}
+
+        {/* Esquina superior derecha de la foto, no de la fila de acciones. */}
+        <FavoriteToggle
+          slug={product.slug}
+          productName={product.name}
+          locale={locale}
+          variant="overlay"
+          className="absolute right-3 top-3 z-10"
         />
       </div>
 
@@ -104,6 +139,20 @@ export function ProductCard({
             añadía blanco muerto en las tarjetas de texto corto. */}
         <p className="mt-1.5 text-sm leading-snug text-body">{product.shortDescription}</p>
 
+        {reviewCount ? (
+          <p className="mt-1.5 flex items-center gap-1.5">
+            <Stars rating={Math.round(averageRating ?? 0)} size="size-3" />
+            <span className="text-2xs text-muted">
+              {(averageRating ?? 0).toFixed(1)} ·{' '}
+              {pick(
+                locale,
+                `${reviewCount} ${reviewCount === 1 ? 'review' : 'reviews'}`,
+                `${reviewCount} ${reviewCount === 1 ? 'reseña' : 'reseñas'}`,
+              )}
+            </span>
+          </p>
+        ) : null}
+
         {/* Mismo lenguaje visual que el badge "Pendiente de detalle" de
             Ingredientes: borde discontinuo + reloj, para que una ficha con
             menos información se lea como "en curso", no como una tarjeta
@@ -119,16 +168,22 @@ export function ProductCard({
       {/* Fila de acciones, siempre al fondo. */}
       <div className="px-4 pb-4 pt-3 sm:px-5 sm:pb-5">
         <p className="flex items-baseline gap-2">
-          <span className="tabular text-md font-semibold tracking-[-0.01em]">
+          {/* Más peso que el tamaño: es el dato que de verdad decide la compra. */}
+          <span className="tabular text-lg font-bold tracking-[-0.01em]">
             {formatMoney(product.price, 'USD', locale === 'en' ? 'en-US' : 'es-US')}
           </span>
           <span className="text-xs text-muted">{product.sizeLabel}</span>
         </p>
 
-        {/* `relative z-10` los saca de debajo del stretched link. */}
-        <div className="relative z-10 mt-3 flex items-stretch gap-2">
-          <QuickAdd slug={product.slug} productName={product.name} locale={locale} inStock={product.inStock} />
-          <FavoriteToggle slug={product.slug} productName={product.name} locale={locale} />
+        {/* `relative z-10` lo saca de debajo del stretched link. */}
+        <div className="relative z-10 mt-3">
+          <QuickAdd
+            slug={product.slug}
+            productName={product.name}
+            locale={locale}
+            inStock={product.inStock}
+            variant="solid"
+          />
         </div>
       </div>
     </article>

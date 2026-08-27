@@ -20,24 +20,53 @@ export async function Founder({ locale }: { locale: Locale }) {
     <Section tone="white" padding="compact" labelledBy="story-title">
       <Container>
         <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-16 xl:gap-20">
-          <Reveal className="frame-arch">
-            <div className="aspect-[4/5]">
-              <EditorialImage
-                src="/images/gaviota/editorial/story-fundadora.jpg"
-                alt={pick(
-                  locale,
-                  'Portrait of Marlene Dietsch, founder of Gaviota by Lia',
-                  'Retrato de Marlene Dietsch, fundadora de Gaviota by Lia',
-                )}
-                width={1800}
-                height={2250}
-                sizes="(min-width: 1024px) 42vw, 100vw"
-                focal="50% 28%"
-              />
+          <Reveal className="relative">
+            <div className="frame-arch">
+              <div className="aspect-[4/5]">
+                <EditorialImage
+                  src="/images/gaviota/editorial/story-fundadora.jpg"
+                  alt={pick(
+                    locale,
+                    'Portrait of Marlene Dietsch, founder of Gaviota by Lia',
+                    'Retrato de Marlene Dietsch, fundadora de Gaviota by Lia',
+                  )}
+                  width={1800}
+                  height={2250}
+                  sizes="(min-width: 1024px) 42vw, 100vw"
+                  focal="50% 28%"
+                />
+              </div>
+            </div>
+
+            {/* Segunda foto en offset: solo desde `lg`, donde el grid le deja
+                aire en el gap para no desbordar el Container. En columna
+                única (< lg) una sola foto ya se lee completa; una segunda
+                superpuesta ahí se recortaría contra el borde. */}
+            <div className="absolute -bottom-10 -right-8 hidden w-[48%] lg:block xl:-right-12">
+              <div className="overflow-hidden rounded-sm shadow-lift ring-8 ring-white-warm">
+                <div className="aspect-[3/4]">
+                  <EditorialImage
+                    src="/images/gaviota/founder/fundadora-1.jpg"
+                    alt={pick(
+                      locale,
+                      'Marlene Dietsch, founder of Gaviota by Lia',
+                      'Marlene Dietsch, fundadora de Gaviota by Lia',
+                    )}
+                    width={1600}
+                    height={2000}
+                    sizes="(min-width: 1280px) 20vw, (min-width: 1024px) 18vw, 45vw"
+                    focal="50% 20%"
+                  />
+                </div>
+              </div>
             </div>
           </Reveal>
 
-          <Reveal delay={80} className="max-w-[34rem]">
+          {/* Sin `max-w` fijo desde `lg`: el track de texto mide ~1.1fr del
+              grid (≈660px dentro del Container de 1200px). Un `max-w-[34rem]`
+              (544px) fijo dejaba una franja vacía a la derecha del párrafo en
+              pantallas anchas — el bloque se leía más plano de lo que es. */}
+          <Reveal delay={80} className="max-w-[30rem] lg:max-w-none">
             {c.eyebrow ? <p className="eyebrow mb-4 text-rose">{c.eyebrow}</p> : null}
 
             <h2 id="story-title" className="text-h2">

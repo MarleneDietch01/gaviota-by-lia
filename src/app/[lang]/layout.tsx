@@ -7,6 +7,7 @@ import { SiteFooter } from '@/components/layout/site-footer';
 import { AnnouncementBar } from '@/components/layout/announcement-bar';
 import { isLocale, locales, pageAlternates, pick, socialMeta } from '@/lib/i18n';
 import { getSiteUrl } from '@/lib/site-url';
+import { organizationJsonLd, websiteJsonLd } from '@/lib/structured-data';
 import '../globals.css';
 
 export function generateStaticParams() {
@@ -28,34 +29,6 @@ export async function generateMetadata({ params }: LayoutProps<'/[lang]'>): Prom
     description,
     alternates: pageAlternates(lang, ''),
     ...socialMeta(lang, '', description),
-  };
-}
-
-/**
- * Datos estructurados de Organización.
- *
- * Ya previsto en `docs/SITEMAP.md` ("nombre legal, logo, contacto, sameAs
- * Instagram"), pero sin implementar hasta ahora porque no existía el nombre
- * legal real — inventar uno habría sido peor que no publicar nada. Datos de
- * `LEGAL_TODO.md` L1 (EIN del IRS + Articles of Organization de Rhode Island).
- */
-function organizationJsonLd(siteUrl: string) {
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'Organization',
-    name: 'Gaviota by Lia',
-    legalName: 'Gaviota By Lia LLC',
-    url: siteUrl,
-    logo: `${siteUrl}/icon.png`,
-    address: {
-      '@type': 'PostalAddress',
-      streetAddress: '5 Rangeley Avenue',
-      addressLocality: 'Providence',
-      addressRegion: 'RI',
-      postalCode: '02908',
-      addressCountry: 'US',
-    },
-    sameAs: ['https://www.instagram.com/gaviotabylia/'],
   };
 }
 
@@ -81,6 +54,10 @@ export default async function RootLayout({ children, params }: LayoutProps<'/[la
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd(siteUrl)) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd(siteUrl, lang)) }}
         />
         <a
           href="#content"

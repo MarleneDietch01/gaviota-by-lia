@@ -30,17 +30,15 @@ export function Benefits({ locale }: { locale: Locale }) {
           {pick(locale, 'Why Gaviota by Lia', 'Por qué Gaviota by Lia')}
         </h2>
 
-        <ul className="grid grid-cols-2 gap-x-6 gap-y-9 sm:gap-x-8 lg:grid-cols-4 lg:gap-x-10">
+        <ul className="grid grid-cols-2 gap-x-6 gap-y-10 sm:gap-x-8 lg:grid-cols-4 lg:gap-x-10">
           {BENEFITS.map((benefit, i) => {
             const Icon = ICONS[benefit.icon];
             return (
               <Reveal as="li" key={benefit.icon} delay={i * 70}>
-                <Icon
-                  className="size-5 text-rose"
-                  strokeWidth={1.5}
-                  aria-hidden="true"
-                />
-                <h3 className="mt-3 font-sans text-body-sm font-semibold leading-snug tracking-[-0.01em]">
+                <span className="grid size-11 place-items-center rounded-pill bg-powder/50">
+                  <Icon className="size-5 text-rose-deep" strokeWidth={1.5} aria-hidden="true" />
+                </span>
+                <h3 className="mt-4 font-sans text-body-sm font-semibold leading-snug tracking-[-0.01em]">
                   {t(benefit.title, locale)}
                 </h3>
                 <p className="mt-1.5 text-sm leading-snug text-body">

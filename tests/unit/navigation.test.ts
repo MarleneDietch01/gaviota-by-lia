@@ -9,7 +9,7 @@ describe('navegación visible', () => {
   });
 
   it('todas las rutas estáticas del header y footer tienen implementación', () => {
-    const implementedElsewhere = new Set(['/shop', '/search']);
+    const implementedElsewhere = new Set(['/shop', '/search', '/account']);
     const routes = [...PRIMARY_NAV, ...CATEGORY_NAV, ...BRAND_NAV, ...HELP_NAV, ...LEGAL_NAV, ...ACCOUNT_NAV].map((item) => item.href.slice(1)).filter(Boolean);
     expect(routes.filter((route) => !implementedElsewhere.has(`/${route}`) && !route.startsWith('categories/') && !(route in ROUTE_PAGES) && route !== 'cart' && route !== 'wishlist')).toEqual([]);
   });

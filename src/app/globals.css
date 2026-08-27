@@ -16,6 +16,13 @@
   --color-ivory: #fbf6f2; /* marfil cálido — superficie por defecto */
   --color-white-warm: #fffdfc; /* blanco cálido — respiro entre marfiles */
   --color-powder: #ebc4cb; /* rosa empolvado — acento, nunca 2 seguidas */
+  /* Crema rosado muy claro: 78% marfil + 22% rosa empolvado. Para secciones que
+     necesitan una temperatura rosa perceptible pero mucho más clara que
+     `powder` (que a plena saturación se lee como bloque rosa en rejillas
+     grandes de producto, ver Colección). Más clara que `powder`, más cálida
+     que `ivory` — el texto ink/rose ya medido contra `ivory` (línea de abajo)
+     sigue pasando con más margen aquí, nunca menos: es un fondo aún más claro. */
+  --color-blush: #f7ebe9;
   /* Superficie profunda de contraste (footer, Comunidad, bloque editorial).
      Corregida: el valor anterior (#4b202d, "vino"/"ciruela") venía de una
      síntesis de dirección de arte (docs/DESIGN_DIRECTION.md §2/§4) que nunca

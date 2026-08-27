@@ -59,6 +59,15 @@ export interface Product {
   readonly imageHeight: number;
   /** Ver nota de simplificación arriba: `LEGACY_IMAGE_BACKGROUND` o el token `white-warm`. */
   readonly imageBackground: string;
+  /**
+   * Todas las fotos del producto, en orden (`sort_order`, la principal
+   * primero). Hoy es siempre un array de 1 elemento — igual a
+   * `image`/`imageAlt`/... arriba — porque ningún producto tiene más de una
+   * foto real todavía. `ProductGallery` la consume ya preparada para 1-N: no
+   * hace falta tocar este campo cuando exista fotografía adicional, solo
+   * subirla desde /admin/products.
+   */
+  readonly images: readonly { src: string; alt: string; width: number; height: number }[];
   readonly featured: boolean;
   /** Se muestran estrellas solo si es > 0. Hoy siempre es 0 (sin sistema de agregación todavía). */
   readonly reviewCount: number;
@@ -244,7 +253,7 @@ type ProductRow = Database['public']['Tables']['products']['Row'] & {
   product_variants: Array<Pick<Database['public']['Tables']['product_variants']['Row'],
     'id' | 'stock_quantity' | 'reserved_quantity' | 'status'>>;
   product_images: Array<Pick<Database['public']['Tables']['product_images']['Row'],
-    'storage_path' | 'alt_text' | 'width' | 'height' | 'is_primary'>>;
+    'storage_path' | 'alt_text' | 'width' | 'height' | 'is_primary' | 'sort_order'>>;
 };
 
 const PRODUCT_SELECT = `
@@ -252,7 +261,7 @@ const PRODUCT_SELECT = `
   ingredients_text, precautions, usage_instructions, track_inventory, translation_stale,
   categories:category_id ( slug ),
   product_variants ( id, stock_quantity, reserved_quantity, status ),
-  product_images ( storage_path, alt_text, width, height, is_primary )
+  product_images ( storage_path, alt_text, width, height, is_primary, sort_order )
 `;
 
 const STORAGE_BUCKET = 'products';
@@ -286,6 +295,20 @@ function toProduct(row: ProductRow, supabaseUrl: string): Product {
         height: 1200,
       };
 
+  // Todas las fotos reales de Storage, ordenadas, principal primero. Sin
+  // fila real ninguna, cae a la misma imagen única de arriba (legacy o
+  // placeholder) como array de 1 — `ProductGallery` no tiene que distinguir
+  // el origen del dato, solo cuántas hay.
+  const dbImages = [...row.product_images]
+    .sort((a, b) => (b.is_primary ? 1 : 0) - (a.is_primary ? 1 : 0) || a.sort_order - b.sort_order)
+    .map((img) => ({
+      src: publicImageUrl(supabaseUrl, img.storage_path),
+      alt: img.alt_text,
+      width: img.width,
+      height: img.height,
+    }));
+  const images = dbImages.length > 0 ? dbImages : [{ src: image.path, alt: image.alt, width: image.width, height: image.height }];
+
   return {
     id: row.id,
     slug: row.slug,
@@ -298,6 +321,7 @@ function toProduct(row: ProductRow, supabaseUrl: string): Product {
     imageWidth: image.width,
     imageHeight: image.height,
     imageBackground: LEGACY_IMAGE_BACKGROUND[row.slug] ?? DEFAULT_IMAGE_BACKGROUND,
+    images,
     featured: row.featured,
     reviewCount: 0,
     categorySlug: (row.categories?.slug as CategorySlug) ?? 'aceites-y-serums',

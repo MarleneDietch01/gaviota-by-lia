@@ -26,6 +26,7 @@ export function QuickAdd({
   productName,
   locale,
   inStock = true,
+  variant = 'outline',
 }: {
   slug: string;
   productName: string;
@@ -37,6 +38,9 @@ export function QuickAdd({
    * rechazará de todas formas.
    */
   inStock?: boolean;
+  /** `solid`: acción principal a ancho completo (tarjeta de producto). `outline`
+   *  (por defecto): como ya se ve en la ficha de producto, junto a favoritos. */
+  variant?: 'outline' | 'solid';
 }) {
   const [added, setAdded] = useState(false);
 
@@ -48,13 +52,20 @@ export function QuickAdd({
     return () => window.clearTimeout(timer);
   }, [added]);
 
+  const shape = variant === 'solid' ? 'w-full' : 'flex-1';
+
   if (!inStock) {
     // Texto visible en vez de `aria-label`: un `aria-label` distinto del texto
     // que se ve rompería la coincidencia nombre-accesible/texto-visible que
     // exige WCAG 2.1 (2.5.3). El nombre de producto ya lo da el `<h3>`/enlace
     // contiguo de la tarjeta o de la ficha, así que no hace falta repetirlo.
     return (
-      <span className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xs border border-dashed border-line-strong px-4 text-[0.8125rem] font-semibold tracking-[0.02em] text-muted">
+      <span
+        className={cn(
+          'inline-flex min-h-11 items-center justify-center gap-2 rounded-xs border border-dashed border-line-strong px-4 text-[0.8125rem] font-semibold tracking-[0.02em] text-muted',
+          shape,
+        )}
+      >
         {pick(locale, 'Out of stock', 'Agotado')}
       </span>
     );
@@ -70,20 +81,26 @@ export function QuickAdd({
         }}
         aria-label={
           added
-            ? pick(locale, `${productName} added to your ritual`, `${productName} añadido a tu ritual`)
-            : pick(locale, `Add ${productName} to your ritual`, `Añadir ${productName} a tu ritual`)
+            ? pick(locale, `${productName} added to your bag`, `${productName} añadido a tu bolsa`)
+            : pick(locale, `Add ${productName} to your bag`, `Añadir ${productName} a tu bolsa`)
         }
         className={cn(
-          'inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xs px-4',
+          'inline-flex min-h-11 items-center justify-center gap-2 rounded-xs px-4',
           'text-meta font-semibold tracking-[0.02em]',
           'transition-colors duration-300 ease-soft',
-          // Borde a 0.55 y no a 0.25: sobre la tarjeta marfil el trazo anterior
-          // quedaba casi invisible y la acción principal de la tarjeta no se
-          // leía como acción. El hover pasa a vino de marca en vez de a tinta
-          // neutra — el cambio es inequívoco y sigue siendo de la paleta.
+          shape,
           added
             ? 'bg-success text-white-warm'
-            : 'border border-ink/55 text-ink hover:border-rose-deep hover:bg-rose-deep hover:text-on-dark',
+            : variant === 'solid'
+              ? // Acción principal a ancho completo (tarjeta de producto):
+                // vino sólido, igual receta que `Button` variant="primary".
+                'bg-rose text-white-warm hover:bg-rose-deep active:bg-rose-ink'
+              : // Borde a 0.55 y no a 0.25: sobre la tarjeta marfil el trazo
+                // anterior quedaba casi invisible y la acción principal de la
+                // tarjeta no se leía como acción. El hover pasa a vino de marca
+                // en vez de a tinta neutra — el cambio es inequívoco y sigue
+                // siendo de la paleta.
+                'border border-ink/55 text-ink hover:border-rose-deep hover:bg-rose-deep hover:text-on-dark',
         )}
       >
         {added ? (
@@ -92,16 +109,14 @@ export function QuickAdd({
           <Plus className="size-4 shrink-0" aria-hidden="true" />
         )}
         <span aria-hidden="true">
-          {added
-            ? pick(locale, 'Added', 'Añadido')
-            : pick(locale, 'Add to ritual', 'Añadir al ritual')}
+          {added ? pick(locale, 'Added', 'Añadido') : pick(locale, 'Add to bag', 'Añadir a la bolsa')}
         </span>
       </button>
 
       {/* Región viva: anuncia el resultado sin mover el foco. */}
       <span role="status" aria-live="polite" className="sr-only">
         {added
-          ? pick(locale, `${productName} added to your ritual`, `${productName} añadido a tu ritual`)
+          ? pick(locale, `${productName} added to your bag`, `${productName} añadido a tu bolsa`)
           : ''}
       </span>
     </>
@@ -112,10 +127,19 @@ export function FavoriteToggle({
   slug,
   productName,
   locale,
+  variant = 'inline',
+  className,
 }: {
   slug: string;
   productName: string;
   locale: Locale;
+  /** `overlay`: botón circular flotando sobre una foto (tarjeta de producto),
+   *  fondo translúcido con blur en vez del borde sobre superficie plana que
+   *  usa `inline` (ficha de producto, junto a "Add to bag"). */
+  variant?: 'inline' | 'overlay';
+  /** Posicionamiento (`absolute`, etc.): depende de dónde se monte el botón,
+   *  no es parte del aspecto propio del componente. */
+  className?: string;
 }) {
   // `useSyncExternalStore` en lugar de useState + useEffect: el snapshot de
   // servidor es `false`, así que el HTML del servidor y el primer render de
@@ -138,14 +162,25 @@ export function FavoriteToggle({
         `Save ${productName} to favorites`,
         `Guardar ${productName} en favoritos`,
       )}
-      // Acción SECUNDARIA a propósito: borde más tenue que el de "añadir al
-      // ritual" y sin relleno en reposo. La jerarquía entre los dos botones se
+      // Acción SECUNDARIA a propósito: borde más tenue que el de "add to bag"
+      // y sin relleno en reposo. La jerarquía entre los dos botones se
       // sostiene en el peso del trazo, no en el tamaño.
       className={cn(
-        'grid size-11 shrink-0 place-items-center rounded-xs border transition-colors duration-300 ease-soft',
-        active
-          ? 'border-rose bg-rose/10 text-rose'
-          : 'border-ink/30 text-body hover:border-rose hover:text-rose',
+        'grid size-11 shrink-0 place-items-center transition-colors duration-300 ease-soft',
+        variant === 'overlay'
+          ? cn(
+              'rounded-pill border backdrop-blur-sm',
+              active
+                ? 'border-rose bg-white-warm/90 text-rose'
+                : 'border-white-warm/70 bg-white-warm/70 text-ink hover:border-rose hover:text-rose',
+            )
+          : cn(
+              'rounded-xs border',
+              active
+                ? 'border-rose bg-rose/10 text-rose'
+                : 'border-ink/30 text-body hover:border-rose hover:text-rose',
+            ),
+        className,
       )}
     >
       <Heart className={cn('size-4', active && 'fill-current')} aria-hidden="true" />
