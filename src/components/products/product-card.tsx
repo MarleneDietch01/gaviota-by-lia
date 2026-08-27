@@ -5,7 +5,7 @@ import { formatMoney } from '@/lib/commerce/money';
 import { cn } from '@/lib/utils/cn';
 import { localizedHref, pick, type Locale } from '@/lib/i18n';
 import { QuickAdd, FavoriteToggle } from '@/components/products/product-actions';
-import { ProductImage } from '@/components/media/site-image';
+import { ProductCardMedia } from '@/components/products/product-card-media';
 import { Stars } from '@/components/ui/stars';
 
 /**
@@ -28,7 +28,7 @@ import { Stars } from '@/components/ui/stars';
  *     `product_review_stats`, ver `getReviewSummaries`) es > 0. La mayoría de
  *     productos siguen sin reseñas todavía.
  *   · Precio anterior y % de ahorro — no existe un precio anterior con vigencia.
- *   · Segunda foto al hover — solo si `product.images[1]` existe de verdad.
+ *   · Segunda foto al hover/tacto — solo si `product.images[1]` existe de verdad.
  *   · Badge — es contenido editorial que decide quien llama a la tarjeta
  *     (ver `FEATURED_BADGES` en `collection.tsx`), no un dato del catálogo.
  */
@@ -72,36 +72,12 @@ export function ProductCard({
           tile es el que ya trae la foto — reducirlo a cero es lo que hace que
           el producto se vea lo más grande posible dentro de esta proporción. */}
       <div className="relative aspect-[4/5]" style={{ backgroundColor: product.imageBackground }}>
-        <ProductImage
-          src={product.image}
-          alt={product.imageAlt}
-          width={product.imageWidth}
-          height={product.imageHeight}
+        <ProductCardMedia
+          product={product}
+          secondImage={secondImage}
           priority={priority}
-          sizes="(max-width: 639px) 85vw, (max-width: 1023px) 44vw, 23vw"
-          // El hover no es un `scale` plano: es la misma idea de
-          // `product-packshot.tsx` (foto como objeto en el espacio, no
-          // sticker) en dosis mínima — `perspective()` inline evita tener que
-          // envolver el tile en un contenedor 3D aparte. Solo con
-          // `motion-safe`, igual que el resto del sitio. Si hay segunda foto,
-          // esta se desvanece para dejarla ver (`secondImage &&` abajo); si
-          // no la hay, se queda tal cual con su propio tilt.
-          className={cn(
-            'transition-[transform,opacity] duration-300 ease-editorial motion-safe:group-hover:[transform:perspective(900px)_rotateX(3deg)_rotateY(-5deg)_scale(1.03)]',
-            secondImage && 'motion-safe:group-hover:opacity-0',
-          )}
+          locale={locale}
         />
-
-        {secondImage ? (
-          <ProductImage
-            src={secondImage.src}
-            alt={secondImage.alt}
-            width={secondImage.width}
-            height={secondImage.height}
-            sizes="(max-width: 639px) 85vw, (max-width: 1023px) 44vw, 23vw"
-            className="absolute inset-0 object-cover! opacity-0 transition-opacity duration-300 ease-editorial motion-safe:group-hover:opacity-100"
-          />
-        ) : null}
 
         {badge ? (
           <span className="absolute left-3 top-3 z-10 rounded-pill bg-rose-deep px-2.5 py-1 text-2xs font-bold uppercase tracking-[0.1em] text-white-warm">

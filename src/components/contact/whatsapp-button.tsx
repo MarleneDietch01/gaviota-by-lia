@@ -19,7 +19,13 @@ export function WhatsAppButton({ locale }: { locale: Locale }) {
       target="_blank"
       rel="noopener noreferrer"
       aria-label={label}
-      className="fixed bottom-5 right-5 z-30 inline-flex min-h-12 items-center justify-center gap-2 rounded-pill bg-rose-deep px-3.5 text-sm font-semibold text-white-warm shadow-lift transition-[background-color,transform] duration-300 ease-soft hover:bg-rose-ink motion-safe:hover:-translate-y-0.5 sm:bottom-6 sm:right-6 sm:px-5"
+      // `bottom-24` y no `bottom-5` en móvil/tablet: la ficha de producto tiene
+      // una barra fija de "Añadir a la bolsa" (`fixed inset-x-0 bottom-0`,
+      // ~69px de alto) que hasta `lg` cubre el mismo ancho de pantalla — con
+      // `bottom-5` este botón quedaba encima de esa barra, tapando la acción
+      // de compra. A partir de `lg` la barra ya no existe (`lg:hidden` en la
+      // ficha), así que ahí sí vuelve a la esquina ajustada.
+      className="fixed bottom-24 right-5 z-30 inline-flex min-h-12 items-center justify-center gap-2 rounded-pill bg-rose-deep px-3.5 text-sm font-semibold text-white-warm shadow-lift transition-[background-color,transform] duration-300 ease-soft hover:bg-rose-ink motion-safe:hover:-translate-y-0.5 sm:right-6 sm:px-5 lg:bottom-6"
     >
       <WhatsAppIcon className="size-5 shrink-0" />
       <span className="hidden sm:inline">WhatsApp</span>
