@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { EditorialImage } from '@/components/media/site-image';
 import { NeedCard } from '@/components/sections/build-ritual';
@@ -12,7 +13,7 @@ import { getAllProducts } from '@/lib/catalog/products';
 import { getShippingConfig } from '@/lib/commerce/checkout';
 import { RITUAL_NEEDS } from '@/lib/content/home-data';
 import { ROUTE_PAGES, localizedCopy, type RoutePage } from '@/lib/content/route-pages';
-import { isLocale, localizedHref, pageAlternates, socialMeta, type Locale } from '@/lib/i18n';
+import { isLocale, localizedHref, pageAlternates, pick, socialMeta, type Locale } from '@/lib/i18n';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 
 /**
@@ -207,6 +208,111 @@ export default async function CatchAllPage({ params }: Props) {
                 </address>
               </aside>
             </Reveal>
+          </div>
+        </Container>
+      </Section>
+    );
+  }
+
+  // `/ingredients`: la ficha genérica solo pintaba el texto de "pendiente".
+  // Ahora lista, producto a producto, el INCI, el modo de uso y las
+  // precauciones que ya vienen confirmados de la base de datos (poblados con la
+  // documentación del fabricante). Los que aún no la tienen se cuentan, no se
+  // inventan. El botón de `PageLinks` lleva al formulario de contacto.
+  if (key === 'ingredients') {
+    const page = ROUTE_PAGES[key]!;
+    const hero = page.hero!;
+    const products = await getAllProducts(lang);
+    const documented = products.filter((product) => product.ingredients);
+    const pending = products.length - documented.length;
+
+    return (
+      <Section tone="ivory">
+        <Container>
+          <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16 xl:gap-20">
+            <Reveal className="frame-arch">
+              <div className="aspect-[4/5]">
+                <EditorialImage
+                  src={hero.src}
+                  alt={localizedCopy(hero.alt, lang)}
+                  width={2000}
+                  height={2500}
+                  sizes="(min-width: 1024px) 46vw, 100vw"
+                  focal={hero.focal}
+                  fit={hero.fit ?? 'cover'}
+                />
+              </div>
+            </Reveal>
+
+            <Reveal delay={80} className="max-w-[34rem]">
+              <p className="eyebrow mb-4 text-rose">{localizedCopy(page.eyebrow, lang)}</p>
+              <h1 className="text-h1">{localizedCopy(page.title, lang)}</h1>
+              <Rule className="my-7 max-w-24" />
+              {page.body.map((paragraph) => (
+                <p key={paragraph.en} className="mt-5 text-lead leading-relaxed text-body">
+                  {localizedCopy(paragraph, lang)}
+                </p>
+              ))}
+              <PageLinks page={page} lang={lang} />
+            </Reveal>
+          </div>
+
+          <div className="mx-auto mt-16 max-w-3xl sm:mt-20">
+            {documented.length > 0 ? (
+              <ul className="space-y-6">
+                {documented.map((product) => (
+                  <li
+                    key={product.slug}
+                    className="rounded-md border border-line bg-white-warm p-6 shadow-subtle sm:p-8"
+                  >
+                    <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                      <h2 className="text-h3">
+                        <Link
+                          href={localizedHref(lang, `/products/${product.slug}`)}
+                          className="transition-colors hover:text-rose"
+                        >
+                          {product.name}
+                        </Link>
+                      </h2>
+                      <span className="text-sm text-muted">{product.sizeLabel}</span>
+                    </div>
+
+                    <h3 className="eyebrow mt-6 text-rose">
+                      {pick(lang, 'Ingredients (INCI)', 'Ingredientes (INCI)')}
+                    </h3>
+                    <p className="mt-2 text-body-sm leading-relaxed text-body">{product.ingredients}</p>
+
+                    {product.usageInstructions ? (
+                      <div className="mt-5">
+                        <h3 className="eyebrow text-rose">{pick(lang, 'How to use', 'Modo de uso')}</h3>
+                        <p className="mt-2 text-body-sm leading-relaxed text-body">
+                          {product.usageInstructions}
+                        </p>
+                      </div>
+                    ) : null}
+
+                    {product.precautions ? (
+                      <div className="mt-5">
+                        <h3 className="eyebrow text-rose">{pick(lang, 'Precautions', 'Precauciones')}</h3>
+                        <p className="mt-2 text-body-sm leading-relaxed text-body">
+                          {product.precautions}
+                        </p>
+                      </div>
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+
+            {pending > 0 ? (
+              <p className="mt-6 rounded-sm border border-dashed border-line-strong p-4 text-sm leading-relaxed text-muted">
+                {pick(
+                  lang,
+                  `${pending === 1 ? 'One more product is' : `${pending} more products are`} awaiting manufacturer documentation. Each list is added here as soon as it is confirmed.`,
+                  `${pending === 1 ? 'Queda 1 producto' : `Quedan ${pending} productos`} a la espera de la documentación del fabricante. Cada lista se añade aquí en cuanto se confirma.`,
+                )}
+              </p>
+            ) : null}
           </div>
         </Container>
       </Section>

@@ -134,4 +134,26 @@ insert into product_related (product_id, related_id, relation, sort_order) value
   ('a0000001-0000-4000-8000-000000000001', 'a0000002-0000-4000-8000-000000000002', 'similar', 1)
 on conflict do nothing;
 
+-- Ingredientes (INCI), precauciones y modo de uso confirmados con la
+-- documentación del fabricante (Maluhia Laboratorios). Espejo de la migración
+-- 20260827120000_product_ingredients.sql para que un seed nuevo ya los traiga.
+-- Solo los 3 productos con ficha recibida; el resto sigue pendiente (C1).
+update products set
+  ingredients_text = 'Sucrose, Prunus Amygdalus Dulcis Oil, Simmondsia Chinensis Seed Oil, Fragrance (Parfum), Cocos Nucifera Oil, Phenoxyethanol, Sodium Benzoate.',
+  precautions = 'Mantener fuera del alcance de los niños. En caso de irritación, descontinuar su uso. Evite contacto con los ojos. Uso externo.',
+  usage_instructions = 'Aplicar en la piel húmeda una cantidad moderada y dar masajes circulares durante unos 3-5 minutos en el área deseada. Luego retirar con abundante agua. Para óptimos resultados, utilizar dos veces por semana.'
+where slug = 'exfoliante-de-coco';
+
+update products set
+  ingredients_text = 'Paraffinum Liquidum, Mineral Oil, Cocos Nucifera (Coconut) Oil, Rosa Moschata (Rosehip) Seed Oil, Prunus Dulcis (Almond) Oil, Tocopherol Acetate, Isopropyl Myristate, Fragrance (Parfum), Glycine Soja Oil.',
+  precautions = 'Mantener fuera del alcance de los niños. En caso de irritación, descontinuar su uso. Evite contacto con los ojos. Uso externo.',
+  usage_instructions = 'Aplicar en la zona deseada y masajear con movimientos circulares por unos minutos. Para óptimos resultados, aplicar después del baño, dos veces al día.'
+where slug = 'aceite-anti-estrias';
+
+update products set
+  ingredients_text = 'Paraffinum Liquidum, Mineral Oil, Cocos Nucifera (Coconut) Oil, Rosa Moschata (Rosehip) Seed Oil, Prunus Dulcis (Almond) Oil, Tocopherol Acetate, Isopropyl Myristate, Fragrance (Parfum), Glycine Soja Oil.',
+  precautions = 'Mantener fuera del alcance de los niños. En caso de irritación, descontinuar su uso. Evite contacto con los ojos. Uso externo.',
+  usage_instructions = 'Aplicar el spray sobre la barba limpia y seca, masajeando suavemente la piel para favorecer la absorción. Usar 1-2 veces al día de forma constante para mejores resultados.'
+where slug = 'tonico-para-barba';
+
 commit;
