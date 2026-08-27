@@ -18,33 +18,42 @@ import { localizedHref, pick, type Locale } from '@/lib/i18n';
  * cuando el dato exista. Inventar un "ahorras un 15 %" sería exactamente el tipo
  * de descuento sin vigencia que este proyecto decidió no replicar.
  */
+/**
+ * Foto del kit por idioma: son dos archivos distintos, no la misma imagen
+ * traducida por CSS — el flyer en inglés tiene su propio recorte/proporción
+ * (1122×1402) porque el texto en inglés es más largo que en español
+ * (1254×1254, cuadrado). Ambas ya llevan fondo blanco propio, así que el
+ * plinto ya no necesita un color de fondo muestreado (a diferencia de
+ * `coleccion-completa.jpg`, que sí lo llevaba).
+ */
+const KIT_IMAGE = {
+  es: { src: '/images/gaviota/products/kit.png', width: 1254, height: 1254 },
+  en: { src: '/images/gaviota/products/kit-en.png', width: 1122, height: 1402 },
+} as const;
+
 export async function Sets({ locale }: { locale: Locale }) {
   const c = await getSection('home.kits', locale);
   if (!c) return null;
+
+  const kitImage = KIT_IMAGE[locale];
 
   return (
     <Section tone="powder" labelledBy="sets-title">
       <Container>
         <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
-          {/* `#e69fa3` no es un valor inventado: es el color de fondo real de
-              `coleccion-completa.jpg`, muestreado por `scripts/process-images.mjs`
-              y registrado en `image-manifest.json` como `collection.all.background`.
-              Mismo patrón que `imageBackground` en `products.ts` — el plinto usa el
-              tono exacto de la foto para que el recorte `fit="contain"` no deje ver
-              el borde rectangular del JPEG contra la tarjeta marfil. */}
           <Reveal className="frame-arch bg-white-warm">
-            <div className="aspect-[4/3] bg-[#e69fa3]">
+            <div className="aspect-[4/3]">
               <EditorialImage
-                src="/images/gaviota/editorial/coleccion-completa.jpg"
+                src={kitImage.src}
                 alt={pick(
                   locale,
-                  'Gaviota by Lia products grouped as a complete routine set',
-                  'Productos Gaviota by Lia agrupados como kit de rutina completa',
+                  'Gaviota by Lia Stretch Mark & Brightening Kit: stretch mark body oil, hydrating body cream and coconut body scrub',
+                  'Kit Anti-Estrías y Aclaración Gaviota by Lia: aceite anti-estrías, crema hidratante y exfoliante de coco',
                 )}
-                width={2000}
-                height={2500}
+                width={kitImage.width}
+                height={kitImage.height}
                 sizes="(min-width: 1024px) 48vw, 100vw"
-                focal="50% 52%"
+                focal="50% 50%"
                 fit="contain"
               />
             </div>

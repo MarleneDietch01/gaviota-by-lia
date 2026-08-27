@@ -170,6 +170,24 @@ const LEGACY_IMAGE: Record<string, { path: string; alt: string; width: number; h
   },
 };
 
+/**
+ * Fotos de estilo de vida adicionales, entregadas directamente como archivo
+ * (no vía /admin/products → Storage). Se añaden siempre al final de
+ * `images`, sin importar si la foto principal viene de Storage o de
+ * `LEGACY_IMAGE` arriba — a diferencia de esa, esta lista no se apaga sola
+ * cuando el producto ya tiene fotos reales en `product_images`.
+ */
+const STATIC_SECONDARY_IMAGES: Record<string, { path: string; alt: string; width: number; height: number }[]> = {
+  'tonico-para-barba': [
+    {
+      path: '/images/gaviota/products/modelo2.png',
+      alt: 'Hombre aplicándose el Tónico Para Barba Gaviota by Lia frente al espejo',
+      width: 1122,
+      height: 1402,
+    },
+  ],
+};
+
 /** Color del ciclorama de las 6 fotos ya existentes. Ver nota de simplificación arriba. */
 const LEGACY_IMAGE_BACKGROUND: Record<string, string> = {
   'aceite-anti-estrias': '#ffffff',
@@ -307,7 +325,16 @@ function toProduct(row: ProductRow, supabaseUrl: string): Product {
       width: img.width,
       height: img.height,
     }));
-  const images = dbImages.length > 0 ? dbImages : [{ src: image.path, alt: image.alt, width: image.width, height: image.height }];
+  const staticSecondary = (STATIC_SECONDARY_IMAGES[row.slug] ?? []).map((s) => ({
+    src: s.path,
+    alt: s.alt,
+    width: s.width,
+    height: s.height,
+  }));
+  const images = [
+    ...(dbImages.length > 0 ? dbImages : [{ src: image.path, alt: image.alt, width: image.width, height: image.height }]),
+    ...staticSecondary,
+  ];
 
   return {
     id: row.id,
