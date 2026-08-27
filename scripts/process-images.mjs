@@ -24,6 +24,7 @@ import {
   OUT_DIR,
   PACKSHOTS,
   FOCAL,
+  COMMUNITY_ZOOM,
   PACKSHOT_CANVAS,
   PACKSHOT_BASELINE,
   PACKSHOT_SCALE,
@@ -129,6 +130,30 @@ async function derive(file, key, outPath, targetWidth) {
   await emit(sharp(src).resize(targetWidth, null, { withoutEnlargement: true }), outPath, key);
 }
 
+/**
+ * Acerca el encuadre `zoom×` sobre el punto focal, manteniendo el 4:5 nativo.
+ * `zoom = 1` es equivalente a `derive` (no recorta nada).
+ */
+async function deriveZoom(file, key, outPath, targetWidth, zoom) {
+  const src = path.join(ORIGINALS, file);
+  if (zoom === 1) return derive(file, key, outPath, targetWidth);
+
+  const meta = await sharp(src).metadata();
+  const focal = FOCAL[file] ?? { x: 0.5, y: 0.5 };
+  const cropW = Math.round(meta.width / zoom);
+  const cropH = Math.round(meta.height / zoom);
+  const left = Math.max(0, Math.min(meta.width - cropW, Math.round(meta.width * focal.x - cropW / 2)));
+  const top = Math.max(0, Math.min(meta.height - cropH, Math.round(meta.height * focal.y - cropH / 2)));
+
+  await emit(
+    sharp(src)
+      .extract({ left, top, width: cropW, height: cropH })
+      .resize(targetWidth, null, { withoutEnlargement: true }),
+    outPath,
+    key,
+  );
+}
+
 /** Recorta a otra relación de aspecto usando el punto focal. */
 async function deriveRatio(file, key, outPath, targetWidth, ratio) {
   const src = path.join(ORIGINALS, file);
@@ -173,6 +198,9 @@ await deriveRatio(HERO, 'hero.mobile', `${OUT_DIR}/hero/hero-mobile.jpg`, 1400, 
 console.log('\n── Editorial ─────────────────────────────────────────────────────');
 const EDITORIAL = [
   ['LeslieEstevezPhotography-(7of19).jpg', 'campaign', 'campaign-aplicacion.jpg', 2000],
+  // Bloque de campaña destacada (home.campaign). La 7of19 se queda para la
+  // tarjeta "Hidratación" de RITUAL_NEEDS.
+  ['LeslieEstevezPhotography-(16of19).jpg', 'campaign.labios', 'campaign-labios.jpg', 2000],
   ['LeslieEstevezPhotography-(15of19).jpg', 'ritual.exfolia', 'ritual-exfolia.jpg', 1600],
   ['LeslieEstevezPhotography-(7of19).jpg', 'ritual.hidrata', 'ritual-hidrata.jpg', 1600],
   ['LeslieEstevezPhotography-(16of19).jpg', 'ritual.labios', 'ritual-labios.jpg', 1600],
@@ -194,12 +222,15 @@ for (const n of [1, 2, 3, 4, 5, 6]) {
 }
 
 console.log('\n── Comunidad ─────────────────────────────────────────────────────');
+// La 9 y la 11 se acercan al encuadre; la 17 y la 18 pasan con zoom 1 (sin
+// recorte). Ver `COMMUNITY_ZOOM` en crops.mjs.
 for (const n of [9, 11, 17, 18]) {
-  await derive(
+  await deriveZoom(
     `LeslieEstevezPhotography-(${n}of19).jpg`,
     `community.${n}`,
     `${OUT_DIR}/community/comunidad-${n}.jpg`,
     1400,
+    COMMUNITY_ZOOM[n],
   );
 }
 

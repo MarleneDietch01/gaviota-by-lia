@@ -70,7 +70,12 @@ export async function Community({ locale }: { locale: Locale }) {
                       width={1400}
                       height={1750}
                       sizes="(max-width: 639px) 68vw, (max-width: 1023px) 48vw, 23vw"
-                      focal={photo.focal}
+                      // Todos los originales son 4:5, igual que el contenedor:
+                      // `object-cover` no recorta y el punto focal no tiene
+                      // efecto. Se deja el centro por defecto. Si algún día se
+                      // cambia el `aspect-[4/5]` de arriba, habrá que volver a
+                      // pasar un focal por foto.
+                      focal="50% 50%"
                     />
                   </div>
                 </div>

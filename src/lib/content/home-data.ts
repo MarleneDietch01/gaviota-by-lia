@@ -318,48 +318,35 @@ export const CAMPAIGN_BENEFITS: readonly Bilingual[] = [
 export interface CommunityPhoto {
   readonly src: string;
   readonly alt: Bilingual;
-  readonly focal: string;
 }
 
 export const COMMUNITY_PHOTOS: readonly CommunityPhoto[] = [
   {
     src: '/images/gaviota/community/comunidad-18.jpg',
-    focal: '50% 45%',
     alt: {
-      en: 'Five women holding different products from the Gaviota by Lia line',
-      es: 'Cinco mujeres mostrando distintos productos de la línea Gaviota by Lia',
+      en: 'Four women showing different products from the Gaviota by Lia line',
+      es: 'Cuatro mujeres mostrando distintos productos de la línea Gaviota by Lia',
     },
   },
   {
     src: '/images/gaviota/community/comunidad-9.jpg',
-    focal: '50% 58%',
     alt: {
-      en: 'Four women of different skin tones with the Gaviota by Lia product line',
-      es: 'Cuatro mujeres de distintos tonos de piel junto a la línea de productos Gaviota by Lia',
+      en: 'Four women of different skin tones with the Gaviota by Lia line',
+      es: 'Cuatro mujeres de distintos tonos de piel junto a la línea Gaviota by Lia',
     },
   },
   {
     src: '/images/gaviota/community/comunidad-17.jpg',
-    focal: '50% 42%',
     alt: {
-      en: 'Three women holding the Gaviota by Lia scrub and body oil',
-      es: 'Tres mujeres sosteniendo el exfoliante y el aceite Gaviota by Lia',
+      en: 'Three women holding Gaviota by Lia body-care products',
+      es: 'Tres mujeres sosteniendo productos de cuidado corporal Gaviota by Lia',
     },
   },
   {
     src: '/images/gaviota/community/comunidad-11.jpg',
-    focal: '50% 50%',
     alt: {
-      en: 'Four women posing together with Gaviota by Lia products',
-      es: 'Cuatro mujeres posando juntas con productos Gaviota by Lia',
-    },
-  },
-  {
-    src: '/images/gaviota/community/comunidad-19.jpg',
-    focal: '50% 30%',
-    alt: {
-      en: 'Woman seated and surrounded by hands holding the Gaviota by Lia product line',
-      es: 'Mujer sentada rodeada de manos sosteniendo la línea de productos Gaviota by Lia',
+      en: 'Three women posing together with Gaviota by Lia products',
+      es: 'Tres mujeres posando juntas con productos Gaviota by Lia',
     },
   },
 ];

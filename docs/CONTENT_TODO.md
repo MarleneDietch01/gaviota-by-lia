@@ -350,6 +350,12 @@ productos.
 
 - [ ] ¿Se puede usar, o su exclusión fue deliberada?
 
+**Estado:** se había añadido a la rejilla de comunidad como `comunidad-19.jpg` (un
+JPEG de 20,8 MB sin pasar por el pipeline, y dejaba 5 fotos = fila huérfana en la
+rejilla de 4). Se retira hasta que se resuelva la duda de arriba. Para volver a
+usarla: añadir `12` a los bucles de `scripts/process-images.mjs` y a
+`COMMUNITY_PHOTOS`, y decidir un layout de 5 (p. ej. `lg:grid-cols-5`).
+
 ---
 
 ## 🟢 C19 — Reseñas y testimonios

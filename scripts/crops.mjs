@@ -152,6 +152,30 @@ export const STUDIO_BACKGROUND = { r: 255, g: 255, b: 255 };
 export const LIFESTYLE_PACKSHOTS = [];
 
 /**
+ * Zoom de encuadre para la rejilla de comunidad.
+ *
+ * Las cuatro fotos son 4:5 nativas y se servían sin recortar. Pero la 17 y la
+ * 18 se dispararon en plano corto (los rostros llenan el cuadro) y la 9 y la 11
+ * en plano entero, con un tercio de ciclorama rosa vacío por encima de las
+ * cabezas. En la rejilla de cuatro columnas eso hacía convivir dos escalas muy
+ * distintas y la sección perdía cohesión.
+ *
+ * Se recorta la 9 y la 11 sobre su punto focal para acercar el grupo hasta una
+ * escala parecida a la de la 17/18, sin llegar a cortar pies ni productos:
+ *
+ *   9  → 1,20×  (era la que más aire muerto tenía)
+ *   11 → 1,12×
+ *
+ * La 17 y la 18 no se tocan (1,0×): ya están encuadradas.
+ */
+export const COMMUNITY_ZOOM = {
+  9: 1.2,
+  11: 1.12,
+  17: 1,
+  18: 1,
+};
+
+/**
  * Punto focal por fotografía (0 = izquierda/arriba, 1 = derecha/abajo).
  * Protege rostros y productos en los recortes responsivos.
  */

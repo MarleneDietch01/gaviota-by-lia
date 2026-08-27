@@ -68,7 +68,7 @@ const DEFAULTS_ES: Record<string, ContentSection> = {
     key: 'home.campaign',
     eyebrow: 'Exfoliante de Coco',
     title: 'Suavidad que se convierte en ritual.',
-    body: 'Gránulos finos de coco y una fragancia que convierte dos minutos en la ducha en el momento más esperado del día.',
+    body: 'Gránulos finos de coco y una fragancia irresistible que convierte dos minutos en la ducha en el momento más esperado del día.',
     buttonLabel: 'Conocer el producto',
     buttonUrl: '/products/exfoliante-de-coco',
     status: 'active',

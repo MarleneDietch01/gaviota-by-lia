@@ -21,17 +21,21 @@ export async function Campaign({ locale }: { locale: Locale }) {
     <Section tone="wine" padding="none" labelledBy="campaign-title" className="overflow-hidden">
       <div className="grid lg:grid-cols-2">
         {/* La imagen llena su mitad de verdad: el contenedor se estira con la
-            fila de la rejilla y la foto usa `object-cover` a altura completa. */}
-        <div className="relative min-h-[22rem] sm:min-h-[26rem] lg:min-h-[42rem]">
+            fila de la rejilla y la foto usa `object-cover` a altura completa.
+            `lg:min-h-[48rem]` (antes 42): la foto es un primer plano 4:5 con
+            poco aire sobre la cabeza; en un panel más bajo `object-cover` le
+            recortaba la coronilla en pantallas anchas. Con 48rem el panel se
+            acerca al retrato y `focal` 50% 4% deja la cabeza entera. */}
+        <div className="relative min-h-[22rem] sm:min-h-[26rem] lg:min-h-[48rem]">
           <FillEditorialImage
-            src="/images/gaviota/editorial/campaign-aplicacion.jpg"
+            src="/images/gaviota/editorial/campaign-labios.jpg"
             alt={pick(
               locale,
-              'Woman applying Gaviota by Lia body cream to her shoulder',
-              'Mujer aplicando crema hidratante Gaviota by Lia sobre su hombro',
+              'Woman holding a small gold Gaviota by Lia jar, one finger to her lips',
+              'Mujer sosteniendo un pequeño tarro dorado de Gaviota by Lia, con un dedo sobre los labios',
             )}
             sizes="(min-width: 1024px) 50vw, 100vw"
-            focal="45% 38%"
+            focal="50% 4%"
           />
         </div>
 
