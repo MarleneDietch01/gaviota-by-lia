@@ -194,6 +194,22 @@ const STATIC_SECONDARY_IMAGES: Record<string, { path: string; alt: string; width
       height: 1402,
     },
   ],
+  'serum-vellos-encarnados': [
+    {
+      path: '/images/gaviota/products/Modelo7.png',
+      alt: 'Hombre aplicándose el Sérum Vellos Encarnados Gaviota by Lia en el hombro',
+      width: 971,
+      height: 1619,
+    },
+  ],
+  'aceite-anti-estrias-masculino': [
+    {
+      path: '/images/gaviota/products/modelo6.png',
+      alt: 'Hombre aplicándose el Aceite Anti-Estrías Masculino Gaviota by Lia en el brazo',
+      width: 1122,
+      height: 1402,
+    },
+  ],
   'tonico-para-barba': [
     {
       path: '/images/gaviota/products/modelo2.png',
