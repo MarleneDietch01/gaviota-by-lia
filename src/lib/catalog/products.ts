@@ -177,11 +177,15 @@ const LEGACY_IMAGE: Record<string, { path: string; alt: string; width: number; h
  * `LEGACY_IMAGE` arriba — a diferencia de esa, esta lista no se apaga sola
  * cuando el producto ya tiene fotos reales en `product_images`.
  */
-const STATIC_SECONDARY_IMAGES: Record<string, { path: string; alt: string; width: number; height: number }[]> = {
+const STATIC_SECONDARY_IMAGES: Record<
+  string,
+  { path: string; alt: string; altEn: string; width: number; height: number }[]
+> = {
   'exfoliante-de-coco': [
     {
       path: '/images/gaviota/products/modelo3.png',
       alt: 'Mujer utilizando el Exfoliante de Coco Gaviota by Lia en la pierna',
+      altEn: 'Woman using Gaviota by Lia Coconut Body Scrub on her leg',
       width: 1122,
       height: 1402,
     },
@@ -190,6 +194,7 @@ const STATIC_SECONDARY_IMAGES: Record<string, { path: string; alt: string; width
     {
       path: '/images/gaviota/products/Modelo4.png',
       alt: 'Mujer aplicándose la Crema Hidratante Gaviota by Lia en el brazo',
+      altEn: 'Woman applying Gaviota by Lia Hydrating Body Cream to her arm',
       width: 1122,
       height: 1402,
     },
@@ -198,6 +203,7 @@ const STATIC_SECONDARY_IMAGES: Record<string, { path: string; alt: string; width
     {
       path: '/images/gaviota/products/Modelo7.png',
       alt: 'Hombre aplicándose el Sérum Vellos Encarnados Gaviota by Lia en el hombro',
+      altEn: 'Man applying Gaviota by Lia Ingrown Hair Serum to his shoulder',
       width: 971,
       height: 1619,
     },
@@ -206,6 +212,7 @@ const STATIC_SECONDARY_IMAGES: Record<string, { path: string; alt: string; width
     {
       path: '/images/gaviota/products/modelo6.png',
       alt: 'Hombre aplicándose el Aceite Anti-Estrías Masculino Gaviota by Lia en el brazo',
+      altEn: "Man applying Gaviota by Lia Men's Stretch Mark Body Oil to his arm",
       width: 1122,
       height: 1402,
     },
@@ -214,6 +221,7 @@ const STATIC_SECONDARY_IMAGES: Record<string, { path: string; alt: string; width
     {
       path: '/images/gaviota/products/modelo2.png',
       alt: 'Hombre aplicándose el Tónico Para Barba Gaviota by Lia frente al espejo',
+      altEn: 'Man applying Gaviota by Lia Beard Tonic in front of the mirror',
       width: 1122,
       height: 1402,
     },
@@ -222,6 +230,7 @@ const STATIC_SECONDARY_IMAGES: Record<string, { path: string; alt: string; width
     {
       path: '/images/gaviota/products/Modelo5.png',
       alt: 'Mujer aplicándose el Aceite Anti-Estrías Gaviota by Lia en el brazo',
+      altEn: 'Woman applying Gaviota by Lia Stretch Mark Body Oil to her arm',
       width: 1122,
       height: 1402,
     },
@@ -287,18 +296,67 @@ const ENGLISH: Record<
   'tonico-para-barba': {
     name: 'Beard Tonic',
     shortDescription: 'Conditions, softens and helps tame your beard, with a fresh everyday scent.',
-    imageAlt: 'Gaviota by Lia Beard Tonic bottle next to its box',
+    imageAlt: 'Gaviota by Lia Beard Tonic spray bottle',
     precautions: 'Keep out of reach of children. In case of irritation, discontinue use. Avoid contact with eyes. External use.',
     usageInstructions: 'Apply the spray to a clean, dry beard, gently massaging it into the skin to promote absorption. Use 1-2 times daily for consistent, best results.',
   },
 };
 
+/**
+ * Packshot con la etiqueta en inglés. Es un archivo aparte, no la foto en
+ * español con el texto traducido por CSS — el envase fotografiado es distinto.
+ *
+ * Se aplica SIEMPRE en locale `en` (igual que el `ENGLISH` de texto de arriba
+ * pisa el nombre y la descripción), sustituyendo a la foto principal venga de
+ * `LEGACY_IMAGE` o de Storage. Hoy no existe un flujo en /admin para subir una
+ * foto por idioma, así que este mapa es la única fuente del packshot inglés.
+ *
+ * `serum-vellos-encarnados` no tiene versión en inglés todavía: en `en` cae a
+ * la foto en español con el `imageAlt` de `ENGLISH`.
+ *
+ * Solo cubre la foto PRINCIPAL. Si algún producto llega a tener varias fotos de
+ * Storage, las secundarias seguirían en español — no ocurre hoy (ninguno pasa
+ * de una).
+ */
+const ENGLISH_IMAGE: Record<string, { path: string; width: number; height: number }> = {
+  'aceite-anti-estrias': { path: '/images/gaviota/products/aceite-anti-estrias-en.png', width: 1254, height: 1254 },
+  'exfoliante-de-coco': { path: '/images/gaviota/products/exfoliante-de-coco-en.png', width: 1254, height: 1254 },
+  'crema-hidratante': { path: '/images/gaviota/products/crema-hidratante-en.png', width: 1254, height: 1254 },
+  'aceite-anti-estrias-masculino': { path: '/images/gaviota/products/aceite-anti-estrias-masculino-en.png', width: 1254, height: 1254 },
+  'tonico-para-barba': { path: '/images/gaviota/products/tonico-para-barba-en.png', width: 1254, height: 1254 },
+};
+
 function localizeProduct(product: Product, locale: Locale): Product {
   if (locale !== 'en') return product;
 
+  const en = ENGLISH[product.slug];
+  const enImage = ENGLISH_IMAGE[product.slug];
+
+  // `alt` en inglés de las fotos de estilo de vida, indexado por su ruta —
+  // `product.images` ya no lleva el idioma, solo la cadena en español.
+  const lifestyleAltEn = new Map(
+    (STATIC_SECONDARY_IMAGES[product.slug] ?? []).map((s) => [s.path, s.altEn] as const),
+  );
+
+  const images = product.images.map((img, index) => {
+    if (index === 0) {
+      return {
+        ...img,
+        ...(enImage ? { src: enImage.path, width: enImage.width, height: enImage.height } : {}),
+        ...(en?.imageAlt ? { alt: en.imageAlt } : {}),
+      };
+    }
+    const altEn = lifestyleAltEn.get(img.src);
+    return altEn ? { ...img, alt: altEn } : img;
+  });
+
   return {
     ...product,
-    ...ENGLISH[product.slug],
+    ...en,
+    ...(enImage
+      ? { image: enImage.path, imageWidth: enImage.width, imageHeight: enImage.height }
+      : {}),
+    images,
     // El español se editó y nadie confirmó todavía que el inglés de arriba
     // sigue vigente: no se sirve tal cual sin avisar. Reutiliza el mismo
     // aviso "ficha en ampliación" que ya existe para contenido incompleto,
