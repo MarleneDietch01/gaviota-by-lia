@@ -292,6 +292,9 @@ const ENGLISH: Record<
     name: "Men's Stretch Mark Body Oil",
     shortDescription: 'Firming hydration for soft, luminous-looking skin.',
     imageAlt: "4 fl oz Gaviota by Lia Men's Stretch Mark Body Oil dropper bottle",
+    // Misma etiqueta bilingüe que el Aceite Anti-Estrías.
+    precautions: 'Keep out of reach of children. In case of irritation, discontinue use. Avoid contact with eyes. External use.',
+    usageInstructions: 'Apply to the desired area and massage in circular motions for a few minutes. For optimal results, apply after bathing, twice a day.',
   },
   'tonico-para-barba': {
     name: 'Beard Tonic',

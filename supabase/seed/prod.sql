@@ -162,4 +162,12 @@ update products set
   usage_instructions = 'Aplique el producto después de la depilación para calmar la piel y prevenir los pelos encarnados.'
 where slug = 'serum-vellos-encarnados';
 
+-- El masculino comparte etiqueta (fórmula, uso y precauciones) con el aceite
+-- anti-estrías; confirmado por la propietaria.
+update products set
+  ingredients_text = 'Paraffinum Liquidum, Mineral Oil, Cocos Nucifera (Coconut) Oil, Rosa Moschata (Rosehip) Seed Oil, Prunus Dulcis (Almond) Oil, Tocopherol Acetate, Isopropyl Myristate, Fragrance (Parfum), Glycine Soja Oil.',
+  precautions = 'Mantener fuera del alcance de los niños. En caso de irritación, descontinuar su uso. Evite contacto con los ojos. Uso externo.',
+  usage_instructions = 'Aplicar en la zona deseada y masajear con movimientos circulares por unos minutos. Para óptimos resultados, aplicar después del baño, dos veces al día.'
+where slug = 'aceite-anti-estrias-masculino';
+
 commit;
