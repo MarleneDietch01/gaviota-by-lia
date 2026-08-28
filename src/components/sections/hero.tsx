@@ -26,22 +26,17 @@ import { localizedHref, pick, type Locale } from '@/lib/i18n';
  *   · < 1024px  apilado: fotografía arriba, contenido debajo sobre marfil.
  *               El texto NUNCA se superpone al rostro, así que no depende de un
  *               degradado para tener contraste.
- *   · ≥ 1024px  dividido 42 / 58, retrato completo sobre una extensión del
- *               mismo fondo rosa. La foto conserva cabello, brazos y envases
- *               sin deformarse ni ampliarse hasta perder el producto.
+ *   · ≥ 1024px  dividido 42 / 58, con un recorte horizontal preparado desde
+ *               el original para conservar rostro, manos y productos.
  *
- * `object-position` se ajusta en móvil/tablet porque el recorte cambia de forma.
- * En escritorio la fuente 4:5 no se fuerza a cubrir el panel casi horizontal:
- * se escala moderadamente al 115 % de la altura y se alinea a la derecha. Así
- * quedan visibles cabello, manos y los tres productos; solo sale del marco una
- * parte del fondo superior y del cajón. El borde izquierdo se desvanece sobre
- * el mismo rosa para evitar una unión vertical visible.
+ * Cada breakpoint recibe un archivo con la relación de aspecto de su caja. El
+ * `object-cover` absorbe únicamente diferencias mínimas entre viewports, no
+ * convierte una fotografía vertical en una falsa panorámica.
  * -----------------------------------------------------------------------------
  */
 
-const ALT_ES =
-  'Mujer sonriente junto a tres productos de cuidado corporal Gaviota by Lia sobre un cajón blanco';
-const ALT_EN = 'Smiling woman beside three Gaviota by Lia body care products on a white dresser';
+const ALT_ES = 'Modelo rodeada de manos que presentan productos de cuidado corporal Gaviota by Lia';
+const ALT_EN = 'Model surrounded by hands presenting Gaviota by Lia body care products';
 
 export async function Hero({ locale }: { locale: Locale }) {
   const c = await getSection('home.hero', locale);
@@ -55,15 +50,15 @@ export async function Hero({ locale }: { locale: Locale }) {
 
   const {
     props: { srcSet: desktopSrcSet },
-  } = getImageProps({ ...common, src: '/images/gaviota/hero/hero-desktop.jpg', width: 2400, height: 3000, sizes: '58vw' });
+  } = getImageProps({ ...common, src: '/images/gaviota/hero/hero-desktop.jpg', width: 2400, height: 1667, sizes: '58vw' });
 
   const {
     props: { srcSet: tabletSrcSet },
-  } = getImageProps({ ...common, src: '/images/gaviota/hero/hero-tablet.jpg', width: 1800, height: 2250, sizes: '100vw' });
+  } = getImageProps({ ...common, src: '/images/gaviota/hero/hero-tablet.jpg', width: 1800, height: 1250, sizes: '100vw' });
 
   const {
     props: { srcSet: mobileSrcSet, ...imgProps },
-  } = getImageProps({ ...common, src: '/images/gaviota/hero/hero-mobile.jpg', width: 1400, height: 1866, sizes: '100vw' });
+  } = getImageProps({ ...common, src: '/images/gaviota/hero/hero-mobile.jpg', width: 1400, height: 1167, sizes: '100vw' });
 
   return (
     <section className="relative bg-ivory">
@@ -149,7 +144,7 @@ export async function Hero({ locale }: { locale: Locale }) {
         </div>
 
         {/* ---------------- Fotografía ---------------- */}
-        <div className="relative order-1 overflow-hidden lg:order-2 lg:h-[min(calc(100svh-5rem),48rem)] lg:bg-[#d58b95]">
+        <div className="relative order-1 overflow-hidden lg:order-2 lg:h-[min(calc(100svh-5rem),48rem)]">
           <picture className="block h-full">
             <source media="(min-width: 1024px)" srcSet={desktopSrcSet} sizes="58vw" />
             <source media="(min-width: 640px)" srcSet={tabletSrcSet} sizes="100vw" />
@@ -168,9 +163,7 @@ export async function Hero({ locale }: { locale: Locale }) {
                 // pliegue, sin quitar protagonismo a la fotografía.
                 'h-[clamp(15rem,38svh,20rem)] w-full object-cover ' +
                 'object-[50%_30%] sm:h-[clamp(22rem,50svh,32rem)] sm:object-[50%_26%] ' +
-                'lg:absolute lg:right-0 lg:top-1/2 lg:h-[115%] lg:w-auto lg:max-w-none ' +
-                'lg:-translate-y-1/2 lg:rounded-bl-[3rem] lg:object-contain ' +
-                'lg:[mask-image:linear-gradient(to_right,transparent_0%,black_14%,black_100%)]'
+                'lg:h-full lg:rounded-bl-[3rem] lg:object-[50%_50%]'
               }
             />
           </picture>

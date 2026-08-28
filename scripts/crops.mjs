@@ -180,6 +180,7 @@ export const COMMUNITY_ZOOM = {
  * Protege rostros y productos en los recortes responsivos.
  */
 export const FOCAL = {
+  'LeslieEstevezPhotography-(12of19).jpg': { x: 0.5, y: 0.32 },
   'LeslieEstevezPhotography-(19of19).jpg': { x: 0.5, y: 0.32 },
   'LeslieEstevezPhotography-(7of19).jpg':  { x: 0.45, y: 0.42 },
   'LeslieEstevezPhotography-(15of19).jpg': { x: 0.5, y: 0.55 },
