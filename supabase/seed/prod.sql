@@ -156,4 +156,10 @@ update products set
   usage_instructions = 'Aplicar el spray sobre la barba limpia y seca, masajeando suavemente la piel para favorecer la absorción. Usar 1-2 veces al día de forma constante para mejores resultados.'
 where slug = 'tonico-para-barba';
 
+update products set
+  ingredients_text = 'Aqua, Propylene Glycol, 3-O-Ethyl Ascorbic Acid, Tocopheryl Acetate, Polyisobutene, Polysorbate 20, Sorbitan Isostearate, Hyaluronic Acid, Xanthan Gum, Benzoic Acid, Sorbic Acid, Salicylic Acid, Lactic Acid, Citric Acid, Benzyl Alcohol, Sodium Polyacrylate.',
+  precautions = 'Mantener fuera del alcance de los niños. En caso de irritación, suspender su uso. Evitar el contacto con los ojos. Uso externo.',
+  usage_instructions = 'Aplique el producto después de la depilación para calmar la piel y prevenir los pelos encarnados.'
+where slug = 'serum-vellos-encarnados';
+
 commit;
