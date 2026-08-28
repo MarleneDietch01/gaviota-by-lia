@@ -1,20 +1,20 @@
 {
   "hero.desktop": {
-    "src": "/images/gaviota/hero/hero-desktop.jpg",
+    "src": "/images/gaviota/hero/hero-products-desktop.jpg",
     "width": 2400,
-    "height": 3000,
+    "height": 1667,
     "background": "#b27e7b"
   },
   "hero.tablet": {
-    "src": "/images/gaviota/hero/hero-tablet.jpg",
+    "src": "/images/gaviota/hero/hero-products-tablet.jpg",
     "width": 1800,
-    "height": 2250,
+    "height": 1250,
     "background": "#b27e7b"
   },
   "hero.mobile": {
-    "src": "/images/gaviota/hero/hero-mobile.jpg",
+    "src": "/images/gaviota/hero/hero-products-mobile.jpg",
     "width": 1400,
-    "height": 1866,
+    "height": 1167,
     "background": "#b07d79"
   },
   "campaign": {

@@ -39,9 +39,8 @@ import { localizedHref, pick, type Locale } from '@/lib/i18n';
  * -----------------------------------------------------------------------------
  */
 
-const ALT_ES =
-  'Mujer sonriente junto a tres productos de cuidado corporal Gaviota by Lia sobre un cajón blanco';
-const ALT_EN = 'Smiling woman beside three Gaviota by Lia body care products on a white dresser';
+const ALT_ES = 'Modelo rodeada de manos que presentan productos de cuidado corporal Gaviota by Lia';
+const ALT_EN = 'Model surrounded by hands presenting Gaviota by Lia body care products';
 
 export async function Hero({ locale }: { locale: Locale }) {
   const c = await getSection('home.hero', locale);
@@ -55,15 +54,15 @@ export async function Hero({ locale }: { locale: Locale }) {
 
   const {
     props: { srcSet: desktopSrcSet },
-  } = getImageProps({ ...common, src: '/images/gaviota/hero/hero-desktop.jpg', width: 2400, height: 3000, sizes: '58vw' });
+  } = getImageProps({ ...common, src: '/images/gaviota/hero/hero-products-desktop.jpg', width: 2400, height: 1667, sizes: '58vw' });
 
   const {
     props: { srcSet: tabletSrcSet },
-  } = getImageProps({ ...common, src: '/images/gaviota/hero/hero-tablet.jpg', width: 1800, height: 2250, sizes: '100vw' });
+  } = getImageProps({ ...common, src: '/images/gaviota/hero/hero-products-tablet.jpg', width: 1800, height: 1250, sizes: '100vw' });
 
   const {
     props: { srcSet: mobileSrcSet, ...imgProps },
-  } = getImageProps({ ...common, src: '/images/gaviota/hero/hero-mobile.jpg', width: 1400, height: 1866, sizes: '100vw' });
+  } = getImageProps({ ...common, src: '/images/gaviota/hero/hero-products-mobile.jpg', width: 1400, height: 1167, sizes: '100vw' });
 
   return (
     <section className="relative bg-ivory">
@@ -167,8 +166,8 @@ export async function Hero({ locale }: { locale: Locale }) {
                 // En 390×844 deja el CTA primario completo dentro del primer
                 // pliegue, sin quitar protagonismo a la fotografía.
                 'h-[clamp(15rem,38svh,20rem)] w-full object-cover ' +
-                'object-[50%_30%] sm:h-[clamp(22rem,50svh,32rem)] sm:object-[50%_26%] ' +
-                'lg:h-full lg:rounded-bl-[3rem] lg:object-[50%_58%]'
+                'object-[50%_50%] sm:h-[clamp(22rem,50svh,32rem)] sm:object-[50%_50%] ' +
+                'lg:h-full lg:rounded-bl-[3rem] lg:object-[50%_50%]'
               }
             />
           </picture>

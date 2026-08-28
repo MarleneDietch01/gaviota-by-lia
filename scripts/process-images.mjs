@@ -168,7 +168,7 @@ async function deriveRatio(file, key, outPath, targetWidth, ratio) {
   );
 }
 
-const HERO = 'LeslieEstevezPhotography-(19of19).jpg';
+const HERO = 'LeslieEstevezPhotography-(12of19).jpg';
 
 /* ---------------------------------------------------------------------------
    ANCHOS OBJETIVO
@@ -189,11 +189,12 @@ const HERO = 'LeslieEstevezPhotography-(19of19).jpg';
    --------------------------------------------------------------------------- */
 
 console.log('\n── Hero ──────────────────────────────────────────────────────────');
-// Escritorio: composición dividida, conserva el 4:5 nativo sin recortar nada.
-await derive(HERO, 'hero.desktop', `${OUT_DIR}/hero/hero-desktop.jpg`, 2400);
-await derive(HERO, 'hero.tablet', `${OUT_DIR}/hero/hero-tablet.jpg`, 1800);
-// Móvil: recorte 3:4 propio, con el rostro protegido por el punto focal.
-await deriveRatio(HERO, 'hero.mobile', `${OUT_DIR}/hero/hero-mobile.jpg`, 1400, 3 / 4);
+// Recortes con la relación real de cada caja del hero. La toma 12 concentra
+// rostro, manos y envases en la mitad superior y funciona como panorámica sin
+// cortar el producto ni extender artificialmente el ciclorama.
+await deriveRatio(HERO, 'hero.desktop', `${OUT_DIR}/hero/hero-products-desktop.jpg`, 2400, 36 / 25);
+await deriveRatio(HERO, 'hero.tablet', `${OUT_DIR}/hero/hero-products-tablet.jpg`, 1800, 36 / 25);
+await deriveRatio(HERO, 'hero.mobile', `${OUT_DIR}/hero/hero-products-mobile.jpg`, 1400, 6 / 5);
 
 console.log('\n── Editorial ─────────────────────────────────────────────────────');
 const EDITORIAL = [
