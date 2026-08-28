@@ -42,52 +42,60 @@ export function CampaignFlyers({ locale }: { locale: Locale }) {
   return (
     <Section tone="ivory" padding="compact" labelledBy="campaign-flyers-title">
       <Container>
-        <SectionHeader
-          id="campaign-flyers-title"
-          eyebrow={pick(locale, 'What to expect', 'Lo que puedes esperar')}
-          title={pick(locale, 'Your best version starts here.', 'Tu mejor versión empieza aquí.')}
-        />
+        <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-12 xl:gap-16">
+          <Reveal>
+            {/* Proporción nativa 4:5: no añade recortes a rostro, manos, piernas o tarro. */}
+            <figure className="aspect-[4/5] overflow-hidden rounded-sm bg-powder/20">
+              <EditorialImage
+                src="/images/gaviota/editorial/ritual-exfolia.jpg"
+                alt={pick(
+                  locale,
+                  'Woman applying a Gaviota by Lia body care product to her leg while holding the jar',
+                  'Mujer aplicando un producto corporal Gaviota by Lia en su pierna mientras sostiene el tarro',
+                )}
+                width={1600}
+                height={2000}
+                sizes="(max-width: 1023px) calc(100vw - 2.5rem), 34rem"
+                focal="50% 50%"
+              />
+            </figure>
+          </Reveal>
 
-        <Reveal>
-          <ul className="mx-auto mb-14 flex max-w-3xl flex-wrap justify-center gap-x-8 gap-y-3">
-            {CAMPAIGN_BENEFITS.map((benefit) => (
-              <li key={benefit.en} className="flex items-center gap-2 text-sm font-medium text-body">
-                <Check className="size-4 shrink-0 text-rose" strokeWidth={2.5} aria-hidden="true" />
-                {t(benefit, locale)}
-              </li>
-            ))}
-          </ul>
-        </Reveal>
-
-        <Reveal className="mx-auto max-w-md">
-          {/*
-            Recorte propio de la foto de sesión (`journal-tras-camaras-cropped.jpg`,
-            generado desde el original en `originales/LeslieEstevezPhotographyGA15.jpg`),
-            no la versión publicada anteriormente: esa mostraba el borde del papel de
-            fondo, el piso y el estante de telones enrollados en el margen — una toma
-            de detrás de cámaras, no una foto terminada. El recorte deja solo el fondo
-            rosa limpio y a las dos modelos, sin tocar facciones, cuerpos ni color.
-          */}
-          <figure className="aspect-[4/5] overflow-hidden rounded-sm bg-powder/20">
-            <EditorialImage
-              src="/images/gaviota/editorial/journal-tras-camaras-cropped.jpg"
-              alt={pick(
+          <Reveal className="min-w-0 lg:py-6">
+            <SectionHeader
+              id="campaign-flyers-title"
+              eyebrow={pick(locale, 'What to expect', 'Lo que puedes esperar')}
+              title={pick(locale, 'Your daily moment of care.', 'Tu momento diario de cuidado.')}
+              subtitle={pick(
                 locale,
-                'Gaviota by Lia product being applied to skin during a photoshoot',
-                'Producto Gaviota by Lia aplicándose sobre la piel durante una sesión de fotos',
+                'A simple body-care ritual made to hydrate, soften, and turn every application into a moment of your own.',
+                'Un ritual sencillo de cuidado corporal creado para hidratar, suavizar y convertir cada aplicación en un momento para ti.',
               )}
-              width={1600}
-              height={1923}
-              sizes="(max-width: 639px) 100vw, 28rem"
-              focal="50% 42%"
+              align="left"
+              className="mb-8 sm:mb-9"
             />
-          </figure>
-          <div className="mt-5 text-center">
-            <LinkButton href={localizedHref(locale, '/shop')} variant="secondary">
-              {pick(locale, 'Shop the collection', 'Ver la colección')}
-            </LinkButton>
-          </div>
-        </Reveal>
+
+            <ul className="space-y-5">
+              {CAMPAIGN_BENEFITS.map((benefit) => (
+                <li key={benefit.title.en} className="flex gap-3.5">
+                  <span className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-powder/55 text-wine">
+                    <Check className="size-3.5" strokeWidth={2.25} aria-hidden="true" />
+                  </span>
+                  <div className="min-w-0">
+                    <h3 className="text-sm font-semibold text-ink">{t(benefit.title, locale)}</h3>
+                    <p className="mt-0.5 text-sm leading-relaxed text-body">{t(benefit.body, locale)}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+
+            <div className="mt-8">
+              <LinkButton href={localizedHref(locale, '/shop')} variant="wine">
+                {pick(locale, 'Shop the collection', 'Ver la colección')}
+              </LinkButton>
+            </div>
+          </Reveal>
+        </div>
       </Container>
     </Section>
   );

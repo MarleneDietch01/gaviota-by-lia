@@ -309,11 +309,33 @@ export const INGREDIENTS: readonly Ingredient[] = [
    del sitio — ver LEGAL_TODO.md L13). Los bullets los dio la propietaria de la
    marca directamente para esta sección; no son ingredientes ni porcentajes.
    =========================================================================== */
-export const CAMPAIGN_BENEFITS: readonly Bilingual[] = [
-  { en: 'Deep hydration', es: 'Hidratación profunda' },
-  { en: 'Elasticity and firmness', es: 'Elasticidad y firmeza' },
-  { en: 'Even tone', es: 'Tono uniforme' },
-  { en: 'Visible results', es: 'Resultados visibles' },
+export interface CampaignBenefit {
+  readonly title: Bilingual;
+  readonly body: Bilingual;
+}
+
+export const CAMPAIGN_BENEFITS: readonly CampaignBenefit[] = [
+  {
+    title: { en: 'Deep hydration', es: 'Hidratación profunda' },
+    body: {
+      en: 'Cream and body oils help keep skin feeling hydrated and comfortable.',
+      es: 'La crema y los aceites corporales ayudan a mantener la piel hidratada y cómoda.',
+    },
+  },
+  {
+    title: { en: 'Everyday softness', es: 'Suavidad diaria' },
+    body: {
+      en: 'Cream and scrub support softer, smoother-feeling skin.',
+      es: 'La crema y el exfoliante favorecen una piel de sensación más suave y lisa.',
+    },
+  },
+  {
+    title: { en: 'Firming body care', es: 'Cuidado corporal reafirmante' },
+    body: {
+      en: 'The body oil pairs moisturizing care with a luminous-looking finish.',
+      es: 'El aceite corporal combina cuidado hidratante con un acabado de apariencia luminosa.',
+    },
+  },
 ];
 
 /* ===========================================================================

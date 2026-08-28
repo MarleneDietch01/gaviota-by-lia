@@ -17,6 +17,7 @@ import { cn } from '@/lib/utils/cn';
 
 const VARIANTS = {
   primary: 'bg-rose text-white-warm hover:bg-rose-deep active:bg-rose-ink motion-safe:active:scale-[0.98]',
+  wine: 'bg-wine text-white-warm hover:bg-rose-ink active:bg-ink motion-safe:active:scale-[0.98]',
   secondary:
     'border border-ink/25 bg-transparent text-ink hover:border-ink hover:bg-ink hover:text-ivory',
   onDark:
