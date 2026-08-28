@@ -168,7 +168,7 @@ async function deriveRatio(file, key, outPath, targetWidth, ratio) {
   );
 }
 
-const HERO = 'LeslieEstevezPhotography-(12of19).jpg';
+const HERO = 'LeslieEstevezPhotography-(19of19).jpg';
 
 /* ---------------------------------------------------------------------------
    ANCHOS OBJETIVO
@@ -189,12 +189,11 @@ const HERO = 'LeslieEstevezPhotography-(12of19).jpg';
    --------------------------------------------------------------------------- */
 
 console.log('\n── Hero ──────────────────────────────────────────────────────────');
-// Recortes propios por breakpoint: la toma 12 concentra rostro, manos y envases
-// en la mitad superior. Estas relaciones siguen la caja real del hero para que
-// `object-cover` no tenga que improvisar un segundo recorte en el navegador.
-await deriveRatio(HERO, 'hero.desktop', `${OUT_DIR}/hero/hero-desktop.jpg`, 2400, 36 / 25);
-await deriveRatio(HERO, 'hero.tablet', `${OUT_DIR}/hero/hero-tablet.jpg`, 1800, 36 / 25);
-await deriveRatio(HERO, 'hero.mobile', `${OUT_DIR}/hero/hero-mobile.jpg`, 1400, 6 / 5);
+// Escritorio: composición dividida, conserva el 4:5 nativo sin recortar nada.
+await derive(HERO, 'hero.desktop', `${OUT_DIR}/hero/hero-desktop.jpg`, 2400);
+await derive(HERO, 'hero.tablet', `${OUT_DIR}/hero/hero-tablet.jpg`, 1800);
+// Móvil: recorte 3:4 propio, con el rostro protegido por el punto focal.
+await deriveRatio(HERO, 'hero.mobile', `${OUT_DIR}/hero/hero-mobile.jpg`, 1400, 3 / 4);
 
 console.log('\n── Editorial ─────────────────────────────────────────────────────');
 const EDITORIAL = [
