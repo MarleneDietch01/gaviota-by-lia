@@ -192,7 +192,7 @@ const STATIC_SECONDARY_IMAGES: Record<
   ],
   'crema-hidratante': [
     {
-      path: '/images/gaviota/products/Modelo4.png',
+      path: '/images/gaviota/products/Modelo5.png',
       alt: 'Mujer aplicándose la Crema Hidratante Gaviota by Lia en el brazo',
       altEn: 'Woman applying Gaviota by Lia Hydrating Body Cream to her arm',
       width: 1122,
@@ -228,7 +228,7 @@ const STATIC_SECONDARY_IMAGES: Record<
   ],
   'aceite-anti-estrias': [
     {
-      path: '/images/gaviota/products/Modelo5.png',
+      path: '/images/gaviota/products/Modelo4.png',
       alt: 'Mujer aplicándose el Aceite Anti-Estrías Gaviota by Lia en el brazo',
       altEn: 'Woman applying Gaviota by Lia Stretch Mark Body Oil to her arm',
       width: 1122,
