@@ -199,8 +199,8 @@ export interface RitualStep {
  * Las rutas y las mayúsculas son contractuales. Se inspeccionaron visualmente
  * antes de asignarlas; no se mueven ni renombran los archivos:
  *   · modelo3.png → Exfoliate → Coconut Body Scrub
- *   · Modelo4.png → Hydrate → Hydrating Body Cream
- *   · Modelo5.png → Nourish → Stretch Mark Body Oil
+ *   · Modelo5.png → Hydrate → Hydrating Body Cream
+ *   · Modelo4.png → Nourish → Stretch Mark Body Oil
  */
 export const RITUAL_STEPS: readonly RitualStep[] = [
   {
@@ -228,7 +228,7 @@ export const RITUAL_STEPS: readonly RitualStep[] = [
     },
     product: { en: 'Hydrating Body Cream', es: 'Crema Hidratante' },
     href: '/products/crema-hidratante',
-    image: '/images/gaviota/products/Modelo4.png',
+    image: '/images/gaviota/products/Modelo5.png',
     focal: '50% 48%',
     alt: {
       en: 'Woman applying Gaviota by Lia Hydrating Body Cream to her upper arm.',
@@ -244,7 +244,7 @@ export const RITUAL_STEPS: readonly RitualStep[] = [
     },
     product: { en: 'Stretch Mark Body Oil', es: 'Aceite Anti-Estrías' },
     href: '/products/aceite-anti-estrias',
-    image: '/images/gaviota/products/Modelo5.png',
+    image: '/images/gaviota/products/Modelo4.png',
     focal: '50% 48%',
     alt: {
       en: 'Woman applying Gaviota by Lia Stretch Mark Body Oil to her forearm with a dropper.',
