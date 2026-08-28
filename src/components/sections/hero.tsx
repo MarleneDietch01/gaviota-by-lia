@@ -26,11 +26,16 @@ import { localizedHref, pick, type Locale } from '@/lib/i18n';
  *   · < 1024px  apilado: fotografía arriba, contenido debajo sobre marfil.
  *               El texto NUNCA se superpone al rostro, así que no depende de un
  *               degradado para tener contraste.
- *   · ≥ 1024px  dividido 42 / 58, imagen a altura completa sin deformar.
+ *   · ≥ 1024px  dividido 42 / 58, retrato completo sobre una extensión del
+ *               mismo fondo rosa. La foto conserva cabello, brazos y envases
+ *               sin deformarse ni ampliarse hasta perder el producto.
  *
- * `object-position` se ajusta por breakpoint porque el recorte cambia de forma:
- * en móvil el 3:4 ya viene recortado sobre el rostro; en escritorio la columna
- * es casi cuadrada y hay que subir el encuadre para no cortar la cara.
+ * `object-position` se ajusta en móvil/tablet porque el recorte cambia de forma.
+ * En escritorio la fuente 4:5 no se fuerza a cubrir el panel casi horizontal:
+ * se escala moderadamente al 115 % de la altura y se alinea a la derecha. Así
+ * quedan visibles cabello, manos y los tres productos; solo sale del marco una
+ * parte del fondo superior y del cajón. El borde izquierdo se desvanece sobre
+ * el mismo rosa para evitar una unión vertical visible.
  * -----------------------------------------------------------------------------
  */
 
@@ -144,8 +149,8 @@ export async function Hero({ locale }: { locale: Locale }) {
         </div>
 
         {/* ---------------- Fotografía ---------------- */}
-        <div className="relative order-1 lg:order-2 lg:h-[min(calc(100svh-5rem),48rem)]">
-          <picture>
+        <div className="relative order-1 overflow-hidden lg:order-2 lg:h-[min(calc(100svh-5rem),48rem)] lg:bg-[#d58b95]">
+          <picture className="block h-full">
             <source media="(min-width: 1024px)" srcSet={desktopSrcSet} sizes="58vw" />
             <source media="(min-width: 640px)" srcSet={tabletSrcSet} sizes="100vw" />
             {/* `alt` va explícito además de venir en `imgProps`: el linter no
@@ -163,7 +168,9 @@ export async function Hero({ locale }: { locale: Locale }) {
                 // pliegue, sin quitar protagonismo a la fotografía.
                 'h-[clamp(15rem,38svh,20rem)] w-full object-cover ' +
                 'object-[50%_30%] sm:h-[clamp(22rem,50svh,32rem)] sm:object-[50%_26%] ' +
-                'lg:h-full lg:rounded-bl-[3rem] lg:object-[50%_34%]'
+                'lg:absolute lg:right-0 lg:top-1/2 lg:h-[115%] lg:w-auto lg:max-w-none ' +
+                'lg:-translate-y-1/2 lg:rounded-bl-[3rem] lg:object-contain ' +
+                'lg:[mask-image:linear-gradient(to_right,transparent_0%,black_14%,black_100%)]'
               }
             />
           </picture>
