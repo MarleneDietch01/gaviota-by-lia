@@ -116,9 +116,11 @@ select lives_ok(
 insert into coupons (code, discount_type, discount_value, minimum_amount, expires_at)
 values ('DIEZ', 'percentage', 1000, 3000, now() + interval '30 days');
 
-insert into coupons (code, discount_type, discount_value, status)
-values ('CADUCADO', 'fixed', 500, 'active');
-update coupons set expires_at = now() - interval '1 day' where code = 'CADUCADO';
+-- starts_at también en el pasado: la restricción expires_after_start impide
+-- expires_at <= starts_at, y starts_at usa default now().
+insert into coupons (code, discount_type, discount_value, status, starts_at, expires_at)
+values ('CADUCADO', 'fixed', 500, 'active',
+        now() - interval '30 days', now() - interval '1 day');
 
 select is(
   calculate_coupon_discount('DIEZ', 10000, null),

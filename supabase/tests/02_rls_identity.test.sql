@@ -74,8 +74,11 @@ select throws_ok(
   null,
   'Tampoco a super_admin');
 
+-- 'suspended' es un cambio real frente al 'active' del seed: `is distinct
+-- from` compara valores, así que un no-op (status = 'active') no dispararía
+-- el trigger y no probaría nada.
 select throws_ok(
-  $$ update profiles set status = 'active'
+  $$ update profiles set status = 'suspended'
       where id = '11111111-1111-1111-1111-111111111111' $$,
   '42501',
   null,

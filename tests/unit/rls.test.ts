@@ -8,8 +8,9 @@
  *
  * Toda prueba que empiece por "NO debe" tiene que fallar la operación.
  */
-import { describe, it, expect, beforeAll } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import { Client as PgClient } from 'pg';
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
 const ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '';
@@ -81,6 +82,27 @@ beforeAll(async () => {
 
   if (error) throw new Error(`No se pudo preparar el pedido: ${error.message}`);
   orderOfB = data.id;
+});
+
+// Limpieza: el pedido de B se borra al terminar para no ensuciar el seed que
+// asume la suite pgTAP. La conexión directa con `session_replication_role =
+// replica` es la única forma de saltar el trigger de inmutabilidad de
+// order_status_history.
+afterAll(async () => {
+  if (!SUPABASE_URL || !ANON_KEY || !orderOfB) return;
+  const pgUrl = process.env.SUPABASE_DB_URL ?? 'postgresql://postgres:postgres@127.0.0.1:54822/postgres';
+  const client = new PgClient({ connectionString: pgUrl });
+  try {
+    await client.connect();
+    await client.query("set session_replication_role = 'replica'");
+    await client.query('delete from order_status_history where order_id = $1', [orderOfB]);
+    await client.query('delete from order_items where order_id = $1', [orderOfB]);
+    await client.query('delete from orders where id = $1', [orderOfB]);
+  } catch {
+    /* mejor esfuerzo: en remoto sin acceso directo a PG, se omite */
+  } finally {
+    await client.end().catch(() => {});
+  }
 });
 
 // ===========================================================================

@@ -45,10 +45,15 @@ end $$;
 -- promociona a los administradores, que es justamente lo que un cliente NO puede
 -- hacer por sí mismo (lo bloquea prevent_role_escalation).
 -- -----------------------------------------------------------------------------
+-- confirmation_token, recovery_token, email_change_token_new y email_change se
+-- fijan a '' explícitamente: no tienen default en auth.users y GoTrue >= 2.19x
+-- falla al escanear NULL en esas columnas ("converting NULL to string is
+-- unsupported"), lo que rompe TODO inicio de sesión con estos usuarios.
 insert into auth.users (
   instance_id, id, aud, role, email, encrypted_password,
   email_confirmed_at, created_at, updated_at,
-  raw_app_meta_data, raw_user_meta_data
+  raw_app_meta_data, raw_user_meta_data,
+  confirmation_token, recovery_token, email_change_token_new, email_change
 )
 values
   ('00000000-0000-0000-0000-000000000000',
@@ -57,7 +62,8 @@ values
    extensions.crypt('DevPassword123!', extensions.gen_salt('bf')),
    now(), now(), now(),
    '{"provider":"email","providers":["email"]}'::jsonb,
-   '{"first_name":"Ana","last_name":"Cliente"}'::jsonb),
+   '{"first_name":"Ana","last_name":"Cliente"}'::jsonb,
+   '', '', '', ''),
 
   ('00000000-0000-0000-0000-000000000000',
    '22222222-2222-2222-2222-222222222222', 'authenticated', 'authenticated',
@@ -65,7 +71,8 @@ values
    extensions.crypt('DevPassword123!', extensions.gen_salt('bf')),
    now(), now(), now(),
    '{"provider":"email","providers":["email"]}'::jsonb,
-   '{"first_name":"Beatriz","last_name":"Cliente"}'::jsonb),
+   '{"first_name":"Beatriz","last_name":"Cliente"}'::jsonb,
+   '', '', '', ''),
 
   ('00000000-0000-0000-0000-000000000000',
    '33333333-3333-3333-3333-333333333333', 'authenticated', 'authenticated',
@@ -73,7 +80,8 @@ values
    extensions.crypt('DevPassword123!', extensions.gen_salt('bf')),
    now(), now(), now(),
    '{"provider":"email","providers":["email"]}'::jsonb,
-   '{"first_name":"Admin","last_name":"Gaviota"}'::jsonb),
+   '{"first_name":"Admin","last_name":"Gaviota"}'::jsonb,
+   '', '', '', ''),
 
   ('00000000-0000-0000-0000-000000000000',
    '44444444-4444-4444-4444-444444444444', 'authenticated', 'authenticated',
@@ -81,8 +89,21 @@ values
    extensions.crypt('DevPassword123!', extensions.gen_salt('bf')),
    now(), now(), now(),
    '{"provider":"email","providers":["email"]}'::jsonb,
-   '{"first_name":"Super","last_name":"Admin"}'::jsonb)
+   '{"first_name":"Super","last_name":"Admin"}'::jsonb,
+   '', '', '', '')
 on conflict (id) do nothing;
+
+-- auth.identities: sin una fila 'email' aquí, signInWithPassword de gotrue-js
+-- no resuelve al usuario y algunos flujos (getUserByEmail) fallan.
+insert into auth.identities (
+  provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+)
+select id::text, id,
+       jsonb_build_object('sub', id::text, 'email', email, 'email_verified', true),
+       'email', now(), now(), now()
+  from auth.users
+ where email like '%@ejemplo.test'
+on conflict (provider, provider_id) do nothing;
 
 -- Promoción de roles (solo posible con service_role / propietario).
 update profiles set role = 'admin'
