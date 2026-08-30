@@ -14,9 +14,13 @@ import { z } from 'zod';
 export const productEditSchema = z
   .object({
     name: z.string().trim().min(1, 'El nombre es obligatorio').max(200),
+    nameEn: z.string().trim().min(1, 'El nombre en inglés es obligatorio').max(200),
     shortDescription: z.string().trim().max(300).optional(),
     description: z.string().trim().max(4000).optional(),
+    shortDescriptionEn: z.string().trim().max(300).optional(),
+    descriptionEn: z.string().trim().max(4000).optional(),
     sizeLabel: z.string().trim().max(40).optional(),
+    sizeLabelEn: z.string().trim().max(40).optional(),
     price: z.coerce.number().positive('El precio debe ser mayor que cero'),
     compareAtPrice: z.coerce.number().positive().optional(),
     compareAtStartsAt: z.string().trim().optional(),
@@ -26,6 +30,9 @@ export const productEditSchema = z
     ingredientsText: z.string().trim().max(4000).optional(),
     usageInstructions: z.string().trim().max(2000).optional(),
     precautions: z.string().trim().max(2000).optional(),
+    usageInstructionsEn: z.string().trim().max(2000).optional(),
+    precautionsEn: z.string().trim().max(2000).optional(),
+    lowStockThreshold: z.coerce.number().int().min(0).max(100000),
   })
   .superRefine((data, ctx) => {
     if (data.compareAtPrice !== undefined) {

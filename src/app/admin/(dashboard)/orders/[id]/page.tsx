@@ -46,7 +46,8 @@ export default async function AdminOrderDetailPage({
        order_items ( product_name, variant_name, quantity, unit_price, line_total ),
        order_addresses ( address_type, recipient_name, address_line_1, address_line_2, city, state, postal_code, country, phone ),
        payments ( provider, status, amount ),
-       shipments ( id, carrier, tracking_number, tracking_url, status, shipped_at, delivered_at )`,
+       shipments ( id, carrier, tracking_number, tracking_url, status, shipped_at, delivered_at ),
+       order_status_history ( id, previous_status, new_status, note, created_at, changed_by )`,
     )
     .eq('id', id)
     .maybeSingle();
@@ -73,7 +74,7 @@ export default async function AdminOrderDetailPage({
       </div>
       <p className="mt-1 text-sm text-body">
         {order.customer_email === PLACEHOLDER_EMAIL ? (
-          <span className="italic text-muted">Sin datos de clienta</span>
+          <span className="italic text-muted">Sin datos de cliente</span>
         ) : (
           order.customer_email
         )}
@@ -227,7 +228,7 @@ export default async function AdminOrderDetailPage({
       {/* -------------------------------------------------------------- */}
       <section aria-labelledby="notes-heading" className="mt-6 rounded-sm border border-line bg-white-warm p-5">
         <h2 id="notes-heading" className="text-h3">Notas internas</h2>
-        <p className="text-xs text-muted">Solo visibles para el equipo, nunca para la clienta.</p>
+        <p className="text-xs text-muted">Solo visibles para el equipo, nunca para el cliente.</p>
         <form action={saveOrderNotes} className="mt-3">
           <input type="hidden" name="orderId" value={order.id} />
           <label htmlFor="internalNotes" className="sr-only">Notas internas</label>
@@ -247,10 +248,14 @@ export default async function AdminOrderDetailPage({
         </form>
         {order.customer_notes ? (
           <div className="mt-4 rounded-xs bg-ivory p-3 text-sm text-body">
-            <p className="font-semibold text-ink">Nota de la clienta</p>
+            <p className="font-semibold text-ink">Nota del cliente</p>
             <p>{order.customer_notes}</p>
           </div>
         ) : null}
+      </section>
+      <section aria-labelledby="history-heading" className="mt-6 rounded-sm border border-line bg-white-warm p-5">
+        <h2 id="history-heading" className="text-h3">Historial</h2>
+        {order.order_status_history?.length ? <ol className="mt-3 space-y-3">{[...order.order_status_history].sort((a,b)=>b.created_at.localeCompare(a.created_at)).map(entry=><li key={entry.id} className="border-l-2 border-rose/40 pl-3 text-sm"><strong>{STATUS_LABEL[entry.new_status] ?? entry.new_status}</strong><p className="text-xs text-muted">{formatDate(entry.created_at)}{entry.note?` · ${entry.note}`:''}</p></li>)}</ol>:<p className="mt-2 text-sm text-muted">Sin cambios registrados.</p>}
       </section>
     </div>
   );

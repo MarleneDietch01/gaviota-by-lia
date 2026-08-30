@@ -12,6 +12,7 @@ import {
   updateProduct,
   uploadProductImage,
 } from '../actions';
+import { ImageUploader } from './image-uploader';
 
 export const metadata = { title: 'Editar producto' };
 
@@ -46,8 +47,10 @@ export default async function AdminProductEditPage({
         `id, name, slug, short_description, description, base_price, compare_at_price,
          compare_at_starts_at, compare_at_ends_at, size_label, status, featured, category_id,
          ingredients_text, usage_instructions, precautions, track_inventory, translation_stale,
+         name_en, short_description_en, description_en, size_label_en, usage_instructions_en, precautions_en,
          product_variants ( id, stock_quantity, reserved_quantity, low_stock_threshold ),
-         product_images ( storage_path, alt_text, is_primary, width, height )`,
+         product_images ( storage_path, alt_text, is_primary, width, height, locale, image_role, sort_order ),
+         inventory_movements ( id, movement_type, quantity, previous_quantity, new_quantity, reason, created_at, profiles:created_by(email) )`,
       )
       .eq('id', id)
       .maybeSingle(),
@@ -59,7 +62,7 @@ export default async function AdminProductEditPage({
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
   const variant = product.product_variants?.[0] ?? null;
   const available = variant ? variant.stock_quantity - variant.reserved_quantity : null;
-  const primaryImage = product.product_images?.find((img) => img.is_primary) ?? product.product_images?.[0] ?? null;
+  const primaryImage = product.product_images?.find((img) => img.image_role === 'main' && img.locale !== 'en') ?? product.product_images?.find((img) => img.is_primary) ?? product.product_images?.[0] ?? null;
 
   // Cada acción redirige de vuelta a la misma ficha con el resultado en la
   // query string: un Server Action ligado directamente a `<form action>` (sin
@@ -93,9 +96,9 @@ export default async function AdminProductEditPage({
     redirect(`/admin/products/${id}?${qs.toString()}`);
   }
 
-  async function removeImageAction(): Promise<void> {
+  async function removeImageAction(formData: FormData): Promise<void> {
     'use server';
-    if (primaryImage) await deleteProductImage(id, primaryImage.storage_path);
+    await deleteProductImage(id, String(formData.get('storagePath') ?? ''));
     redirect(`/admin/products/${id}?saved=1`);
   }
 
@@ -174,6 +177,13 @@ export default async function AdminProductEditPage({
             )}
           </div>
 
+          <div className="min-w-0 flex-1">
+          <ImageUploader action={uploadImageAction} />
+          <div className="mt-4 flex flex-wrap gap-3">
+            {product.product_images.map((img)=><div key={img.storage_path} className="w-24"><div className="aspect-square overflow-hidden rounded-xs border border-line"><Image src={imageUrl(supabaseUrl,img.storage_path)} alt={img.alt_text} width={img.width} height={img.height} className="size-full object-contain"/></div><p className="mt-1 text-2xs text-muted">{img.image_role} · {img.locale}</p><form action={removeImageAction}><input type="hidden" name="storagePath" value={img.storage_path}/><button className="text-2xs font-semibold text-danger">Quitar</button></form></div>)}
+          </div>
+          </div>
+          {/*
           <form action={uploadImageAction} className="min-w-0 flex-1 space-y-3">
             <div>
               <label htmlFor="image" className="block text-sm font-medium">
@@ -217,7 +227,7 @@ export default async function AdminProductEditPage({
                 </button>
               ) : null}
             </div>
-          </form>
+          </form> */}
         </div>
       </section>
 
@@ -268,6 +278,7 @@ export default async function AdminProductEditPage({
                 Guardar
               </button>
             </form>
+            {product.inventory_movements?.length ? <div className="mt-6 overflow-x-auto"><h3 className="text-sm font-semibold">Movimientos recientes</h3><table className="mt-2 w-full text-left text-xs"><thead><tr><th className="py-2">Fecha</th><th>Cambio</th><th>Motivo</th><th>Responsable</th></tr></thead><tbody>{[...product.inventory_movements].sort((a,b)=>b.created_at.localeCompare(a.created_at)).slice(0,20).map(m=><tr key={m.id} className="border-t border-line"><td className="py-2">{new Date(m.created_at).toLocaleString('es-DO')}</td><td className="font-semibold">{m.quantity>0?'+':''}{m.quantity} ({m.previous_quantity} → {m.new_quantity})</td><td>{m.reason ?? 'Sin motivo registrado'}</td><td>{m.profiles?.email ?? 'Sistema'}</td></tr>)}</tbody></table></div>:<p className="mt-4 text-xs text-muted">Todavía no hay movimientos de inventario.</p>}
           </>
         ) : (
           <p className="mt-2 text-sm text-body">Este producto no tiene variante de inventario.</p>
@@ -291,6 +302,10 @@ export default async function AdminProductEditPage({
             className="mt-1 min-h-10 w-full rounded-xs border border-line-strong bg-white-warm px-3 text-sm"
           />
         </div>
+        <div>
+          <label htmlFor="nameEn" className="block text-sm font-medium">Nombre EN</label>
+          <input id="nameEn" name="nameEn" required defaultValue={product.name_en ?? ''} className="mt-1 min-h-10 w-full rounded-xs border border-line-strong bg-white-warm px-3 text-sm" />
+        </div>
 
         <div>
           <label htmlFor="shortDescription" className="block text-sm font-medium">Descripción corta</label>
@@ -302,6 +317,7 @@ export default async function AdminProductEditPage({
             className="mt-1 min-h-10 w-full rounded-xs border border-line-strong bg-white-warm px-3 text-sm"
           />
         </div>
+        <div><label htmlFor="shortDescriptionEn" className="block text-sm font-medium">Descripción corta EN</label><input id="shortDescriptionEn" name="shortDescriptionEn" defaultValue={product.short_description_en ?? ''} className="mt-1 min-h-10 w-full rounded-xs border border-line-strong bg-white-warm px-3 text-sm" /></div>
 
         <div>
           <label htmlFor="description" className="block text-sm font-medium">Descripción larga</label>
@@ -313,6 +329,7 @@ export default async function AdminProductEditPage({
             className="mt-1 w-full rounded-xs border border-line-strong bg-white-warm px-3 py-2 text-sm"
           />
         </div>
+        <div><label htmlFor="descriptionEn" className="block text-sm font-medium">Descripción larga EN</label><textarea id="descriptionEn" name="descriptionEn" rows={4} defaultValue={product.description_en ?? ''} className="mt-1 w-full rounded-xs border border-line-strong bg-white-warm px-3 py-2 text-sm" /></div>
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
@@ -326,6 +343,7 @@ export default async function AdminProductEditPage({
               className="mt-1 min-h-10 w-full rounded-xs border border-line-strong bg-white-warm px-3 text-sm"
             />
           </div>
+          <div><label htmlFor="sizeLabelEn" className="block text-sm font-medium">Presentación EN</label><input id="sizeLabelEn" name="sizeLabelEn" defaultValue={product.size_label_en ?? ''} className="mt-1 min-h-10 w-full rounded-xs border border-line-strong bg-white-warm px-3 text-sm" /></div>
           <div>
             <label htmlFor="categoryId" className="block text-sm font-medium">Categoría</label>
             <select
@@ -418,6 +436,7 @@ export default async function AdminProductEditPage({
             className="mt-1 w-full rounded-xs border border-line-strong bg-white-warm px-3 py-2 text-sm"
           />
         </div>
+        <div><label htmlFor="usageInstructionsEn" className="block text-sm font-medium">Modo de uso EN</label><textarea id="usageInstructionsEn" name="usageInstructionsEn" rows={3} defaultValue={product.usage_instructions_en ?? ''} className="mt-1 w-full rounded-xs border border-line-strong bg-white-warm px-3 py-2 text-sm" /></div>
 
         <div>
           <label htmlFor="ingredientsText" className="block text-sm font-medium">Ingredientes (INCI)</label>
@@ -440,6 +459,8 @@ export default async function AdminProductEditPage({
             className="mt-1 w-full rounded-xs border border-line-strong bg-white-warm px-3 py-2 text-sm"
           />
         </div>
+        <div><label htmlFor="precautionsEn" className="block text-sm font-medium">Precauciones EN</label><textarea id="precautionsEn" name="precautionsEn" rows={2} defaultValue={product.precautions_en ?? ''} className="mt-1 w-full rounded-xs border border-line-strong bg-white-warm px-3 py-2 text-sm" /></div>
+        <div><label htmlFor="lowStockThreshold" className="block text-sm font-medium">Stock mínimo para alerta</label><input id="lowStockThreshold" name="lowStockThreshold" type="number" min="0" required defaultValue={variant?.low_stock_threshold ?? 0} className="mt-1 min-h-10 w-40 rounded-xs border border-line-strong bg-white-warm px-3 text-sm" /></div>
 
         <p className="rounded-xs border border-dashed border-line-strong bg-ivory p-3 text-xs leading-relaxed text-body">
           Estos son cosméticos: evita palabras como &ldquo;cura&rdquo;, &ldquo;elimina&rdquo;, &ldquo;clínicamente

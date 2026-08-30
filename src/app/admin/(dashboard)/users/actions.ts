@@ -25,17 +25,23 @@ export async function updateUserRole(formData: FormData): Promise<void> {
 
   const userId = String(formData.get('userId') ?? '');
   const role = String(formData.get('role') ?? '');
+  const confirmed = formData.get('confirmed') === 'yes';
 
-  if (!userId || !isAssignableRole(role)) {
+  if (!userId || !isAssignableRole(role) || !confirmed) {
     throw new Error('Datos inválidos');
   }
 
   const supabase = await createServerSupabaseClient();
+  const { data: target } = await supabase.from('profiles').select('role').eq('id', userId).single();
+  if (target?.role === 'super_admin' && role !== 'super_admin') {
+    const { count } = await supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('role', 'super_admin').eq('status', 'active');
+    if ((count ?? 0) <= 1) throw new Error('No se puede retirar el último superadministrador.');
+  }
   const { error } = await supabase.from('profiles').update({ role }).eq('id', userId);
 
   if (error) {
     throw new Error(`No se pudo actualizar el rol: ${error.message}`);
   }
 
-  revalidatePath('/admin/users');
+  revalidatePath('/admin/team');
 }

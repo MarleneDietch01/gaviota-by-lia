@@ -4,14 +4,7 @@ import { redirect } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import { AuthorizationError, requireAdmin } from '@/lib/auth/guards';
 import { signOutAdmin } from './actions';
-
-const NAV = [
-  { href: '/admin', label: 'Panel' },
-  { href: '/admin/products', label: 'Productos' },
-  { href: '/admin/orders', label: 'Pedidos' },
-  { href: '/admin/reviews', label: 'Reseñas' },
-  { href: '/admin/users', label: 'Usuarios' },
-] as const;
+import { AdminNav } from './admin-nav';
 
 /**
  * Guard del panel entero.
@@ -53,40 +46,14 @@ export default async function AdminDashboardLayout({ children }: { children: Rea
           </button>
         </form>
       </header>
-      <nav
-        aria-label="Panel"
-        className="flex gap-1 overflow-x-auto border-b border-line bg-white-warm px-3 py-2 lg:hidden"
-      >
-        {NAV.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className="flex min-h-10 shrink-0 items-center rounded-xs px-3 text-sm font-medium text-ink transition-colors hover:bg-ivory hover:text-rose"
-          >
-            {item.label}
-          </Link>
-        ))}
-      </nav>
+      <AdminNav mobile />
 
       <aside className="hidden w-56 shrink-0 flex-col justify-between border-r border-line bg-white-warm p-5 lg:flex">
         <div>
           <Link href="/admin" className="font-display text-lg">
             Gaviota <span className="accent-word">by Lia</span>
           </Link>
-          <nav aria-label="Panel" className="mt-8">
-            <ul className="space-y-1">
-              {NAV.map((item) => (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className="flex min-h-10 items-center rounded-xs px-3 text-sm font-medium text-ink transition-colors hover:bg-ivory hover:text-rose"
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
+          <AdminNav />
         </div>
 
         <div>

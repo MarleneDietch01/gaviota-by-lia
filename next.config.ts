@@ -139,7 +139,24 @@ const nextConfig: NextConfig = {
         hostname: '*.supabase.co',
         pathname: '/storage/v1/object/public/**',
       },
+      // Supabase local (supabase start) sirve Storage desde 127.0.0.1. Solo en
+      // desarrollo: sin esto, cualquier imagen subida desde /admin/products
+      // hace que next/image lance y la página de edición devuelve 500.
+      ...(isDev
+        ? [
+            {
+              protocol: 'http' as const,
+              hostname: '127.0.0.1',
+              pathname: '/storage/v1/object/public/**',
+            },
+          ]
+        : []),
     ],
+    // Next 16 bloquea que el optimizador de imágenes descargue de una IP
+    // privada (protección SSRF). En producción las fotos vienen de
+    // *.supabase.co (IP pública) y no aplica; en local, sin esto, la vista
+    // previa de Storage sale rota (400). Solo en desarrollo.
+    dangerouslyAllowLocalIP: isDev,
     formats: ['image/avif', 'image/webp'],
     // Ajustados a los puntos de ruptura reales del diseño (360/390/430/768/
     // 1024/1280/1536), no a los valores por defecto.

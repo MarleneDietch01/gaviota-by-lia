@@ -5,7 +5,7 @@ import { updateUserRole } from './actions';
 export const metadata = { title: 'Usuarios' };
 
 const ROLE_LABEL: Record<string, string> = {
-  customer: 'Clienta',
+  customer: 'Cliente',
   admin: 'Admin',
   super_admin: 'Super admin',
 };
@@ -71,7 +71,7 @@ export default async function AdminUsersPage() {
                           defaultValue={profile.role}
                           className="min-h-9 rounded-xs border border-line-strong bg-white-warm px-2 text-xs"
                         >
-                          <option value="customer">Clienta</option>
+                          <option value="customer">Cliente</option>
                           <option value="admin">Admin</option>
                           <option value="super_admin">Super admin</option>
                         </select>

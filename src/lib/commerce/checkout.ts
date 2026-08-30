@@ -8,6 +8,8 @@ import { checkoutLinesSchema } from '@/lib/validation/checkout';
 import type { Database } from '@/types/database.types';
 
 export interface CheckoutItem {
+  readonly productId: string;
+  readonly variantId: string | null;
   readonly slug: string;
   readonly name: string;
   readonly unitPrice: Cents;
@@ -61,6 +63,8 @@ export async function validateCheckoutLines(
   }
 
   const items: CheckoutItem[] = resolved.map(({ line, product }) => ({
+    productId: product!.id,
+    variantId: product!.variantId,
     slug: line.slug,
     name: product!.name,
     unitPrice: product!.price,
@@ -184,10 +188,8 @@ export async function computeShipping(
  * `totals_add_up` de la base de datos (`grand_total = subtotal - discount_total
  * + tax_total + shipping_total`) rechaza el insert si esta cuenta no cuadra —
  * es la verificación real, esto solo tiene que dejarle los números correctos.
- * `variant_id` queda sin asignar a propósito: no hay inventario real todavía
- * (`CONTENT_TODO.md` C6), así que `reserve_inventory()`/`commit_inventory_sale()`
- * no tienen nada que hacer con estas líneas — no es un olvido, es el estado
- * explícito "sin control de inventario" que el propio esquema ya contempla.
+ * Las líneas conservan product_id/variant_id para que la confirmación de pago
+ * pueda descontar inventario exactamente una vez.
  */
 export async function createPendingOrder(
   admin: SupabaseClient<Database>,
@@ -224,6 +226,8 @@ export async function createPendingOrder(
   const { error: itemsError } = await admin.from('order_items').insert(
     params.items.map((item) => ({
       order_id: order.id,
+      product_id: item.productId,
+      variant_id: item.variantId,
       product_name: item.name,
       quantity: item.quantity,
       unit_price: item.unitPrice,
@@ -233,6 +237,14 @@ export async function createPendingOrder(
 
   if (itemsError) {
     return { error: 'order_items_failed' };
+  }
+
+  for (const item of params.items) {
+    if (!item.variantId) continue;
+    const { error: reserveError } = await admin.rpc('reserve_inventory', {
+      p_variant_id: item.variantId, p_quantity: item.quantity, p_order_id: order.id,
+    });
+    if (reserveError) return { error: 'inventory_reservation_failed' };
   }
 
   const { error: paymentError } = await admin.from('payments').insert({

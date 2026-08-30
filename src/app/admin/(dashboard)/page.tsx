@@ -62,10 +62,13 @@ const STATUS_LABEL: Record<string, string> = {
   partially_refunded: 'Reembolso parcial',
 };
 
-export default async function AdminDashboardPage() {
+export default async function AdminDashboardPage({ searchParams }: { searchParams: Promise<{ period?: string }> }) {
+  const { period = 'month' } = await searchParams;
   const supabase = await createServerSupabaseClient();
   const startOfMonth = new Date();
-  startOfMonth.setDate(1);
+  if (period === '7d') startOfMonth.setDate(startOfMonth.getDate() - 7);
+  else if (period === '30d') startOfMonth.setDate(startOfMonth.getDate() - 30);
+  else startOfMonth.setDate(1);
   startOfMonth.setHours(0, 0, 0, 0);
 
   const [
@@ -120,7 +123,7 @@ export default async function AdminDashboardPage() {
     supabase.from('reviews').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
     supabase
       .from('products')
-      .select('id, track_inventory, product_variants(stock_quantity, reserved_quantity)')
+      .select('id, track_inventory, product_variants(stock_quantity, reserved_quantity, low_stock_threshold)')
       .eq('status', 'active'),
     supabase
       .from('orders')
@@ -128,6 +131,26 @@ export default async function AdminDashboardPage() {
       .order('created_at', { ascending: false })
       .limit(8),
   ]);
+
+  const [{ data: refundedPayments }, { data: soldItems }] = await Promise.all([
+    supabase.from('payments').select('amount, status, orders!inner(customer_email, created_at)')
+      .in('status', ['refunded', 'partially_refunded']).gte('orders.created_at', startOfMonth.toISOString())
+      .not('orders.customer_email', 'ilike', `%${TEST_EMAIL_SUFFIX}`),
+    supabase.from('order_items').select('product_name, quantity, orders!inner(payment_status, customer_email, created_at)')
+      .eq('orders.payment_status', 'paid').gte('orders.created_at', startOfMonth.toISOString())
+      .not('orders.customer_email', 'ilike', `%${TEST_EMAIL_SUFFIX}`),
+  ]);
+  // `payments.amount` es el importe COBRADO, no el devuelto. En un reembolso
+  // total coinciden; en uno parcial no, y el webhook (charge.refunded) no
+  // guarda el monto devuelto en ninguna columna. Así que solo se suman los
+  // totales —donde amount sí es el reembolso— y los parciales se cuentan
+  // aparte para que la propietaria sepa que el número es un mínimo.
+  const fullyRefunded = (refundedPayments ?? []).filter((p) => p.status === 'refunded');
+  const partialRefundCount = (refundedPayments ?? []).filter((p) => p.status === 'partially_refunded').length;
+  const refundCents = fullyRefunded.reduce((sum, p) => sum + p.amount, 0);
+  const bestSellerMap = new Map<string,number>();
+  for (const item of soldItems ?? []) bestSellerMap.set(item.product_name,(bestSellerMap.get(item.product_name)??0)+item.quantity);
+  const bestSellers=[...bestSellerMap].sort((a,b)=>b[1]-a[1]).slice(0,5);
 
   const monthlyRevenueCents = (monthlyPaidOrders ?? [])
     .filter((o) => !o.customer_email.toLowerCase().endsWith(TEST_EMAIL_SUFFIX))
@@ -137,7 +160,7 @@ export default async function AdminDashboardPage() {
     if (!product.track_inventory) return false;
     const variant = product.product_variants?.[0];
     if (!variant) return false;
-    return variant.stock_quantity - variant.reserved_quantity <= 0;
+    return variant.stock_quantity - variant.reserved_quantity <= variant.low_stock_threshold;
   });
 
   const hasActionItems =
@@ -147,6 +170,7 @@ export default async function AdminDashboardPage() {
     <div>
       <h1 className="font-display text-h2">Panel</h1>
       <p className="mt-1 text-sm text-body">Lo que necesita tu atención hoy.</p>
+      <form className="mt-4"><label className="text-sm font-medium">Período <select name="period" defaultValue={period} className="ml-2 min-h-9 rounded-xs border border-line-strong bg-white-warm px-3"><option value="month">Este mes</option><option value="7d">Últimos 7 días</option><option value="30d">Últimos 30 días</option></select></label><button className="ml-2 min-h-9 rounded-xs border border-ink/25 px-3 text-sm">Aplicar</button></form>
 
       {disputedCount ? (
         <div className="mt-6 rounded-sm border border-danger/40 bg-danger/10 p-4">
@@ -206,9 +230,9 @@ export default async function AdminDashboardPage() {
                 >
                   <span>
                     <span className="block font-semibold text-ink">
-                      {outOfStockProducts.length} {outOfStockProducts.length === 1 ? 'producto agotado' : 'productos agotados'}
+                      {outOfStockProducts.length} {outOfStockProducts.length === 1 ? 'producto con stock bajo' : 'productos con stock bajo'}
                     </span>
-                    <span className="text-sm text-body">No se pueden comprar hasta que repongas el stock.</span>
+                    <span className="text-sm text-body">Revisa los niveles mínimos y repón cuando corresponda.</span>
                   </span>
                   <span aria-hidden="true" className="text-rose-deep">→</span>
                 </Link>
@@ -220,6 +244,11 @@ export default async function AdminDashboardPage() {
             No hay nada urgente pendiente: sin pedidos por enviar, sin reseñas por moderar y sin productos agotados.
           </p>
         )}
+      </section>
+
+      <section className="mt-10 grid gap-4 sm:grid-cols-2" aria-label="Reembolsos y productos más vendidos">
+        <div className="rounded-sm border border-line bg-white-warm p-5"><h2 className="text-h3">Reembolsos</h2><p className="mt-2 text-2xl font-semibold">{formatMoney(cents(refundCents),'USD','es-US')}</p><p className="text-xs text-muted">Reembolsos totales del período.{partialRefundCount>0?` ${partialRefundCount} ${partialRefundCount===1?'reembolso parcial no incluido':'reembolsos parciales no incluidos'} — revisa el importe en el panel del proveedor.`:''}</p></div>
+        <div className="rounded-sm border border-line bg-white-warm p-5"><h2 className="text-h3">Más vendidos</h2>{bestSellers.length?<ol className="mt-3 space-y-2 text-sm">{bestSellers.map(([name,quantity])=><li key={name} className="flex justify-between"><span>{name}</span><strong>{quantity}</strong></li>)}</ol>:<p className="mt-3 text-sm text-muted">No hay ventas cobradas en este período.</p>}</div>
       </section>
 
       {/* ---------------------------------------------------------------- */}
@@ -275,7 +304,7 @@ export default async function AdminDashboardPage() {
                   <span className="tabular font-medium">{order.order_number}</span>
                   <span className="text-sm text-body">
                     {order.customer_email === PLACEHOLDER_EMAIL ? (
-                      <span className="italic text-muted">— Sin datos de clienta</span>
+                      <span className="italic text-muted">— Sin datos de cliente</span>
                     ) : (
                       order.customer_email
                     )}

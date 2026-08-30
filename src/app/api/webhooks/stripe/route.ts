@@ -63,9 +63,16 @@ export async function POST(request: NextRequest) {
     // Choque de la restricción única (provider, provider_event_id) => este
     // evento ya se procesó en un intento anterior. Éxito silencioso.
     if (insertError.code === '23505') {
-      return NextResponse.json({ received: true, duplicate: true });
+      const { data: logged } = await admin.from('payment_events')
+        .select('processing_status').eq('provider', 'stripe').eq('provider_event_id', event.id).single();
+      if (logged?.processing_status === 'processed') {
+        return NextResponse.json({ received: true, duplicate: true });
+      }
+      // Un intento anterior falló. Stripe reintenta precisamente para que el
+      // efecto se vuelva a ejecutar; conservar la fila no debe convertir el
+      // fallo en un falso 200. Las operaciones de abajo son idempotentes.
     }
-    return NextResponse.json({ error: 'event_log_failed' }, { status: 500 });
+    else return NextResponse.json({ error: 'event_log_failed' }, { status: 500 });
   }
 
   try {
@@ -74,6 +81,7 @@ export async function POST(request: NextRequest) {
         const session = event.data.object as Stripe.Checkout.Session;
         const orderId = session.metadata?.['order_id'];
         if (!orderId) break;
+        if (session.payment_status === 'unpaid') break;
 
         // `orders`/`payments` guardan todo en centavos de USD. Con Adaptive
         // Pricing desactivado (ver /api/checkout) esto siempre debería ser
@@ -102,6 +110,8 @@ export async function POST(request: NextRequest) {
           .update({
             order_status: 'paid',
             payment_status: 'paid',
+            ...(session.customer_details?.email ? { customer_email: session.customer_details.email } : {}),
+            ...(session.customer_details?.phone ? { customer_phone: session.customer_details.phone } : {}),
             ...(amountTotal !== undefined ? { tax_total: amountTax, grand_total: amountTotal } : {}),
           })
           .eq('id', orderId);
@@ -115,6 +125,20 @@ export async function POST(request: NextRequest) {
             ...(amountTotal !== undefined ? { amount: amountTotal } : {}),
           })
           .eq('order_id', orderId);
+
+        const shipping = session.collected_information?.shipping_details;
+        if (shipping?.address && shipping.name) {
+          await admin.from('order_addresses').upsert({
+            order_id: orderId, address_type: 'shipping', recipient_name: shipping.name,
+            phone: session.customer_details?.phone ?? null,
+            address_line_1: shipping.address.line1 ?? '', address_line_2: shipping.address.line2 ?? null,
+            city: shipping.address.city ?? '', state: shipping.address.state ?? null,
+            postal_code: shipping.address.postal_code ?? null,
+            country: (shipping.address.country ?? 'US').slice(0, 2),
+          }, { onConflict: 'order_id,address_type' });
+        }
+
+        await admin.rpc('commit_inventory_sale', { p_order_id: orderId });
 
         break;
       }
@@ -138,6 +162,8 @@ export async function POST(request: NextRequest) {
           .from('payments')
           .update({ status: 'paid', paid_at: new Date().toISOString(), provider_payment_id: intent.id })
           .eq('order_id', orderId);
+
+        await admin.rpc('commit_inventory_sale', { p_order_id: orderId });
 
         break;
       }

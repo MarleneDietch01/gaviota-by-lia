@@ -1028,6 +1028,8 @@ export type Database = {
           height: number
           id: string
           is_primary: boolean
+          image_role: string
+          locale: string
           product_id: string
           sort_order: number
           storage_path: string
@@ -1042,6 +1044,8 @@ export type Database = {
           height: number
           id?: string
           is_primary?: boolean
+          image_role?: string
+          locale?: string
           product_id: string
           sort_order?: number
           storage_path: string
@@ -1056,6 +1060,8 @@ export type Database = {
           height?: number
           id?: string
           is_primary?: boolean
+          image_role?: string
+          locale?: string
           product_id?: string
           sort_order?: number
           storage_path?: string
@@ -1184,16 +1190,21 @@ export type Database = {
           cost_price: number | null
           created_at: string
           description: string | null
+          description_en: string | null
           featured: boolean
           id: string
           ingredients_text: string | null
           name: string
+          name_en: string | null
           precautions: string | null
+          precautions_en: string | null
           requires_disclaimer: boolean
           seo_description: string | null
           seo_title: string | null
           short_description: string | null
+          short_description_en: string | null
           size_label: string | null
+          size_label_en: string | null
           skin_type: string[] | null
           sku: string | null
           slug: string
@@ -1202,6 +1213,7 @@ export type Database = {
           translation_stale: boolean
           updated_at: string
           usage_instructions: string | null
+          usage_instructions_en: string | null
           weight_grams: number | null
         }
         Insert: {
@@ -1213,16 +1225,21 @@ export type Database = {
           cost_price?: number | null
           created_at?: string
           description?: string | null
+          description_en?: string | null
           featured?: boolean
           id?: string
           ingredients_text?: string | null
           name: string
+          name_en?: string | null
           precautions?: string | null
+          precautions_en?: string | null
           requires_disclaimer?: boolean
           seo_description?: string | null
           seo_title?: string | null
           short_description?: string | null
+          short_description_en?: string | null
           size_label?: string | null
+          size_label_en?: string | null
           skin_type?: string[] | null
           sku?: string | null
           slug: string
@@ -1231,6 +1248,7 @@ export type Database = {
           translation_stale?: boolean
           updated_at?: string
           usage_instructions?: string | null
+          usage_instructions_en?: string | null
           weight_grams?: number | null
         }
         Update: {
@@ -1242,16 +1260,21 @@ export type Database = {
           cost_price?: number | null
           created_at?: string
           description?: string | null
+          description_en?: string | null
           featured?: boolean
           id?: string
           ingredients_text?: string | null
           name?: string
+          name_en?: string | null
           precautions?: string | null
+          precautions_en?: string | null
           requires_disclaimer?: boolean
           seo_description?: string | null
           seo_title?: string | null
           short_description?: string | null
+          short_description_en?: string | null
           size_label?: string | null
+          size_label_en?: string | null
           skin_type?: string[] | null
           sku?: string | null
           slug?: string
@@ -1260,6 +1283,7 @@ export type Database = {
           translation_stale?: boolean
           updated_at?: string
           usage_instructions?: string | null
+          usage_instructions_en?: string | null
           weight_grams?: number | null
         }
         Relationships: [

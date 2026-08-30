@@ -96,6 +96,8 @@ export interface Product {
    */
   readonly translationStale: boolean;
   readonly contentComplete?: boolean;
+  readonly english?: Partial<Pick<Product, 'name' | 'shortDescription' | 'sizeLabel' | 'precautions' | 'usageInstructions' | 'imageAlt'>>;
+  readonly englishImages?: readonly { src: string; alt: string; width: number; height: number }[];
 }
 
 export const CATEGORIES = [
@@ -332,8 +334,9 @@ const ENGLISH_IMAGE: Record<string, { path: string; width: number; height: numbe
 function localizeProduct(product: Product, locale: Locale): Product {
   if (locale !== 'en') return product;
 
-  const en = ENGLISH[product.slug];
-  const enImage = ENGLISH_IMAGE[product.slug];
+  const en = product.english ?? ENGLISH[product.slug];
+  const enImage = product.englishImages?.[0] ?? ENGLISH_IMAGE[product.slug];
+  const enImageSrc = enImage ? ('src' in enImage ? enImage.src : enImage.path) : undefined;
 
   // `alt` en inglés de las fotos de estilo de vida, indexado por su ruta —
   // `product.images` ya no lleva el idioma, solo la cadena en español.
@@ -341,11 +344,12 @@ function localizeProduct(product: Product, locale: Locale): Product {
     (STATIC_SECONDARY_IMAGES[product.slug] ?? []).map((s) => [s.path, s.altEn] as const),
   );
 
-  const images = product.images.map((img, index) => {
+  const localizedSourceImages = product.englishImages?.length ? product.englishImages : product.images;
+  const images = localizedSourceImages.map((img, index) => {
     if (index === 0) {
       return {
         ...img,
-        ...(enImage ? { src: enImage.path, width: enImage.width, height: enImage.height } : {}),
+        ...(enImageSrc ? { src: enImageSrc, width: enImage!.width, height: enImage!.height } : {}),
         ...(en?.imageAlt ? { alt: en.imageAlt } : {}),
       };
     }
@@ -356,8 +360,8 @@ function localizeProduct(product: Product, locale: Locale): Product {
   return {
     ...product,
     ...en,
-    ...(enImage
-      ? { image: enImage.path, imageWidth: enImage.width, imageHeight: enImage.height }
+    ...(enImageSrc
+      ? { image: enImageSrc, imageWidth: enImage!.width, imageHeight: enImage!.height }
       : {}),
     images,
     // El español se editó y nadie confirmó todavía que el inglés de arriba
@@ -375,15 +379,15 @@ type ProductRow = Database['public']['Tables']['products']['Row'] & {
   product_variants: Array<Pick<Database['public']['Tables']['product_variants']['Row'],
     'id' | 'stock_quantity' | 'reserved_quantity' | 'status'>>;
   product_images: Array<Pick<Database['public']['Tables']['product_images']['Row'],
-    'storage_path' | 'alt_text' | 'width' | 'height' | 'is_primary' | 'sort_order'>>;
+    'storage_path' | 'alt_text' | 'width' | 'height' | 'is_primary' | 'sort_order' | 'locale' | 'image_role'>>;
 };
 
 const PRODUCT_SELECT = `
-  id, slug, name, short_description, base_price, size_label, status, featured,
-  ingredients_text, precautions, usage_instructions, track_inventory, translation_stale,
+  id, slug, name, name_en, short_description, short_description_en, base_price, size_label, size_label_en, status, featured,
+  ingredients_text, precautions, precautions_en, usage_instructions, usage_instructions_en, track_inventory, translation_stale,
   categories:category_id ( slug ),
   product_variants ( id, stock_quantity, reserved_quantity, status ),
-  product_images ( storage_path, alt_text, width, height, is_primary, sort_order )
+  product_images ( storage_path, alt_text, width, height, is_primary, sort_order, locale, image_role )
 `;
 
 const STORAGE_BUCKET = 'products';
@@ -399,7 +403,7 @@ function toProduct(row: ProductRow, supabaseUrl: string): Product {
     ? Math.max(0, primaryVariant.stock_quantity - primaryVariant.reserved_quantity)
     : null;
 
-  const primaryImage = row.product_images.find((img) => img.is_primary) ?? row.product_images[0] ?? null;
+  const primaryImage = row.product_images.find((img) => img.image_role === 'main' && img.locale !== 'en') ?? row.product_images.find((img) => img.is_primary) ?? row.product_images[0] ?? null;
   const legacy = LEGACY_IMAGE[row.slug];
   const image = primaryImage
     ? {
@@ -421,8 +425,11 @@ function toProduct(row: ProductRow, supabaseUrl: string): Product {
   // fila real ninguna, cae a la misma imagen única de arriba (legacy o
   // placeholder) como array de 1 — `ProductGallery` no tiene que distinguir
   // el origen del dato, solo cuántas hay.
-  const dbImages = [...row.product_images]
-    .sort((a, b) => (b.is_primary ? 1 : 0) - (a.is_primary ? 1 : 0) || a.sort_order - b.sort_order)
+  const dbImages = [...row.product_images].filter((img) => img.locale !== 'en')
+    .sort((a, b) => {
+      const rank = (role: string) => role === 'main' ? 0 : role === 'hover' ? 1 : 2;
+      return rank(a.image_role) - rank(b.image_role) || a.sort_order - b.sort_order;
+    })
     .map((img) => ({
       src: publicImageUrl(supabaseUrl, img.storage_path),
       alt: img.alt_text,
@@ -439,6 +446,9 @@ function toProduct(row: ProductRow, supabaseUrl: string): Product {
     ...(dbImages.length > 0 ? dbImages : [{ src: image.path, alt: image.alt, width: image.width, height: image.height }]),
     ...staticSecondary,
   ];
+  const englishImages = [...row.product_images].filter((img) => img.locale === 'en')
+    .sort((a,b) => (a.image_role === 'main' ? -1 : b.image_role === 'main' ? 1 : a.sort_order - b.sort_order))
+    .map((img) => ({ src: publicImageUrl(supabaseUrl, img.storage_path), alt: img.alt_text, width: img.width, height: img.height }));
 
   return {
     id: row.id,
@@ -464,6 +474,14 @@ function toProduct(row: ProductRow, supabaseUrl: string): Product {
     inStock: stockAvailable === null || stockAvailable > 0,
     variantId: primaryVariant?.id ?? null,
     translationStale: row.translation_stale,
+    english: {
+      ...(row.name_en ? { name: row.name_en } : {}),
+      ...(row.short_description_en ? { shortDescription: row.short_description_en } : {}),
+      ...(row.size_label_en ? { sizeLabel: row.size_label_en } : {}),
+      ...(row.precautions_en ? { precautions: row.precautions_en } : {}),
+      ...(row.usage_instructions_en ? { usageInstructions: row.usage_instructions_en } : {}),
+    },
+    englishImages,
   };
 }
 

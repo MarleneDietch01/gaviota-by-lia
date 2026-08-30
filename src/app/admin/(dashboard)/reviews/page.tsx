@@ -28,7 +28,7 @@ export default async function AdminReviewsPage() {
                   <p className="font-semibold text-ink">
                     {review.products?.name ?? review.products?.slug ?? 'Producto'}
                   </p>
-                  <p className="text-xs text-muted">{review.profiles?.email ?? 'Clienta sin correo'}</p>
+                  <p className="text-xs text-muted">{review.profiles?.email ?? 'Cliente sin correo'}</p>
                 </div>
                 <span className="rounded-pill bg-powder/40 px-2.5 py-1 text-xs font-semibold text-rose-deep">
                   {review.rating} / 5
