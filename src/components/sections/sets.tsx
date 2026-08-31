@@ -41,7 +41,7 @@ export async function Sets({ locale }: { locale: Locale }) {
     <Section tone="powder" labelledBy="sets-title">
       <Container>
         <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
-          <Reveal className="frame-arch bg-white-warm">
+          <Reveal className="set-visual frame-arch bg-white-warm">
             <div className="aspect-[4/3]">
               <EditorialImage
                 src={kitImage.src}

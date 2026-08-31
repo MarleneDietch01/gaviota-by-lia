@@ -20,7 +20,7 @@ export async function Founder({ locale }: { locale: Locale }) {
     <Section tone="white" padding="compact" labelledBy="story-title">
       <Container>
         <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-16 xl:gap-20">
-          <Reveal className="relative">
+          <Reveal className="founder-portrait relative">
             <div className="frame-arch">
               <div className="aspect-[4/5]">
                 <EditorialImage

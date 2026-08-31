@@ -26,7 +26,7 @@ export async function Campaign({ locale }: { locale: Locale }) {
             poco aire sobre la cabeza; en un panel más bajo `object-cover` le
             recortaba la coronilla en pantallas anchas. Con 48rem el panel se
             acerca al retrato y `focal` 50% 4% deja la cabeza entera. */}
-        <div className="relative min-h-[22rem] sm:min-h-[26rem] lg:min-h-[48rem]">
+        <div className="campaign-visual relative min-h-[22rem] overflow-hidden sm:min-h-[26rem] lg:min-h-[48rem]">
           <FillEditorialImage
             src="/images/gaviota/editorial/campaign-labios.jpg"
             alt={pick(
@@ -37,6 +37,7 @@ export async function Campaign({ locale }: { locale: Locale }) {
             sizes="(min-width: 1024px) 50vw, 100vw"
             focal="50% 4%"
           />
+          <span aria-hidden="true" className="campaign-visual-glow" />
         </div>
 
         <div className="flex items-center px-5 py-14 sm:px-8 sm:py-20 lg:px-16 lg:py-24 xl:px-20">

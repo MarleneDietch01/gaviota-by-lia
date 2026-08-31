@@ -7,6 +7,7 @@ import { localizedHref, pick, type Locale } from '@/lib/i18n';
 import { QuickAdd, FavoriteToggle } from '@/components/products/product-actions';
 import { ProductCardMedia } from '@/components/products/product-card-media';
 import { Stars } from '@/components/ui/stars';
+import { ProductTilt } from '@/components/ui/pointer-depth';
 
 /**
  * Tarjeta de producto.
@@ -55,15 +56,14 @@ export function ProductCard({
   const secondImage = product.images[1];
 
   return (
-    <article
+    <ProductTilt
       className={cn(
         // Rejilla de tres filas: media / contenido / acciones.
         // La fila central es la única elástica (`1fr`), así que el precio y los
         // botones quedan clavados al fondo en las cuatro tarjetas sin depender
         // de que las descripciones midan lo mismo.
         'group relative grid h-full grid-rows-[auto_1fr_auto] overflow-hidden rounded-[12px] border border-line bg-white-warm',
-        'shadow-subtle transition-[box-shadow,transform] duration-300 ease-soft',
-        'motion-safe:hover:-translate-y-1 hover:shadow-lift',
+        'shadow-subtle',
         className,
       )}
     >
@@ -162,6 +162,6 @@ export function ProductCard({
           />
         </div>
       </div>
-    </article>
+    </ProductTilt>
   );
 }

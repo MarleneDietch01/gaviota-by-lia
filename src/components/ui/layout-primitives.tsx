@@ -112,8 +112,11 @@ export function Section({
     <section
       id={id}
       aria-labelledby={labelledBy}
-      className={cn('relative', TONES[tone], PADDINGS[padding], className)}
+      data-tone={tone}
+      className={cn('sensory-section relative isolate overflow-hidden', TONES[tone], PADDINGS[padding], className)}
     >
+      <span aria-hidden="true" className="section-light section-light-a" />
+      <span aria-hidden="true" className="section-light section-light-b" />
       {children}
     </section>
   );

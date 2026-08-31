@@ -77,7 +77,7 @@ export function NeedCard({
   return (
     <Link
       href={localizedHref(locale, need.href)}
-      className="group flex h-full flex-col overflow-hidden rounded-sm bg-white-warm transition-shadow duration-500 ease-soft hover:shadow-lift"
+      className="ritual-need-card group flex h-full flex-col overflow-hidden rounded-sm bg-white-warm transition-[box-shadow,transform,border-color] duration-500 ease-editorial hover:shadow-lift"
     >
       {/* Cuadrado, no 4:3, en las cinco tarjetas: los packshots de estudio son
           lienzos cuadrados de 1200 px (ver `docs/IMAGE_USAGE.md` §5), así que

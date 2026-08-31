@@ -49,7 +49,7 @@ export function TrustStrip({ locale }: { locale: Locale }) {
             return (
               <li
                 key={point.title}
-                className="flex items-center justify-center gap-3 text-center sm:justify-start sm:text-left"
+                className="trust-point flex items-center justify-center gap-3 text-center sm:justify-start sm:text-left"
               >
                 <Icon className="size-5 shrink-0 text-rose-deep" aria-hidden="true" />
                 <div>

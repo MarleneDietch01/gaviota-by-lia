@@ -1,6 +1,7 @@
 import { getImageProps } from 'next/image';
 import { ArrowDown } from 'lucide-react';
 import { LinkButton } from '@/components/ui/button';
+import { HeroDepth } from '@/components/ui/pointer-depth';
 import { getSection } from '@/lib/content/sections';
 import { localizedHref, pick, type Locale } from '@/lib/i18n';
 
@@ -148,8 +149,11 @@ export async function Hero({ locale }: { locale: Locale }) {
         </div>
 
         {/* ---------------- Fotografía ---------------- */}
-        <div className="relative order-1 overflow-hidden lg:order-2 lg:h-[min(calc(100svh-5rem),60rem)]">
-          <picture className="block h-full">
+        <HeroDepth className="relative order-1 overflow-hidden lg:order-2 lg:h-[min(calc(100svh-5rem),60rem)]">
+          <div aria-hidden="true" className="hero-aura hero-aura-top" />
+          <div aria-hidden="true" className="hero-aura hero-aura-bottom" />
+          <div aria-hidden="true" className="hero-ingredient hero-ingredient-coconut" />
+          <picture className="hero-depth-picture block h-full">
             <source media="(min-width: 1024px)" srcSet={desktopSrcSet} sizes="58vw" />
             <source media="(min-width: 640px)" srcSet={tabletSrcSet} sizes="100vw" />
             {/* `alt` va explícito además de venir en `imgProps`: el linter no
@@ -171,7 +175,8 @@ export async function Hero({ locale }: { locale: Locale }) {
               }
             />
           </picture>
-        </div>
+          <div aria-hidden="true" className="hero-glass-light" />
+        </HeroDepth>
       </div>
     </section>
   );

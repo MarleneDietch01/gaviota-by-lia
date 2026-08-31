@@ -36,7 +36,7 @@ export async function Ingredients({ locale }: { locale: Locale }) {
   return (
     <Section tone="ivory" padding="compact" labelledBy="ingredients-title">
       <Container size="narrow">
-        <Reveal className="text-center">
+        <Reveal className="ingredient-panel text-center">
           <p className="eyebrow mb-4 text-rose">
             {pick(locale, 'Ingredients', 'Ingredientes')}
           </p>

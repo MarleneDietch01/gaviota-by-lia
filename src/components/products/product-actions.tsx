@@ -87,7 +87,7 @@ export function QuickAdd({
         className={cn(
           'inline-flex min-h-11 items-center justify-center gap-2 rounded-xs px-4',
           'text-meta font-semibold tracking-[0.02em]',
-          'transition-colors duration-300 ease-soft',
+          'premium-button overflow-hidden transition-[color,background-color,border-color,box-shadow,transform] duration-300 ease-editorial motion-safe:active:scale-[0.98]',
           shape,
           added
             ? 'bg-success text-white-warm'
@@ -166,7 +166,7 @@ export function FavoriteToggle({
       // y sin relleno en reposo. La jerarquía entre los dos botones se
       // sostiene en el peso del trazo, no en el tamaño.
       className={cn(
-        'grid size-11 shrink-0 place-items-center transition-colors duration-300 ease-soft',
+        'favorite-button grid size-11 shrink-0 place-items-center transition-[color,background-color,border-color,box-shadow,transform] duration-300 ease-editorial',
         variant === 'overlay'
           ? cn(
               'rounded-pill border backdrop-blur-sm',

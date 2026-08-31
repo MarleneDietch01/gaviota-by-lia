@@ -38,9 +38,9 @@ export type ButtonVariant = keyof typeof VARIANTS;
 export type ButtonSize = keyof typeof SIZES;
 
 const BASE = cn(
-  'inline-flex items-center justify-center gap-2 text-center',
+  'premium-button inline-flex items-center justify-center gap-2 overflow-hidden text-center',
   'rounded-xs font-sans font-semibold tracking-[0.02em]',
-  'transition-colors duration-300 ease-soft',
+  'transition-[color,background-color,border-color,box-shadow,transform] duration-300 ease-editorial',
   'disabled:pointer-events-none disabled:opacity-45',
 );
 

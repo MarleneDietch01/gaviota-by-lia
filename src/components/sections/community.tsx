@@ -62,7 +62,7 @@ export async function Community({ locale }: { locale: Locale }) {
                 key={photo.src}
                 className="w-[68%] shrink-0 snap-start sm:w-auto sm:shrink"
               >
-                <div className="overflow-hidden rounded-sm">
+                <div className="community-photo overflow-hidden rounded-sm">
                   <div className="aspect-[4/5]">
                     <EditorialImage
                       src={photo.src}

@@ -63,6 +63,8 @@ export function ProductCardMedia({
         />
       ) : null}
 
+      <span aria-hidden="true" className="product-card-sheen" />
+
       {secondImage ? (
         <button
           type="button"

@@ -34,7 +34,7 @@ export async function RitualSteps({ locale }: { locale: Locale }) {
 
         <ol className="grid gap-12 sm:gap-10 lg:grid-cols-3 lg:gap-8">
           {RITUAL_STEPS.map((step, i) => (
-            <Reveal as="li" key={step.n} delay={i * 90} className="relative">
+            <Reveal as="li" key={step.n} delay={i * 90} className="ritual-step relative">
               {/* Numeración editorial de fondo. Decorativa: no aporta
                   información, la lista ya es ordenada. */}
               <span
