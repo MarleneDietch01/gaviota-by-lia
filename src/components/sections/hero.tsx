@@ -131,7 +131,10 @@ export async function Hero({ locale }: { locale: Locale }) {
               className="hero-rise mt-8 flex items-center gap-3 text-caption font-semibold uppercase tracking-[0.16em] text-muted lg:mt-10"
               style={{ '--rise-delay': '320ms' } as React.CSSProperties}
             >
-              <span aria-hidden="true" className="h-px w-8 bg-champagne" />
+              <span
+                aria-hidden="true"
+                className="h-px w-8 bg-[linear-gradient(to_right,var(--color-champagne),var(--color-gold),var(--color-champagne))]"
+              />
               {pick(locale, 'Made in the Dominican Republic', 'Hecho en República Dominicana')}
             </p>
 

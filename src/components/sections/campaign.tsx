@@ -46,6 +46,8 @@ export async function Campaign({ locale }: { locale: Locale }) {
               <p className="eyebrow mb-4 text-on-dark-soft">{c.eyebrow}</p>
             ) : null}
 
+            <hr aria-hidden="true" className="rule-gold mb-5 w-16" />
+
             <h2 id="campaign-title" className="text-h2 text-on-dark">
               {pick(locale, 'Softness, made into a ', 'Suavidad que se convierte en ')}
               <span className="accent-word">ritual</span>.

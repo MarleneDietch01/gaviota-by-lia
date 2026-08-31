@@ -51,6 +51,11 @@
      así que no está sujeto a contraste. Es lo que da el registro editorial sin
      recurrir a iconografía tropical. */
   --color-champagne: #c6a87c;
+  /* Oro pulido del envase real (el collar del gotero). Más luminoso y saturado
+     que `champagne`; se usa SOLO como reflejo metálico en filetes decorativos
+     (aria-hidden), nunca en texto ni como fondo de bloque. La sensación de
+     "brillo" viene del degradado champán -> oro -> champán, no del plano. */
+  --color-gold: #e6c988;
 
   /* --- Texto ----------------------------------------------------------------
      ink ....... 14.27:1 marfil / 9.69:1 polvo / 15.10:1 blanco
@@ -230,15 +235,33 @@
   font-weight: 300;
 }
 
-/* Filete champán. Separador editorial, sustituye a la línea recta. */
+/* Filete champán. Separador editorial, sustituye a la línea recta.
+   Lleva un reflejo de oro pulido en el centro: el degradado champán -> oro ->
+   champán es lo que da el brillo metálico sutil, sin encender un plano dorado. */
 @utility rule-champagne {
   height: 1px;
   border: 0;
   background: linear-gradient(
     to right,
     transparent,
-    var(--color-champagne) 18%,
-    var(--color-champagne) 82%,
+    var(--color-champagne) 16%,
+    var(--color-gold) 50%,
+    var(--color-champagne) 84%,
+    transparent
+  );
+}
+
+/* Variante con más presencia de oro: acentos puntuales (cabecera de sección
+   editorial), no para cada separador. Sigue siendo decorativo/aria-hidden. */
+@utility rule-gold {
+  height: 1px;
+  border: 0;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--color-gold) 12%,
+    color-mix(in oklab, var(--color-gold) 70%, #fff) 50%,
+    var(--color-gold) 88%,
     transparent
   );
 }
