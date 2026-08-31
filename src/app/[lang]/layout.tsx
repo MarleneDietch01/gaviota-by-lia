@@ -28,6 +28,14 @@ export async function generateMetadata({ params }: LayoutProps<'/[lang]'>): Prom
     metadataBase: new URL(getSiteUrl()),
     title: { default: `Gaviota by Lia | ${title}`, template: '%s | Gaviota by Lia' },
     description,
+    icons: {
+      icon: [
+        { url: '/favicon-gbl-v2.png', type: 'image/png', sizes: '64x64' },
+        { url: '/icon.svg', type: 'image/svg+xml', sizes: 'any' },
+      ],
+      shortcut: '/favicon-gbl-v2.png',
+      apple: '/apple-icon.png',
+    },
     alternates: pageAlternates(lang, ''),
     ...socialMeta(lang, '', description),
   };
