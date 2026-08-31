@@ -334,7 +334,11 @@ const ENGLISH_IMAGE: Record<string, { path: string; width: number; height: numbe
 function localizeProduct(product: Product, locale: Locale): Product {
   if (locale !== 'en') return product;
 
-  const en = product.english ?? ENGLISH[product.slug];
+  // Merge, no `??`: `product.english` desde la BD es SIEMPRE un objeto (vacío si
+  // no hay columnas `*_en`), así que `??` nunca caía al mapa `ENGLISH` y la
+  // tienda en inglés servía los nombres en español. El lado BD gana campo a
+  // campo cuando existe; `ENGLISH` cubre lo que la BD deje vacío.
+  const en = { ...ENGLISH[product.slug], ...product.english };
   const enImage = product.englishImages?.[0] ?? ENGLISH_IMAGE[product.slug];
   const enImageSrc = enImage ? ('src' in enImage ? enImage.src : enImage.path) : undefined;
 

@@ -1,6 +1,6 @@
 export default function ShopLoading() {
   return (
-    <div className="mx-auto max-w-[75rem] px-5 py-16 sm:px-8 lg:px-12 xl:px-16" aria-label="Loading products" aria-busy="true">
+    <div className="mx-auto max-w-[75rem] px-5 py-16 sm:px-8 lg:px-12 xl:px-16" aria-label="Loading products · Cargando productos" aria-busy="true">
       <div className="h-3 w-24 animate-pulse rounded-xs bg-line-strong" />
       <div className="mt-7 h-12 max-w-xl animate-pulse rounded-xs bg-line" />
       <div className="mt-4 h-5 max-w-2xl animate-pulse rounded-xs bg-line" />
@@ -16,7 +16,7 @@ export default function ShopLoading() {
           </div>
         ))}
       </div>
-      <span className="sr-only">Loading…</span>
+      <span className="sr-only">Loading… · Cargando…</span>
     </div>
   );
 }
