@@ -30,12 +30,14 @@ export async function generateMetadata({ params }: LayoutProps<'/[lang]'>): Prom
     description,
     icons: {
       icon: [
-        { url: '/favicon.ico', type: 'image/x-icon', sizes: '32x32' },
-        { url: '/favicon-logo-oficial.png', type: 'image/png', sizes: '64x64' },
+        { url: '/favicon.ico', sizes: 'any' },
+        { url: '/images/gaviota/favicon/icon.svg', type: 'image/svg+xml' },
+        { url: '/images/gaviota/favicon/favicon-32x32.png', type: 'image/png', sizes: '32x32' },
       ],
       shortcut: '/favicon.ico',
-      apple: '/apple-icon.png',
+      apple: '/images/gaviota/favicon/apple-touch-icon.png',
     },
+    manifest: '/images/gaviota/favicon/site.webmanifest',
     alternates: pageAlternates(lang, ''),
     ...socialMeta(lang, '', description),
   };

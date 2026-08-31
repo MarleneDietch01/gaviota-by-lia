@@ -18,10 +18,13 @@ export const config = {
   // `admin` queda fuera: es una herramienta interna sin prefijo de idioma,
   // con su propio layout raíz en `src/app/admin/` (ver ese archivo).
   //
-  // `icon.png`/`apple-icon.png` son las convenciones de archivo de Next para
-  // `<link rel="icon">`/`apple-touch-icon` (ver `src/app/icon.png`): viven en
-  // la raíz de `app/`, así que sin excluirlas aquí el proxy las redirige a
-  // `/es/icon.png`, que no existe, y el favicon deja de cargar en todo el sitio.
+  // `favicon.ico` es el fallback clásico que el navegador pide en la raíz del
+  // dominio: sin excluirlo, el proxy lo redirige a `/es/favicon.ico` (no existe)
+  // y el icono de pestaña desaparece. El resto del juego de iconos (icon.svg,
+  // 16/32, apple-touch, android-chrome, site.webmanifest) vive bajo
+  // `public/images/gaviota/favicon/`, ya cubierto por `images`, y se declara
+  // explícito en `[lang]/layout.tsx`. `icon.png`/`apple-icon.png` se mantienen
+  // en la lista por si se reintroduce una convención de archivo en `app/`.
   //
   // `sitemap.xml`/`robots.txt` son la misma convención de archivo (`src/app/
   // sitemap.ts` / `robots.ts`), mismo problema: sin excluirlas, Google pide
