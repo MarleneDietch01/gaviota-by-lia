@@ -30,10 +30,10 @@ export async function generateMetadata({ params }: LayoutProps<'/[lang]'>): Prom
     description,
     icons: {
       icon: [
+        { url: '/favicon.ico', type: 'image/x-icon', sizes: '32x32' },
         { url: '/favicon-gbl-v2.png', type: 'image/png', sizes: '64x64' },
-        { url: '/icon.svg', type: 'image/svg+xml', sizes: 'any' },
       ],
-      shortcut: '/favicon-gbl-v2.png',
+      shortcut: '/favicon.ico',
       apple: '/apple-icon.png',
     },
     alternates: pageAlternates(lang, ''),
