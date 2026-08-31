@@ -13,8 +13,8 @@
   /* --- Superficies ----------------------------------------------------------
      Cuatro. La home alterna entre ellas para crear ritmo; nunca tres secciones
      seguidas con la misma.                                                    */
-  --color-ivory: #fbf6f2; /* marfil cálido — superficie por defecto */
-  --color-white-warm: #fffdfc; /* blanco cálido — respiro entre marfiles */
+  --color-ivory: #f6ece8; /* crema rosado pastel — superficie por defecto */
+  --color-white-warm: #fffaf8; /* blanco cálido — respiro entre marfiles */
   --color-powder: #ebc4cb; /* rosa empolvado — acento, nunca 2 seguidas */
   /* Crema rosado muy claro: 78% marfil + 22% rosa empolvado. Para secciones que
      necesitan una temperatura rosa perceptible pero mucho más clara que
@@ -22,7 +22,7 @@
      grandes de producto, ver Colección). Más clara que `powder`, más cálida
      que `ivory` — el texto ink/rose ya medido contra `ivory` (línea de abajo)
      sigue pasando con más margen aquí, nunca menos: es un fondo aún más claro. */
-  --color-blush: #f7ebe9;
+  --color-blush: #f1dfde;
   /* Superficie profunda de contraste (footer, Comunidad, bloque editorial).
      Corregida: el valor anterior (#4b202d, "vino"/"ciruela") venía de una
      síntesis de dirección de arte (docs/DESIGN_DIRECTION.md §2/§4) que nunca
@@ -361,6 +361,8 @@
 .premium-button { position: relative; box-shadow: 0 1px 0 rgb(255 255 255 / 0.16) inset; }
 .premium-button::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(110deg, transparent 25%, rgb(255 255 255 / 0.2) 48%, transparent 70%); transform: translateX(-120%); transition: transform 650ms var(--ease-editorial); }
 .favorite-button svg { transition: transform 420ms var(--ease-editorial); }
+.brand-logo-link img { filter: drop-shadow(0 7px 14px rgb(110 34 57 / 0.1)); }
+.footer-brand-mark img { filter: drop-shadow(0 1px 0 rgb(255 250 248 / 0.5)) drop-shadow(0 8px 18px rgb(48 33 38 / 0.24)); }
 
 @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
   .product-tilt:hover { border-color: rgb(198 168 124 / 0.6); box-shadow: 0 28px 58px -28px rgb(110 34 57 / 0.38), 0 12px 24px -18px rgb(48 33 38 / 0.22); }

@@ -16,6 +16,7 @@ import {
   type NavItem,
 } from '@/lib/content/navigation';
 import { getBagCount, subscribeBag } from '@/lib/commerce/bag';
+import { BrandLogo } from '@/components/brand/brand-logo';
 
 /* ===========================================================================
    Header
@@ -165,15 +166,14 @@ export function SiteHeader({ locale }: { locale: Locale }) {
             {/* --- Centro: logotipo --- */}
             <Link
               href={localizedHref(locale, '/')}
-              // `gap-[0.26em]` NO es decorativo: este enlace es `flex`, y un
-              // contenedor flex convierte el nodo de texto y el <span> en dos
-              // ítems, descartando el espacio en blanco que los separa en el
-              // JSX. Sin el gap se leía literalmente "Gaviotaby Lia".
-              // En `em` para que la separación escale con el tamaño en los tres
-              // breakpoints del logotipo.
-              className="absolute left-1/2 flex min-h-11 -translate-x-1/2 items-center gap-[0.26em] whitespace-nowrap font-display text-[1.375rem] tracking-[0.01em] sm:text-2xl lg:text-[1.75rem]"
+              aria-label={pick(locale, 'Gaviota by Lia home', 'Inicio de Gaviota by Lia')}
+              className="brand-logo-link absolute left-1/2 grid min-h-11 -translate-x-1/2 place-items-center"
             >
-              Gaviota <span className="accent-word">by Lia</span>
+              <BrandLogo
+                priority
+                sizes="(min-width: 1024px) 190px, 142px"
+                className="w-[8.9rem] lg:w-[11.875rem]"
+              />
             </Link>
 
             {/* --- Derecha: acciones --- */}

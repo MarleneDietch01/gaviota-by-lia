@@ -10,6 +10,7 @@ import {
   type NavItem,
 } from '@/lib/content/navigation';
 import { localizedHref, pick, type Locale } from '@/lib/i18n';
+import { BrandLogo } from '@/components/brand/brand-logo';
 
 const COLUMNS: readonly { title: { en: string; es: string }; items: readonly NavItem[] }[] = [
   { title: { en: 'Shop', es: 'Tienda' }, items: CATEGORY_NAV },
@@ -25,9 +26,13 @@ export function SiteFooter({ locale }: { locale: Locale }) {
         <div className="py-16 lg:py-20">
           <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-[1.3fr_repeat(4,1fr)] lg:gap-10">
             <div className="max-w-xs">
-              <p className="font-display text-2xl">
-                Gaviota <span className="accent-word">by Lia</span>
-              </p>
+              <Link
+                href={localizedHref(locale, '/')}
+                aria-label={pick(locale, 'Gaviota by Lia home', 'Inicio de Gaviota by Lia')}
+                className="footer-brand-mark inline-grid"
+              >
+                <BrandLogo sizes="210px" className="w-[13.125rem]" />
+              </Link>
 
               <p className="mt-4 text-sm leading-relaxed text-on-dark-soft">
                 {pick(

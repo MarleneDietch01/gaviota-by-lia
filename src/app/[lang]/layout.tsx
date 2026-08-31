@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: LayoutProps<'/[lang]'>): Prom
     icons: {
       icon: [
         { url: '/favicon.ico', type: 'image/x-icon', sizes: '32x32' },
-        { url: '/favicon-gbl-v2.png', type: 'image/png', sizes: '64x64' },
+        { url: '/favicon-logo-oficial.png', type: 'image/png', sizes: '64x64' },
       ],
       shortcut: '/favicon.ico',
       apple: '/apple-icon.png',
