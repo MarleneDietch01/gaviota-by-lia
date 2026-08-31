@@ -28,15 +28,11 @@ import { localizedHref, pick, type Locale } from '@/lib/i18n';
  *    testimonio. Prometía una prueba que la sección no entrega. Se cambia a
  *    "What to expect" / "Lo que puedes esperar": describe honestamente lo que
  *    SÍ hay (una lista de beneficios), no lo que falta.
- * 2) La pareja de fotos combinaba una foto de estilo de vida sobre rosa con un
- *    packshot del tónico de barba sobre blanco en la misma fila — fondos,
- *    iluminación y escala distintos, y un producto masculino conviviendo con
- *    una escena de cuidado corporal femenino en el mismo módulo. Queda una
- *    sola foto (recorte limpio de la sesión, ver comentario en el JSX de
- *    abajo); "Ver cuidado masculino" ya vive en la navegación principal y en
- *    el footer, así que retirarlo de aquí no reduce su visibilidad en el
- *    sitio. La línea masculina merece su propio bloque dedicado más adelante,
- *    no compartir fila con esto — no se construye en este pase por alcance.
+ * 2) Las imágenes ilustrativas nuevas llegan compuestas como comparativas.
+ *    Para no insinuar resultados garantizados se usa únicamente su mitad
+ *    editorial en la pieza protagonista. La segunda composición solicitada
+ *    se conserva completa en un panel panorámico y se rotula expresamente
+ *    como imagen ilustrativa, sin añadir afirmaciones de resultados.
  */
 export function CampaignFlyers({ locale }: { locale: Locale }) {
   return (
@@ -44,21 +40,20 @@ export function CampaignFlyers({ locale }: { locale: Locale }) {
       <Container>
         <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-12 xl:gap-16">
           <Reveal>
-            {/* Proporción nativa 4:5: no añade recortes a rostro, manos, piernas o tarro. */}
-            <figure className="aspect-[4/5] overflow-hidden rounded-sm bg-powder/20">
-              <EditorialImage
-                src="/images/gaviota/editorial/ritual-exfolia.jpg"
-                alt={pick(
-                  locale,
-                  'Woman applying a Gaviota by Lia body care product to her leg while holding the jar',
-                  'Mujer aplicando un producto corporal Gaviota by Lia en su pierna mientras sostiene el tarro',
-                )}
-                width={1600}
-                height={2000}
-                sizes="(max-width: 1023px) calc(100vw - 2.5rem), 34rem"
-                focal="50% 50%"
-              />
-            </figure>
+            <div className="campaign-editorial-feature">
+              <figure>
+                <EditorialImage
+                  src="/images/gaviota/products/exfoliante-coco-editorial-feature.webp"
+                  alt={pick(locale, 'Man beside Gaviota by Lia Coconut Body Scrub in a warm pink body-care scene', 'Hombre junto al Exfoliante de Coco Gaviota by Lia en una escena de cuidado corporal rosa cálido')}
+                  width={768}
+                  height={1024}
+                  sizes="(max-width: 1023px) calc(100vw - 2.5rem), 34rem"
+                  focal="50% 50%"
+                  fit="contain"
+                />
+              </figure>
+              <p>{pick(locale, 'Illustrative image', 'Imagen ilustrativa')}</p>
+            </div>
           </Reveal>
 
           <Reveal className="min-w-0 lg:py-6">
@@ -96,6 +91,25 @@ export function CampaignFlyers({ locale }: { locale: Locale }) {
             </div>
           </Reveal>
         </div>
+
+        <Reveal className="campaign-editorial-wide-wrap">
+          <figure className="campaign-editorial-wide">
+            <EditorialImage
+              src="/images/gaviota/products/exfoliante-coco-editorial-mujer-full.webp"
+              alt={pick(
+                locale,
+                'Illustrative side-by-side body-care scene with a woman and Gaviota by Lia Coconut Body Scrub',
+                'Escena ilustrativa de cuidado corporal en paralelo con una mujer y el Exfoliante de Coco Gaviota by Lia',
+              )}
+              width={1440}
+              height={960}
+              sizes="(max-width: 1023px) calc(100vw - 2.5rem), 56rem"
+              focal="50% 50%"
+              fit="contain"
+            />
+          </figure>
+          <p>{pick(locale, 'Illustrative image', 'Imagen ilustrativa')}</p>
+        </Reveal>
       </Container>
     </Section>
   );
