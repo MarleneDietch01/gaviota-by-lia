@@ -25,7 +25,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
       <Container size="wide">
         <div className="py-16 lg:py-20">
           <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-[1.3fr_repeat(4,1fr)] lg:gap-10">
-            <div className="max-w-xs">
+            <div className="footer-brand-panel flex flex-col rounded-3xl bg-ivory p-8 text-body lg:p-9">
               <Link
                 href={localizedHref(locale, '/')}
                 aria-label={pick(locale, 'Gaviota by Lia home', 'Inicio de Gaviota by Lia')}
@@ -34,7 +34,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
                 <BrandLogo sizes="210px" className="w-[13.125rem]" />
               </Link>
 
-              <p className="mt-4 text-sm leading-relaxed text-on-dark-soft">
+              <p className="mt-5 max-w-xs text-sm leading-relaxed text-body">
                 {pick(
                   locale,
                   'Dominican-inspired body care, made for every body.',
@@ -46,7 +46,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
                 href="https://www.instagram.com/gaviotabylia/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-6 inline-flex min-h-11 items-center gap-2 text-sm text-on-dark-soft transition-colors hover:text-on-dark"
+                className="mt-auto inline-flex min-h-11 items-center gap-2 pt-6 text-sm text-body transition-colors hover:text-ink"
               >
                 <InstagramIcon className="size-4" />
                 @gaviotabylia

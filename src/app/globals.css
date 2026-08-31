@@ -362,7 +362,8 @@
 .premium-button::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(110deg, transparent 25%, rgb(255 255 255 / 0.2) 48%, transparent 70%); transform: translateX(-120%); transition: transform 650ms var(--ease-editorial); }
 .favorite-button svg { transition: transform 420ms var(--ease-editorial); }
 .brand-logo-link img { filter: drop-shadow(0 7px 14px rgb(110 34 57 / 0.1)); }
-.footer-brand-mark img { filter: drop-shadow(0 1px 0 rgb(255 250 248 / 0.5)) drop-shadow(0 8px 18px rgb(48 33 38 / 0.24)); }
+.footer-brand-mark img { filter: drop-shadow(0 6px 14px rgb(110 34 57 / 0.12)); }
+.footer-brand-panel { box-shadow: 0 1px 0 rgb(255 255 255 / 0.4) inset, 0 22px 48px -30px rgb(48 33 38 / 0.5); }
 
 @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
   .product-tilt:hover { border-color: rgb(198 168 124 / 0.6); box-shadow: 0 28px 58px -28px rgb(110 34 57 / 0.38), 0 12px 24px -18px rgb(48 33 38 / 0.22); }
