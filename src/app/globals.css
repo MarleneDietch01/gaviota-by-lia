@@ -388,6 +388,22 @@
 .footer-brand-mark img { filter: drop-shadow(0 6px 14px rgb(110 34 57 / 0.12)); }
 .footer-brand-panel { box-shadow: 0 1px 0 rgb(255 255 255 / 0.4) inset, 0 22px 48px -30px rgb(48 33 38 / 0.5); }
 
+.campaign-editorial-feature { position: relative; isolation: isolate; }
+.campaign-editorial-feature::before { content: ''; position: absolute; inset: 8% -7% -5% 14%; z-index: -1; border-radius: 45% 55% 42% 58%; background: radial-gradient(circle at 42% 38%, rgb(228 163 187 / 0.34), rgb(198 168 124 / 0.14) 45%, transparent 72%); filter: blur(22px); }
+.campaign-editorial-feature figure { aspect-ratio: 3 / 4; overflow: hidden; border: 1px solid rgb(110 34 57 / 0.09); border-radius: 48% 48% 1.5rem 1.5rem; background: rgb(241 223 222 / 0.45); box-shadow: 0 28px 70px -38px rgb(110 34 57 / 0.58); transition: transform 600ms var(--ease-editorial), box-shadow 600ms ease; }
+.campaign-editorial-feature img { transition: filter 600ms ease; }
+.campaign-editorial-feature figure:hover { transform: translateY(-0.25rem); box-shadow: 0 32px 74px -36px rgb(110 34 57 / 0.64); }
+.campaign-editorial-feature figure:hover img { filter: saturate(1.03) contrast(1.01); }
+.campaign-editorial-feature > p { margin-top: 0.75rem; text-align: right; font-size: 0.6875rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-muted); }
+.campaign-editorial-wide-wrap { margin: clamp(3rem, 6vw, 5rem) auto 0; max-width: 56rem; }
+.campaign-editorial-wide { aspect-ratio: 3 / 2; overflow: hidden; border: 1px solid rgb(110 34 57 / 0.09); border-radius: 1.5rem; background: rgb(241 223 222 / 0.35); box-shadow: 0 28px 70px -42px rgb(110 34 57 / 0.55); }
+.campaign-editorial-wide-wrap > p { margin-top: 0.75rem; text-align: right; font-size: 0.6875rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-muted); }
+
+@media (prefers-reduced-motion: reduce) {
+  .campaign-editorial-feature figure, .campaign-editorial-feature img { transition: none; }
+  .campaign-editorial-feature figure:hover { transform: none; }
+}
+
 @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
   .product-tilt:hover { border-color: rgb(198 168 124 / 0.6); box-shadow: 0 28px 58px -28px rgb(110 34 57 / 0.38), 0 12px 24px -18px rgb(48 33 38 / 0.22); }
   .product-tilt:hover::before, .product-tilt:hover .product-card-sheen { opacity: 1; }
