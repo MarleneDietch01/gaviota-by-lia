@@ -236,6 +236,13 @@ const STATIC_SECONDARY_IMAGES: Record<
       width: 1122,
       height: 1402,
     },
+    {
+      path: '/images/gaviota/products/modelo8.png',
+      alt: 'Composición ilustrativa en paralelo con un hombre y el Aceite Anti-Estrías Gaviota by Lia',
+      altEn: 'Illustrative side-by-side composition with a man and Gaviota by Lia Stretch Mark Body Oil',
+      width: 1536,
+      height: 1024,
+    },
   ],
 };
 
