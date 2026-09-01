@@ -43,10 +43,10 @@ export function CampaignFlyers({ locale }: { locale: Locale }) {
             <div className="campaign-editorial-feature">
               <figure>
                 <EditorialImage
-                  src="/images/gaviota/products/exfoliante-coco-editorial-feature.webp"
+                  src="/images/gaviota/products/exfoliante-coco-editorial-feature-v2.webp"
                   alt={pick(locale, 'Man beside Gaviota by Lia Coconut Body Scrub in a warm pink body-care scene', 'Hombre junto al Exfoliante de Coco Gaviota by Lia en una escena de cuidado corporal rosa cálido')}
-                  width={768}
-                  height={1024}
+                  width={1086}
+                  height={1448}
                   sizes="(max-width: 1023px) calc(100vw - 2.5rem), 34rem"
                   focal="50% 50%"
                   fit="contain"
