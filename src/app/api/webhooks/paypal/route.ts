@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 import { NextResponse, type NextRequest } from 'next/server';
 import { getPayPalAccessToken, getPayPalApiBase } from '@/lib/paypal/client';
 import { createAdminSupabaseClient } from '@/lib/supabase/admin';
+import { sendOrderConfirmationEmails } from '@/lib/email/order-confirmation';
 
 /**
  * Webhook de PayPal.
@@ -115,6 +116,11 @@ export async function POST(request: NextRequest) {
               provider_payment_id: (resource['id'] as string | undefined) ?? webhookEvent.id,
             })
             .eq('order_id', customId);
+
+          // PayPal no tiene un paso equivalente a `commit_inventory_sale` aquí
+          // todavía (ver la misma nota de inventario pendiente en el webhook
+          // de Stripe) — el recibo no depende de eso, así que se envía igual.
+          await sendOrderConfirmationEmails(admin, customId);
         }
 
         break;

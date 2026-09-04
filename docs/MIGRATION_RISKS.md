@@ -342,13 +342,15 @@ no se controla. Sin SPF/DKIM/DMARC sobre dominio propio, las confirmaciones de p
 a spam. Un cliente que paga y no recibe confirmación es una incidencia de atención directa.
 
 **Mitigación.**
-1. Verificar `gaviotabylia.com` en Resend y configurar los registros DNS.
-2. Enviar desde `pedidos@gaviotabylia.com`; responder-a puede seguir siendo el Gmail.
-3. Configurar DMARC en modo monitor antes del lanzamiento.
-4. Prueba de entrega real a Gmail, Outlook y iCloud antes de abrir la tienda.
-5. Registrar cada envío en base de datos para poder reenviar manualmente desde el panel.
+1. Verificar `gaviotabylia.com` en Resend y configurar los registros DNS. **Pendiente — sin esto RESEND_API_KEY no manda nada real.**
+2. Enviar desde `pedidos@gaviotabylia.com`; responder-a puede seguir siendo el Gmail. ✅ hecho — `EMAIL_FROM` en `.env.example`, `replyTo` fijado en `src/lib/email/resend.ts`.
+3. Configurar DMARC en modo monitor antes del lanzamiento. Pendiente (DNS).
+4. Prueba de entrega real a Gmail, Outlook y iCloud antes de abrir la tienda. Pendiente — solo posible una vez configurado el DNS.
+5. Registrar cada envío en base de datos para poder reenviar manualmente desde el panel. ✅ hecho — `email_log` (ya existía) + botón "Reenviar recibo" en `/admin/orders/[id]`.
 
-**Responsable:** propietaria (DNS) + desarrollo. **Estado:** abierto.
+**Estado del código (2026-09-04):** el recibo de compra a la clienta y la notificación de venta a la propietaria ya están implementados y enganchados a los tres webhooks de pago (`src/lib/email/order-confirmation.ts`). Sin `RESEND_API_KEY` ni `EMAIL_FROM`/`ADMIN_EMAIL` configurados con valores reales, el envío se omite en silencio (se registra en `email_log` como `not_configured`) — un pedido pagado nunca falla por esto, pero tampoco sale ningún correo hasta que se complete el punto 1.
+
+**Responsable:** propietaria (DNS, punto 1 y 3) + desarrollo (hecho: 2, 5). **Estado:** parcialmente resuelto — bloqueado en DNS.
 
 ---
 

@@ -200,6 +200,7 @@ export async function createPendingOrder(
     shipping: Cents;
     provider: 'stripe' | 'paypal';
     idempotencyKey: string;
+    locale: Locale;
   },
 ): Promise<{ orderId: string; orderNumber: string; grandTotal: Cents } | { error: string }> {
   const grandTotal = cents(params.subtotal + params.shipping);
@@ -215,6 +216,11 @@ export async function createPendingOrder(
       payment_status: 'pending',
       order_status: 'pending_payment',
       reservation_expires_at: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
+      // El idioma del checkout es el único momento en que se conoce con
+      // certeza qué idioma habla la compradora — se guarda aquí para que el
+      // webhook (que no ve la petición original) sepa en qué idioma mandar
+      // el recibo por correo.
+      locale: params.locale,
     })
     .select('id, order_number')
     .single();

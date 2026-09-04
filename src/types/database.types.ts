@@ -844,6 +844,7 @@ export type Database = {
       }
       orders: {
         Row: {
+          confirmation_email_sent_at: string | null
           created_at: string
           currency: string
           customer_email: string
@@ -854,6 +855,7 @@ export type Database = {
           grand_total: number
           id: string
           internal_notes: string | null
+          locale: string
           order_number: string
           order_status: Database["public"]["Enums"]["order_status"]
           payment_status: Database["public"]["Enums"]["payment_status"]
@@ -866,6 +868,7 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          confirmation_email_sent_at?: string | null
           created_at?: string
           currency?: string
           customer_email: string
@@ -876,6 +879,7 @@ export type Database = {
           grand_total: number
           id?: string
           internal_notes?: string | null
+          locale?: string
           order_number?: string
           order_status?: Database["public"]["Enums"]["order_status"]
           payment_status?: Database["public"]["Enums"]["payment_status"]
@@ -888,6 +892,7 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          confirmation_email_sent_at?: string | null
           created_at?: string
           currency?: string
           customer_email?: string
@@ -898,6 +903,7 @@ export type Database = {
           grand_total?: number
           id?: string
           internal_notes?: string | null
+          locale?: string
           order_number?: string
           order_status?: Database["public"]["Enums"]["order_status"]
           payment_status?: Database["public"]["Enums"]["payment_status"]

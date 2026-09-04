@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { cents, formatMoney } from '@/lib/commerce/money';
-import { markOrderShipped, saveOrderNotes } from '../actions';
+import { markOrderShipped, resendOrderConfirmation, saveOrderNotes } from '../actions';
 
 export const metadata = { title: 'Pedido' };
 
@@ -43,11 +43,13 @@ export default async function AdminOrderDetailPage({
     .select(
       `id, order_number, customer_email, customer_phone, subtotal, shipping_total, discount_total, tax_total,
        grand_total, order_status, payment_status, internal_notes, customer_notes, created_at,
+       confirmation_email_sent_at,
        order_items ( product_name, variant_name, quantity, unit_price, line_total ),
        order_addresses ( address_type, recipient_name, address_line_1, address_line_2, city, state, postal_code, country, phone ),
        payments ( provider, status, amount ),
        shipments ( id, carrier, tracking_number, tracking_url, status, shipped_at, delivered_at ),
-       order_status_history ( id, previous_status, new_status, note, created_at, changed_by )`,
+       order_status_history ( id, previous_status, new_status, note, created_at, changed_by ),
+       email_log ( id, template, to_email, status, error, created_at )`,
     )
     .eq('id', id)
     .maybeSingle();
@@ -221,6 +223,44 @@ export default async function AdminOrderDetailPage({
             <dd className="tabular">{formatMoney(cents(order.grand_total), 'USD', 'es-US')}</dd>
           </div>
         </dl>
+      </section>
+
+      {/* -------------------------------------------------------------- */}
+      {/* Correo de confirmación                                          */}
+      {/* -------------------------------------------------------------- */}
+      <section aria-labelledby="email-heading" className="mt-6 rounded-sm border border-line bg-white-warm p-5">
+        <h2 id="email-heading" className="text-h3">Correo de confirmación</h2>
+        <p className="mt-2 text-sm text-body">
+          {order.confirmation_email_sent_at
+            ? `Recibo enviado el ${formatDate(order.confirmation_email_sent_at)}.`
+            : 'Todavía no se ha enviado el recibo de este pedido.'}
+        </p>
+
+        {order.email_log?.length ? (
+          <ul className="mt-3 space-y-1.5 text-xs text-muted">
+            {[...order.email_log]
+              .sort((a, b) => b.created_at.localeCompare(a.created_at))
+              .map((entry) => (
+                <li key={entry.id}>
+                  <span className={entry.status === 'sent' ? 'text-success' : 'text-danger'}>
+                    {entry.status === 'sent' ? '✓' : '✗'}
+                  </span>{' '}
+                  {entry.template} → {entry.to_email} · {formatDate(entry.created_at)}
+                  {entry.error ? ` · ${entry.error}` : ''}
+                </li>
+              ))}
+          </ul>
+        ) : null}
+
+        <form action={resendOrderConfirmation} className="mt-4">
+          <input type="hidden" name="orderId" value={order.id} />
+          <button
+            type="submit"
+            className="min-h-10 rounded-xs border border-ink/25 px-4 text-sm font-medium hover:bg-ivory"
+          >
+            Reenviar recibo
+          </button>
+        </form>
       </section>
 
       {/* -------------------------------------------------------------- */}

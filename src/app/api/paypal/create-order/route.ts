@@ -87,6 +87,7 @@ export async function POST(request: NextRequest) {
     shipping: shipping.shippingCents,
     provider: 'paypal',
     idempotencyKey,
+    locale,
   });
 
   if ('error' in pendingOrder) {

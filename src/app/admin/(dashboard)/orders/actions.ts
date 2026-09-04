@@ -5,6 +5,8 @@ import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import { requireAdmin } from '@/lib/auth/guards';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { createAdminSupabaseClient } from '@/lib/supabase/admin';
+import { sendOrderConfirmationEmails } from '@/lib/email/order-confirmation';
 
 /**
  * "Marcar como enviado" — el flujo de despacho que hoy no existe (ver el
@@ -110,4 +112,36 @@ export async function saveOrderNotes(formData: FormData): Promise<void> {
 
   revalidatePath(`/admin/orders/${parsed.data.orderId}`);
   redirect(`/admin/orders/${parsed.data.orderId}?saved=1`);
+}
+
+/**
+ * Reenvía a mano el recibo de compra + la notificación de venta.
+ *
+ * `sendOrderConfirmationEmails` no manda nada dos veces por diseño (candado
+ * en `orders.confirmation_email_sent_at`, ver src/lib/email/order-confirmation.ts)
+ * — así que para un reenvío deliberado hay que soltar el candado primero.
+ * Usa el cliente `service_role`, igual que los webhooks: es la misma función,
+ * llamada desde un sitio distinto.
+ */
+export async function resendOrderConfirmation(formData: FormData): Promise<void> {
+  await requireAdmin();
+
+  const orderId = z.uuid().safeParse(formData.get('orderId'));
+  if (!orderId.success) return;
+
+  const admin = createAdminSupabaseClient();
+  await admin.from('orders').update({ confirmation_email_sent_at: null }).eq('id', orderId.data);
+
+  try {
+    await sendOrderConfirmationEmails(admin, orderId.data);
+  } catch (error) {
+    redirect(
+      `/admin/orders/${orderId.data}?error=${encodeURIComponent(
+        `No se pudo reenviar el recibo: ${error instanceof Error ? error.message : 'error desconocido'}`,
+      )}`,
+    );
+  }
+
+  revalidatePath(`/admin/orders/${orderId.data}`);
+  redirect(`/admin/orders/${orderId.data}?saved=1`);
 }

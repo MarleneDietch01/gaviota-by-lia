@@ -5,6 +5,7 @@ import { createHash } from 'node:crypto';
 import Stripe from 'stripe';
 import { getStripeClient } from '@/lib/stripe/client';
 import { createAdminSupabaseClient } from '@/lib/supabase/admin';
+import { sendOrderConfirmationEmails } from '@/lib/email/order-confirmation';
 
 /**
  * Webhook de Stripe.
@@ -140,6 +141,8 @@ export async function POST(request: NextRequest) {
 
         await admin.rpc('commit_inventory_sale', { p_order_id: orderId });
 
+        await sendOrderConfirmationEmails(admin, orderId);
+
         break;
       }
 
@@ -164,6 +167,8 @@ export async function POST(request: NextRequest) {
           .eq('order_id', orderId);
 
         await admin.rpc('commit_inventory_sale', { p_order_id: orderId });
+
+        await sendOrderConfirmationEmails(admin, orderId);
 
         break;
       }

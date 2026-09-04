@@ -102,6 +102,7 @@ export async function POST(request: NextRequest) {
     shipping: shipping.shippingCents,
     provider: 'stripe',
     idempotencyKey,
+    locale,
   });
 
   if ('error' in pendingOrder) {
