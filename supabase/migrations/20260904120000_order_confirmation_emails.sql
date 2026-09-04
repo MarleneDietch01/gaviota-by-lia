@@ -14,7 +14,7 @@ alter table orders
   add constraint orders_locale_known check (locale in ('en', 'es'));
 
 comment on column orders.locale is
-  'Idioma del checkout, capturado en /api/checkout y /api/paypal/create-order. '
+  'Idioma del checkout, capturado en /api/checkout. '
   'Determina el idioma del recibo por correo — el webhook que dispara el envío '
   'no tiene forma de saberlo por sí mismo.';
 

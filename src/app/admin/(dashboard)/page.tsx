@@ -176,7 +176,7 @@ export default async function AdminDashboardPage({ searchParams }: { searchParam
         <div className="mt-6 rounded-sm border border-danger/40 bg-danger/10 p-4">
           <p className="text-sm font-semibold text-danger">
             {disputedCount} {disputedCount === 1 ? 'pago en disputa' : 'pagos en disputa'} — revisa y responde
-            en el dashboard de Stripe/PayPal antes de que venza el plazo.
+            en el dashboard del proveedor de pago antes de que venza el plazo.
           </p>
         </div>
       ) : null}

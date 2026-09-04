@@ -28,9 +28,6 @@ import type { NextConfig } from 'next';
  *     que hoy no se carga Stripe.js en el DOM — se permite igual porque Fase 4
  *     (Payment/Card Element embebido) sí lo necesitaría sin tener que volver
  *     a tocar esta lista.
- *   · www.paypal.com / www.paypalobjects.com / *.paypal.com -> el SDK de
- *     PayPal Buttons SÍ se inyecta en el DOM (`paypal-button.tsx`) y abre sus
- *     propios iframes/popups para el widget de pago.
  *   · *.supabase.co en `connect-src` -> `reset-password-form.tsx` usa el
  *     cliente de Supabase del NAVEGADOR (`createBrowserSupabaseClient()`),
  *     así que esa llamada sale directo del cliente a la API de Supabase Auth,
@@ -44,18 +41,21 @@ import type { NextConfig } from 'next';
  *     navegador la bloquea por CSP — se ve como una foto rota en la tienda,
  *     no como un error de subida. Detectado subiendo una foto real y
  *     comprobando el resultado en /shop, no asumido.
+ *
+ * PayPal se retiró el 2026-09-04 (decisión de la propietaria) — con él se fue
+ * también su dominio de esta lista (`*.paypal.com`/`*.paypalobjects.com`).
  * -----------------------------------------------------------------------------
  */
 const isDev = process.env.NODE_ENV === 'development';
 
 const cspDirectives = [
   `default-src 'self'`,
-  `script-src 'self' 'unsafe-inline' https://js.stripe.com https://www.paypal.com https://www.paypalobjects.com${isDev ? " 'unsafe-eval'" : ''}`,
+  `script-src 'self' 'unsafe-inline' https://js.stripe.com${isDev ? " 'unsafe-eval'" : ''}`,
   `style-src 'self' 'unsafe-inline'`,
-  `img-src 'self' blob: data: https://www.paypalobjects.com https://*.supabase.co`,
+  `img-src 'self' blob: data: https://*.supabase.co`,
   `font-src 'self' data:`,
-  `connect-src 'self' https://api.stripe.com https://*.paypal.com https://*.paypalobjects.com https://*.supabase.co`,
-  `frame-src 'self' https://js.stripe.com https://*.paypal.com`,
+  `connect-src 'self' https://api.stripe.com https://*.supabase.co`,
+  `frame-src 'self' https://js.stripe.com`,
   `object-src 'none'`,
   `base-uri 'self'`,
   `form-action 'self'`,

@@ -25,10 +25,10 @@ export interface CheckoutValidationResult {
 /**
  * Valida y resuelve las líneas del carrito contra el catálogo del SERVIDOR.
  *
- * Compartido entre Stripe y PayPal a propósito: es la única función que
- * decide qué se cobra. Si algún día se añade un tercer proveedor, valida
- * exactamente igual — no hay una segunda copia de esta lógica que se pueda
- * desincronizar de la primera.
+ * Única función que decide qué se cobra (hoy solo Stripe — PayPal se retiró
+ * el 2026-09-04, ver docs/PAYMENT_TODO.md). Si algún día se añade otro
+ * proveedor, valida exactamente igual — no hay una segunda copia de esta
+ * lógica que se pueda desincronizar de la primera.
  */
 export async function validateCheckoutLines(
   rawLines: unknown,
@@ -198,7 +198,7 @@ export async function createPendingOrder(
     items: readonly CheckoutItem[];
     subtotal: Cents;
     shipping: Cents;
-    provider: 'stripe' | 'paypal';
+    provider: 'stripe';
     idempotencyKey: string;
     locale: Locale;
   },

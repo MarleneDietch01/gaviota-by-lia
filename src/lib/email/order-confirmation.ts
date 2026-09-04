@@ -20,11 +20,14 @@ import type { Database } from '@/types/database.types';
  * -----------------------------------------------------------------------------
  * IDEMPOTENCIA
  * -----------------------------------------------------------------------------
- * Se llama desde tres puntos distintos de los webhooks (Stripe
- * `checkout.session.completed` Y `payment_intent.succeeded` — Stripe
- * recomienda manejar ambos y no garantiza cuál llega primero —, y PayPal
- * `PAYMENT.CAPTURE.COMPLETED`). Sin un candado, el mismo pedido podría
- * disparar dos recibos.
+ * Se llama desde dos puntos distintos del webhook de Stripe
+ * (`checkout.session.completed` Y `payment_intent.succeeded` — Stripe
+ * recomienda manejar ambos y no garantiza cuál llega primero). Sin un
+ * candado, el mismo pedido podría disparar dos recibos.
+ *
+ * (PayPal se llamaba igual desde `PAYMENT.CAPTURE.COMPLETED` antes de
+ * retirarse el 2026-09-04 — esta función siguió sirviendo sin cambios,
+ * porque no sabe ni le importa qué webhook la llamó.)
  *
  * `orders.confirmation_email_sent_at` es ese candado: se reclama con un
  * UPDATE condicionado a `IS NULL` (atómico en Postgres — dos llamadas

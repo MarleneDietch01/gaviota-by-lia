@@ -3,6 +3,12 @@
 **No se asume ninguna pasarela.** El MVP se construye y se prueba íntegramente con
 `MockPaymentProvider`; la decisión real puede tomarse en paralelo al desarrollo.
 
+**Actualización 2026-09-04 — decisión tomada: Stripe, en solitario.** Se implementaron
+tanto Stripe como PayPal, pero la propietaria decidió no cobrar por PayPal y se retiró
+del código (checkout, webhook, botón, SDK, variables de entorno). El resto de esta
+página describe la comparativa y arquitectura previas a esa decisión — se conserva como
+registro histórico, no como guía vigente para añadir un segundo proveedor.
+
 ---
 
 ## 1. Datos requeridos

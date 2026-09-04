@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useMemo, useState, useSyncExternalStore } from 'react';
 import type { Product } from '@/lib/catalog/products';
 import { cents, formatMoney, type Cents } from '@/lib/commerce/money';
@@ -15,7 +14,6 @@ import {
   toggleFavorite,
 } from '@/lib/commerce/bag';
 import { localizedHref, pick, type Locale } from '@/lib/i18n';
-import { PayPalButton } from './paypal-button';
 
 const EMPTY_BAG: readonly { slug: string; quantity: number }[] = [];
 const EMPTY_FAVORITES: readonly string[] = [];
@@ -31,7 +29,6 @@ export function SavedList({
   locale: Locale;
   freeShippingThresholdCents?: Cents | null;
 }) {
-  const router = useRouter();
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const [checkoutPending, setCheckoutPending] = useState(false);
 
@@ -236,25 +233,6 @@ export function SavedList({
               ? pick(locale, 'Starting checkout…', 'Iniciando el pago…')
               : pick(locale, 'Checkout', 'Ir a pagar')}
           </button>
-
-          {hasOutOfStockLine ? null : (
-          <PayPalButton
-            lines={bag.map((line) => ({ slug: line.slug, quantity: line.quantity }))}
-            locale={locale}
-            onSuccess={(orderNumber) =>
-              router.push(`${localizedHref(locale, '/checkout/success')}?order=${orderNumber}`)
-            }
-            onError={() =>
-              setCheckoutError(
-                pick(
-                  locale,
-                  'Something went wrong with PayPal. Please try again.',
-                  'Algo falló con PayPal. Inténtalo de nuevo.',
-                ),
-              )
-            }
-          />
-          )}
         </aside>
       ) : null}
     </div>

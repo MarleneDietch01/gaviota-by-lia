@@ -56,7 +56,8 @@ export default async function AdminOrderDetailPage({
 
   if (error || !order) notFound();
 
-  const disputed = order.payments?.some((p) => p.status === 'disputed') ?? false;
+  const disputedPayment = order.payments?.find((p) => p.status === 'disputed');
+  const disputed = Boolean(disputedPayment);
   const shippingAddress = order.order_addresses?.find((a) => a.address_type === 'shipping');
   const shipment = order.shipments?.[0];
   const canShip = order.payment_status === 'paid' && order.order_status !== 'shipped' && order.order_status !== 'delivered';
@@ -87,7 +88,8 @@ export default async function AdminOrderDetailPage({
       {disputed ? (
         <div className="mt-6 rounded-sm border border-danger/40 bg-danger/10 p-4">
           <p className="text-sm font-semibold text-danger">
-            Este pago está en disputa. Revisa y responde en el dashboard de Stripe/PayPal antes de que venza el plazo.
+            Este pago está en disputa. Revisa y responde en el dashboard de{' '}
+            {disputedPayment?.provider === 'paypal' ? 'PayPal' : 'Stripe'} antes de que venza el plazo.
           </p>
         </div>
       ) : null}

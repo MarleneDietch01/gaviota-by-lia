@@ -53,32 +53,22 @@ require_('SUPABASE_SERVICE_ROLE_KEY');
 
 // --- Sitio --------------------------------------------------------------------
 if (process.env.NEXT_PUBLIC_SITE_URL?.includes('localhost')) {
-  problems.push('NEXT_PUBLIC_SITE_URL sigue en localhost — los redirect_url de Stripe/PayPal y los enlaces de correo saldrán rotos.');
+  problems.push('NEXT_PUBLIC_SITE_URL sigue en localhost — el redirect_url de Stripe y los enlaces de correo saldrán rotos.');
 }
 if (process.env.NEXT_PUBLIC_SITE_URL?.includes('.vercel.app')) {
   problems.push('NEXT_PUBLIC_SITE_URL sigue apuntando a un dominio *.vercel.app — el canonical, hreflang y JSON-LD de Organización saldrán apuntando ahí en vez del dominio real, y Google indexará el sitio equivocado como el "bueno". Actualízala al dominio real en Vercel → Environment Variables.');
 }
 
-// --- Pagos: al menos un proveedor real conectado -----------------------------
+// --- Pagos: Stripe es el único proveedor ------------------------------------
+// PayPal se retiró el 2026-09-04 (decisión de la propietaria: no se cobra por
+// ahí). Ver docs/PAYMENT_TODO.md y la nota de checkout.ts.
 forbid('PAYMENT_PROVIDER', ['mock'], 'PAYMENT_PROVIDER sigue en "mock" — es la variable legada, pero su presencia en "mock" es la señal histórica de "no configurado todavía".');
 
-const stripeConfigured = Boolean(process.env.STRIPE_SECRET_KEY && process.env.STRIPE_WEBHOOK_SECRET);
-const paypalConfigured = Boolean(
-  process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID && process.env.PAYPAL_CLIENT_SECRET && process.env.PAYPAL_WEBHOOK_ID,
-);
-
-if (!stripeConfigured && !paypalConfigured) {
-  problems.push(
-    'Ningún proveedor de pago está completamente configurado (Stripe necesita STRIPE_SECRET_KEY + STRIPE_WEBHOOK_SECRET; PayPal necesita NEXT_PUBLIC_PAYPAL_CLIENT_ID + PAYPAL_CLIENT_SECRET + PAYPAL_WEBHOOK_ID).',
-  );
-}
+require_('STRIPE_SECRET_KEY', 'Falta STRIPE_SECRET_KEY — Stripe es el único proveedor de pago.');
+require_('STRIPE_WEBHOOK_SECRET', 'Falta STRIPE_WEBHOOK_SECRET — Stripe es el único proveedor de pago.');
 
 if (process.env.STRIPE_SECRET_KEY?.startsWith('sk_test_')) {
   problems.push('STRIPE_SECRET_KEY es una clave de TEST (sk_test_) en un build de producción.');
-}
-
-if (process.env.PAYPAL_ENVIRONMENT !== 'live' && paypalConfigured) {
-  problems.push('PAYPAL_ENVIRONMENT no está en "live" en un build de producción (sigue en sandbox).');
 }
 
 // --- Envío: sin esto el checkout cobra un envío inventado o revienta ---------

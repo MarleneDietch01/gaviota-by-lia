@@ -8,16 +8,15 @@ import type { NextRequest } from 'next/server';
  * -----------------------------------------------------------------------------
  * POR QUÉ HACE FALTA
  * -----------------------------------------------------------------------------
- * `/api/checkout`, `/api/paypal/create-order` y `/api/paypal/capture-order`
- * son Route Handlers, no Server Actions — Next.js NO les aplica la
- * comprobación de origen que sí hace automáticamente con `'use server'`. Sin
- * esto, cualquier sitio podría montar un `fetch()` hacia estos endpoints desde
- * el navegador de una visitante y crear pedidos `pending_payment` en su
- * nombre, o intentar capturar pagos ajenos.
+ * `/api/checkout` es un Route Handler, no una Server Action — Next.js NO le
+ * aplica la comprobación de origen que sí hace automáticamente con
+ * `'use server'`. Sin esto, cualquier sitio podría montar un `fetch()` hacia
+ * este endpoint desde el navegador de una visitante y crear pedidos
+ * `pending_payment` en su nombre.
  *
- * Los webhooks (`/api/webhooks/*`) NO usan esta función: por diseño llegan
- * desde fuera (los servidores de Stripe/PayPal), y su autorización real es la
- * firma criptográfica, no el origen.
+ * El webhook (`/api/webhooks/stripe`) NO usa esta función: por diseño llega
+ * desde fuera (los servidores de Stripe), y su autorización real es la firma
+ * criptográfica, no el origen.
  * -----------------------------------------------------------------------------
  */
 export function isSameOriginRequest(request: NextRequest): boolean {
