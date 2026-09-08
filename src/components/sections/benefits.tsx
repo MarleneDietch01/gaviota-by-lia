@@ -36,7 +36,7 @@ export function Benefits({ locale }: { locale: Locale }) {
             return (
               <Reveal as="li" key={benefit.icon} delay={i * 70} className="benefit-item">
                 <span className="benefit-icon grid size-11 place-items-center rounded-pill bg-powder/50">
-                  <Icon className="size-5 text-rose-deep" strokeWidth={1.5} aria-hidden="true" />
+                  <Icon className="size-5 text-caramel-deep" strokeWidth={1.5} aria-hidden="true" />
                 </span>
                 <h3 className="mt-4 font-sans text-body-sm font-semibold leading-snug tracking-[-0.01em]">
                   {t(benefit.title, locale)}

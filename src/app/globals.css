@@ -13,67 +13,74 @@
   /* --- Superficies ----------------------------------------------------------
      Cuatro. La home alterna entre ellas para crear ritmo; nunca tres secciones
      seguidas con la misma.                                                    */
-  --color-ivory: #f6ece8; /* crema rosado pastel — superficie por defecto */
-  --color-white-warm: #fffaf8; /* blanco cálido — respiro entre marfiles */
-  --color-powder: #ebc4cb; /* rosa empolvado — acento, nunca 2 seguidas */
-  /* Crema rosado muy claro: 78% marfil + 22% rosa empolvado. Para secciones que
-     necesitan una temperatura rosa perceptible pero mucho más clara que
-     `powder` (que a plena saturación se lee como bloque rosa en rejillas
-     grandes de producto, ver Colección). Más clara que `powder`, más cálida
-     que `ivory` — el texto ink/rose ya medido contra `ivory` (línea de abajo)
-     sigue pasando con más margen aquí, nunca menos: es un fondo aún más claro. */
-  --color-blush: #f1dfde;
+  --color-ivory: #f7f1ec; /* crema — superficie por defecto */
+  --color-white-warm: #fffaf8; /* blanco cálido — respiro entre cremas */
+  --color-powder: #eccdc6; /* rosa empolvado cálido — acento, nunca 2 seguidas */
+  /* Crema muy claro, entre `ivory` y `powder`. Para secciones que necesitan una
+     temperatura rosa perceptible pero mucho más clara que `powder` (que a plena
+     saturación se lee como bloque rosa en rejillas grandes de producto, ver
+     Colección). Todo texto medido contra `ivory` pasa aquí con más margen,
+     nunca menos: es un fondo aún más claro. */
+  --color-blush: #f2e4de;
   /* Superficie profunda de contraste (footer, Comunidad, bloque editorial).
-     Corregida: el valor anterior (#4b202d, "vino"/"ciruela") venía de una
-     síntesis de dirección de arte (docs/DESIGN_DIRECTION.md §2/§4) que nunca
-     se cerró contra la fuente que manda — el packaging físico es rosa/dorado/
-     blanco (docs/AUDIT.md §13: "la paleta propuesta para la web nace del
-     envase real"). Ahora es exactamente `rose-ink` (mismo matiz de marca, solo
-     oscurecido): sigue dando el contraste "profundo" que pedía la síntesis,
-     pero sin inventar un color ajeno al envase. 10.61:1 sobre `on-dark`,
-     6.81:1 sobre `on-dark-soft` — ambos AA. */
-  --color-wine: #6e2239;
+     Antes era vino #6e2239. Al pasar la marca de rosa a caramelo, un vino
+     ciruela deja de pertenecer a la paleta: el fondo profundo es ahora el mismo
+     espresso que el texto (ver `--color-ink`), que es como funciona la Opción B
+     — el oscuro no es un color aparte, es el tono de texto llevado a superficie.
+     13.17:1 sobre `on-dark`, 5.75:1 sobre `on-dark-soft` — ambos AA holgado. */
+  --color-espresso: #3d2b26;
+  /* Un paso más oscuro, solo para el :hover del botón espresso y el fondo del
+     degradado de sección: sobre un plano tan oscuro, aclarar el hover lo
+     ensucia y oscurecerlo es lo único que se lee como respuesta. */
+  --color-espresso-deep: #2e201c;
 
   /* --- Marca ----------------------------------------------------------------
-     rose ...... 5.59:1 sobre marfil, 5.91:1 sobre blanco. Texto normal OK.
-                 3.80:1 sobre rosa empolvado -> NO usar ahí en texto pequeño.
-     rose-deep . 5.24:1 sobre rosa empolvado. Es la variante para eyebrows y
-                 enlaces cuando la superficie es `powder`.
-     rose-ink .. estado :active y hover del botón primario, y el mismo valor
-                 que `wine` (ver arriba) — es a propósito, no una duplicación
-                 accidental: la superficie profunda del sitio ahora es
-                 literalmente este mismo tono de marca, no un color aparte.  */
-  --color-rose: #a83d60;
-  --color-rose-deep: #8a2c49;
-  --color-rose-ink: #6e2239;
+     caramel ....... 5.20:1 marfil / 5.62:1 blanco / 4.69:1 blush. Texto normal OK.
+                     3.91:1 sobre rosa empolvado -> ahí solo texto grande.
+                     2.30:1 sobre espresso -> NUNCA sobre el oscuro.
+     caramel-deep .. 6.83:1 sobre rosa empolvado. Es la variante para eyebrows y
+                     enlaces cuando la superficie es `powder`, y el :active del
+                     botón primario. 9.07:1 sobre marfil.
+     gold .......... el acento SOBRE oscuro (5.75:1 en espresso) y el fondo de la
+                     barra de anuncio (con texto `ink`, 5.75:1). Sobre marfil da
+                     2.07:1: JAMÁS como texto en superficie clara. Este es el
+                     error que el dorado invita a cometer — se ve caro sobre
+                     crema y es ilegible.                                        */
+  --color-caramel: #8a5a3c;
+  --color-caramel-deep: #5a3a26;
 
   /* Champán. Solo filetes decorativos (aria-hidden): no transporta información,
      así que no está sujeto a contraste. Es lo que da el registro editorial sin
      recurrir a iconografía tropical. */
   --color-champagne: #c6a87c;
-  /* Oro pulido del envase real (el collar del gotero). Más luminoso y saturado
-     que `champagne`; se usa SOLO como reflejo metálico en filetes decorativos
-     (aria-hidden), nunca en texto ni como fondo de bloque. La sensación de
-     "brillo" viene del degradado champán -> oro -> champán, no del plano. */
-  --color-gold: #e6c988;
+  /* Oro del envase real (el collar del gotero). A diferencia del sistema rosa,
+     aquí el oro SÍ transporta información — barra de anuncio y acento sobre
+     espresso — así que su par con esas dos superficies está medido arriba.
+     Sigue siendo además el reflejo metálico de los filetes decorativos. */
+  --color-gold: #d4a15a;
 
   /* --- Texto ----------------------------------------------------------------
-     ink ....... 14.27:1 marfil / 9.69:1 polvo / 15.10:1 blanco
-     body ......  8.20:1 marfil / 5.57:1 polvo — pasa AA en TODA superficie clara
-     muted .....  5.51:1 marfil / 5.83:1 blanco. En `powder` cae a 3.74:1, así
+     ink ....... 11.93:1 marfil / 12.90:1 blanco / 8.98:1 polvo / 10.77:1 blush
+                 y 5.75:1 sobre el dorado de la barra de anuncio.
+                 Mismo valor que `espresso`: a propósito, ver arriba.
+     body ......  7.40:1 marfil / 8.00:1 blanco / 5.57:1 polvo — AA en TODA
+                  superficie clara.
+     muted .....  4.57:1 marfil / 4.94:1 blanco. En `powder` cae a 3.44:1, así
                   que sobre rosa empolvado se usa `body`, nunca `muted`.        */
-  --color-ink: #302126;
-  --color-body: #5e434d;
-  --color-muted: #7a5c67;
+  --color-ink: #3d2b26;
+  --color-body: #5e4a42;
+  --color-muted: #7d6a60;
 
-  /* Sobre vino (ahora `rose-ink`): polvo 6.81:1, blanco 10.61:1. Ambos AA holgado. */
+  /* Sobre espresso: oro 5.75:1, blanco 13.17:1. Ambos AA holgado. `on-dark-soft`
+     pasa de ser el rosa empolvado a ser el oro — sobre el oscuro, el oro es el
+     único acento de la paleta que llega a AA. */
   --color-on-dark: #fffdfc;
-  --color-on-dark-soft: #ebc4cb;
+  --color-on-dark-soft: #d4a15a;
 
   /* --- Estructura ----------------------------------------------------------- */
-  --color-line: #ede0dc; /* hairline sobre marfil */
-  --color-line-strong: #dcc3c8;
-  --color-line-dark: #6b3a49; /* hairline sobre vino */
+  --color-line: #e8ded5; /* hairline sobre crema */
+  --color-line-strong: #d5c5b8;
+  --color-line-dark: #5a453d; /* hairline sobre espresso */
 
   /* --- Estado --------------------------------------------------------------- */
   --color-success: #2c6248;
@@ -126,7 +133,7 @@
   --radius-arch: 20px;
 
   /* --- Sombras --------------------------------------------------------------
-     Muy bajas y teñidas de vino (ahora `rose-ink`): una sombra gris sobre
+     Muy bajas y teñidas de vino (ahora `espresso`): una sombra gris sobre
      marfil se ve sucia.                                                       */
   --shadow-subtle: 0 1px 2px rgb(110 34 57 / 0.05);
   --shadow-lift: 0 10px 30px -12px rgb(110 34 57 / 0.18);
@@ -192,7 +199,7 @@
 
   /* Foco visible siempre. Nunca `outline: none` sin sustituto. */
   :focus-visible {
-    outline: 2px solid var(--color-rose-deep);
+    outline: 2px solid var(--color-caramel-deep);
     outline-offset: 3px;
     border-radius: var(--radius-xs);
   }
@@ -217,7 +224,7 @@
    Utilidades de marca
    ============================================================================= */
 
-/* Antetítulo. En superficies `powder` hay que pasar además `text-rose-deep`:
+/* Antetítulo. En superficies `powder` hay que pasar además `text-caramel-deep`:
    el rosa base no llega a AA sobre rosa empolvado. */
 @utility eyebrow {
   font-family: var(--font-sans);
@@ -225,7 +232,7 @@
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--color-rose);
+  color: var(--color-caramel);
 }
 
 /* La firma tipográfica: UNA palabra en cursiva dentro de un titular romano.
@@ -442,9 +449,9 @@
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.07'/%3E%3C/svg%3E");
 }
 
-.sensory-section[data-tone='wine'] { background-image: radial-gradient(circle at 84% 16%, rgb(235 196 203 / 0.13), transparent 28%), linear-gradient(135deg, var(--color-wine), #5f1d32); }
-.sensory-section[data-tone='powder'] { background-image: radial-gradient(circle at 12% 24%, rgb(255 253 252 / 0.34), transparent 30%), linear-gradient(145deg, var(--color-powder), #e7b9c3); }
-.sensory-section[data-tone='blush'] { background-image: radial-gradient(circle at 88% 14%, rgb(255 255 255 / 0.62), transparent 25%), linear-gradient(155deg, var(--color-blush), #f5e3e3); }
+.sensory-section[data-tone='espresso'] { background-image: radial-gradient(circle at 84% 16%, rgb(212 161 90 / 0.14), transparent 28%), linear-gradient(135deg, var(--color-espresso), var(--color-espresso-deep)); }
+.sensory-section[data-tone='powder'] { background-image: radial-gradient(circle at 12% 24%, rgb(255 253 252 / 0.34), transparent 30%), linear-gradient(145deg, var(--color-powder), #e3bfb5); }
+.sensory-section[data-tone='blush'] { background-image: radial-gradient(circle at 88% 14%, rgb(255 255 255 / 0.62), transparent 25%), linear-gradient(155deg, var(--color-blush), #f7ece5); }
 
 .section-light { position: absolute; z-index: -1; pointer-events: none; border-radius: 999px; filter: blur(2px); opacity: 0.5; }
 .section-light-a { top: 8%; right: -5rem; width: 12rem; aspect-ratio: 1; border: 1px solid rgb(198 168 124 / 0.2); box-shadow: inset 0 0 50px rgb(255 255 255 / 0.13); }

@@ -54,7 +54,7 @@ export function ProductGallery({
               onClick={() => setActiveIndex(index)}
               className={cn(
                 'size-16 shrink-0 overflow-hidden rounded-xs border transition-colors',
-                index === activeIndex ? 'border-rose' : 'border-line hover:border-line-strong',
+                index === activeIndex ? 'border-caramel' : 'border-line hover:border-line-strong',
               )}
             >
               <ProductImage src={image.src} alt="" width={image.width} height={image.height} sizes="64px" />

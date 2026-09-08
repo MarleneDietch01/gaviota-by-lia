@@ -20,7 +20,7 @@ export default async function ResetPasswordPage({ params }: Props) {
     <Section tone="ivory">
       <Container size="narrow">
         <div className="mx-auto w-full max-w-sm">
-          <p className="eyebrow mb-3 text-rose">{pick(lang, 'Account', 'Cuenta')}</p>
+          <p className="eyebrow mb-3 text-caramel">{pick(lang, 'Account', 'Cuenta')}</p>
           <h1 className="text-h1">{pick(lang, 'Set a new password', 'Crear nueva contraseña')}</h1>
 
           <div className="mt-8">

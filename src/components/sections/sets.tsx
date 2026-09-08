@@ -60,7 +60,7 @@ export async function Sets({ locale }: { locale: Locale }) {
           </Reveal>
 
           <Reveal delay={80} className="max-w-[32rem]">
-            {c.eyebrow ? <p className="eyebrow mb-4 text-rose-deep">{c.eyebrow}</p> : null}
+            {c.eyebrow ? <p className="eyebrow mb-4 text-caramel-deep">{c.eyebrow}</p> : null}
 
             <h2 id="sets-title" className="text-h2">
               {c.title}
@@ -76,7 +76,7 @@ export async function Sets({ locale }: { locale: Locale }) {
               {RITUAL_STEPS.map((step) => (
                 <li key={step.n} className="flex items-start gap-3">
                   <Check
-                    className="mt-0.5 size-4 shrink-0 text-rose-deep"
+                    className="mt-0.5 size-4 shrink-0 text-caramel-deep"
                     strokeWidth={2.25}
                     aria-hidden="true"
                   />

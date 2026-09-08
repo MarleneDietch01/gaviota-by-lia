@@ -192,7 +192,7 @@ export default async function AdminDashboardPage({ searchParams }: { searchParam
               <li>
                 <Link
                   href="/admin/orders"
-                  className="flex items-center justify-between gap-4 rounded-sm border border-rose/30 bg-powder/25 p-4 transition-colors hover:bg-powder/40"
+                  className="flex items-center justify-between gap-4 rounded-sm border border-caramel/30 bg-powder/25 p-4 transition-colors hover:bg-powder/40"
                 >
                   <span>
                     <span className="block font-semibold text-ink">
@@ -200,7 +200,7 @@ export default async function AdminDashboardPage({ searchParams }: { searchParam
                     </span>
                     <span className="text-sm text-body">Marca cada uno como enviado y registra el rastreo.</span>
                   </span>
-                  <span aria-hidden="true" className="text-rose-deep">→</span>
+                  <span aria-hidden="true" className="text-caramel-deep">→</span>
                 </Link>
               </li>
             ) : null}
@@ -217,7 +217,7 @@ export default async function AdminDashboardPage({ searchParams }: { searchParam
                     </span>
                     <span className="text-sm text-body">Apruébalas o recházalas antes de que se publiquen.</span>
                   </span>
-                  <span aria-hidden="true" className="text-rose-deep">→</span>
+                  <span aria-hidden="true" className="text-caramel-deep">→</span>
                 </Link>
               </li>
             ) : null}
@@ -234,7 +234,7 @@ export default async function AdminDashboardPage({ searchParams }: { searchParam
                     </span>
                     <span className="text-sm text-body">Revisa los niveles mínimos y repón cuando corresponda.</span>
                   </span>
-                  <span aria-hidden="true" className="text-rose-deep">→</span>
+                  <span aria-hidden="true" className="text-caramel-deep">→</span>
                 </Link>
               </li>
             ) : null}
@@ -288,7 +288,7 @@ export default async function AdminDashboardPage({ searchParams }: { searchParam
       <section aria-labelledby="recent-heading" className="mt-10">
         <div className="flex items-center justify-between">
           <h2 id="recent-heading" className="text-h3">Pedidos recientes</h2>
-          <Link href="/admin/orders" className="text-sm font-medium text-rose hover:text-rose-deep">
+          <Link href="/admin/orders" className="text-sm font-medium text-caramel hover:text-caramel-deep">
             Ver todos
           </Link>
         </div>

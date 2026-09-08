@@ -6,25 +6,33 @@ import { cn } from '@/lib/utils/cn';
  * Jerarquía de botones. Cuatro niveles, y solo UNO primario por pantalla visible.
  *
  * Contraste medido:
- *   primary   texto blanco sobre rose #A83D60 ....... 5.91:1  AA
- *   secondary texto ink sobre marfil, borde ink ..... 14.27:1 AA
- *   onDark    texto wine (= rose-ink) sobre blanco cálido .. 10.61:1 AA
- *   quiet     rose sobre marfil ...................... 5.59:1 AA
+ *   primary   blanco sobre caramel #8A5A3C ............  5.62:1 AA
+ *             :hover sobre caramel-deep ................  9.81:1 AA
+ *             :active sobre espresso .................... 12.90:1 AA
+ *   espresso  blanco sobre espresso #3D2B26 ............ 12.90:1 AA
+ *             :hover sobre espresso-deep ............... 15.14:1 AA
+ *   secondary ink sobre marfil, borde ink .............. 11.93:1 AA
+ *   onDark    espresso sobre blanco cálido ............. 12.90:1 AA
+ *             :hover espresso sobre polvo ..............  8.98:1 AA
+ *   quiet     caramel sobre marfil .....................  5.20:1 AA
  *
  * `active:scale` se aplica solo con motion-safe: en reduced-motion el botón
  * responde igual pero sin deformarse.
  */
 
 const VARIANTS = {
-  primary: 'bg-rose text-white-warm hover:bg-rose-deep active:bg-rose-ink motion-safe:active:scale-[0.98]',
-  wine: 'bg-wine text-white-warm hover:bg-rose-ink active:bg-ink motion-safe:active:scale-[0.98]',
+  primary: 'bg-caramel text-white-warm hover:bg-caramel-deep active:bg-espresso motion-safe:active:scale-[0.98]',
+  // `ink` y `espresso` son el mismo hex, así que el hover/active heredados del
+  // sistema rosa (bg-wine -> hover:bg-rose-ink, ambos #6e2239) no cambiaban
+  // nada. Sobre un plano ya oscuro la respuesta tiene que ser oscurecer.
+  espresso: 'bg-espresso text-white-warm hover:bg-espresso-deep active:bg-espresso-deep motion-safe:active:scale-[0.98]',
   secondary:
     'border border-ink/25 bg-transparent text-ink hover:border-ink hover:bg-ink hover:text-ivory',
   onDark:
-    'bg-white-warm text-wine hover:bg-powder active:bg-powder motion-safe:active:scale-[0.98]',
+    'bg-white-warm text-espresso hover:bg-powder active:bg-powder motion-safe:active:scale-[0.98]',
   onDarkOutline: 'border border-on-dark-soft/50 bg-transparent text-on-dark hover:border-on-dark-soft hover:bg-white-warm/10',
   quiet:
-    'bg-transparent text-rose underline decoration-rose/35 underline-offset-[6px] hover:text-rose-deep hover:decoration-rose-deep',
+    'bg-transparent text-caramel underline decoration-caramel/35 underline-offset-[6px] hover:text-caramel-deep hover:decoration-caramel-deep',
 } as const;
 
 /** Alturas 44/48/52px. 44 es el mínimo táctil accesible; en móvil se sube. */

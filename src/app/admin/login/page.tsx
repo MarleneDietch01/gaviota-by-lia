@@ -9,7 +9,7 @@ export default function AdminLoginPage() {
   return (
     <div className="grid min-h-dvh place-items-center px-5">
       <div className="w-full max-w-sm">
-        <p className="eyebrow mb-2 text-rose">Panel</p>
+        <p className="eyebrow mb-2 text-caramel">Panel</p>
         <h1 className="font-display text-h3">Gaviota by Lia</h1>
         <p className="mt-2 text-sm text-body">Acceso solo para administradoras.</p>
 
@@ -21,7 +21,7 @@ export default function AdminLoginPage() {
             sitio: sin esto no había ninguna forma de volver a la tienda. */}
         <Link
           href="/"
-          className="mt-8 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-body transition-colors hover:text-rose"
+          className="mt-8 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-body transition-colors hover:text-caramel"
         >
           <ArrowLeft className="size-4" aria-hidden="true" />
           Volver al inicio

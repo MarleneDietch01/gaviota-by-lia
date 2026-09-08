@@ -80,7 +80,7 @@ export function ProductCard({
         />
 
         {badge ? (
-          <span className="absolute left-3 top-3 z-10 rounded-pill bg-rose-deep px-2.5 py-1 text-2xs font-bold uppercase tracking-[0.1em] text-white-warm">
+          <span className="absolute left-3 top-3 z-10 rounded-pill bg-caramel-deep px-2.5 py-1 text-2xs font-bold uppercase tracking-[0.1em] text-white-warm">
             {badge}
           </span>
         ) : null}
@@ -104,7 +104,7 @@ export function ProductCard({
           <Link
             href={href}
             prefetch={false}
-            className="transition-colors after:absolute after:inset-0 after:content-[''] hover:text-rose"
+            className="transition-colors after:absolute after:inset-0 after:content-[''] hover:text-caramel"
           >
             {product.name}
           </Link>

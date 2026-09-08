@@ -3,12 +3,15 @@ import 'server-only';
 import { formatMoney, type Cents } from '@/lib/commerce/money';
 import type { Locale } from '@/lib/i18n';
 
-const WINE = '#6e2239';
-const IVORY = '#f6ece8';
+// Espejo de los tokens de `globals.css`. El correo NO puede leer variables CSS
+// —los clientes de correo no las resuelven— así que los hex van a mano y hay
+// que moverlos con la paleta, o el recibo llega con la marca anterior.
+const ESPRESSO = '#3d2b26';
+const IVORY = '#f7f1ec';
 const WHITE_WARM = '#fffaf8';
-const INK = '#302126';
-const BODY = '#5e434d';
-const LINE = '#ede0dc';
+const INK = '#3d2b26';
+const BODY = '#5e4a42';
+const LINE = '#e8ded5';
 const CHAMPAGNE = '#c6a87c';
 
 export interface ReceiptItem {
@@ -73,7 +76,7 @@ function layout(opts: { preheader: string; bodyHtml: string; footerHtml: string 
       <td align="center" style="padding:32px 16px;">
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px; background-color:${WHITE_WARM}; border-radius:4px; overflow:hidden;">
           <tr>
-            <td style="background-color:${WINE}; padding:28px 32px; text-align:center;">
+            <td style="background-color:${ESPRESSO}; padding:28px 32px; text-align:center;">
               <span style="font-family:Georgia, 'Times New Roman', serif; font-size:26px; font-style:italic; color:${WHITE_WARM}; letter-spacing:0.02em;">Gaviota by Lia</span>
             </td>
           </tr>
@@ -227,7 +230,7 @@ export function buildOwnerNotificationEmail(
     ${shippingAddress ? `<div style="margin-top:24px; padding-top:20px; border-top:1px solid ${LINE};">${addressBlock(shippingAddress, locale)}</div>` : ''}
     ${
       siteUrl
-        ? `<p style="margin:24px 0 0;"><a href="${siteUrl}/admin/orders/${orderId}" style="display:inline-block; padding:10px 20px; background-color:${WINE}; color:${WHITE_WARM}; font-family:Arial, Helvetica, sans-serif; font-size:13px; font-weight:700; text-decoration:none; border-radius:2px;">Ver pedido en el panel</a></p>`
+        ? `<p style="margin:24px 0 0;"><a href="${siteUrl}/admin/orders/${orderId}" style="display:inline-block; padding:10px 20px; background-color:${ESPRESSO}; color:${WHITE_WARM}; font-family:Arial, Helvetica, sans-serif; font-size:13px; font-weight:700; text-decoration:none; border-radius:2px;">Ver pedido en el panel</a></p>`
         : ''
     }`;
 

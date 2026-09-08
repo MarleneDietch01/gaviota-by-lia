@@ -50,7 +50,7 @@ export async function BeforeAfter({ locale }: { locale: Locale }) {
                       sizes="(max-width: 639px) 50vw, (max-width: 1023px) 25vw, 17vw"
                       focal="50% 50%"
                     />
-                    <figcaption className="absolute left-2 top-2 rounded-pill bg-wine/85 px-2 py-1 text-2xs font-semibold uppercase tracking-[0.1em] text-on-dark">
+                    <figcaption className="absolute left-2 top-2 rounded-pill bg-espresso/85 px-2 py-1 text-2xs font-semibold uppercase tracking-[0.1em] text-on-dark">
                       {before}
                     </figcaption>
                   </figure>
@@ -63,7 +63,7 @@ export async function BeforeAfter({ locale }: { locale: Locale }) {
                       sizes="(max-width: 639px) 50vw, (max-width: 1023px) 25vw, 17vw"
                       focal="50% 50%"
                     />
-                    <figcaption className="absolute left-2 top-2 rounded-pill bg-wine/85 px-2 py-1 text-2xs font-semibold uppercase tracking-[0.1em] text-on-dark">
+                    <figcaption className="absolute left-2 top-2 rounded-pill bg-espresso/85 px-2 py-1 text-2xs font-semibold uppercase tracking-[0.1em] text-on-dark">
                       {after}
                     </figcaption>
                   </figure>

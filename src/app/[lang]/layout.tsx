@@ -72,7 +72,7 @@ export default async function RootLayout({ children, params }: LayoutProps<'/[la
         />
         <a
           href="#content"
-          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-100 focus:inline-flex focus:min-h-11 focus:items-center focus:rounded-xs focus:bg-rose focus:px-4 focus:text-sm focus:font-semibold focus:text-white-warm"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-100 focus:inline-flex focus:min-h-11 focus:items-center focus:rounded-xs focus:bg-caramel focus:px-4 focus:text-sm focus:font-semibold focus:text-white-warm"
         >
           {pick(lang, 'Skip to content', 'Saltar al contenido')}
         </a>

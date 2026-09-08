@@ -72,7 +72,7 @@ export default async function AdminProductsPage({
             {count ?? 0} {count === 1 ? 'producto' : 'productos'} en el catálogo.
           </p>
         </div>
-        <Link href="/admin/products/new" className="min-h-10 rounded-xs bg-rose px-5 py-2.5 text-sm font-semibold text-white-warm hover:bg-rose-deep">
+        <Link href="/admin/products/new" className="min-h-10 rounded-xs bg-caramel px-5 py-2.5 text-sm font-semibold text-white-warm hover:bg-caramel-deep">
           Crear producto
         </Link>
         <form className="flex gap-2" action="/admin/products">
@@ -122,7 +122,7 @@ export default async function AdminProductsPage({
                   return (
                     <tr key={product.id} className="border-b border-line last:border-0">
                       <td className="px-4 py-3">
-                        <Link href={`/admin/products/${product.id}`} className="font-medium hover:text-rose">
+                        <Link href={`/admin/products/${product.id}`} className="font-medium hover:text-caramel">
                           {product.name}
                         </Link>
                         <p className="text-xs text-muted">{product.size_label}</p>
@@ -155,7 +155,7 @@ export default async function AdminProductsPage({
                       <td className="px-4 py-3 text-body">{product.featured ? 'Sí' : 'No'}</td>
                       <td className="px-4 py-3 text-right">
                         <div className="mb-2 flex justify-end gap-2">
-                          <Link href={`/admin/products/${product.id}`} className="min-h-9 rounded-xs bg-rose px-3 py-2 text-xs font-semibold text-white-warm">Editar</Link>
+                          <Link href={`/admin/products/${product.id}`} className="min-h-9 rounded-xs bg-caramel px-3 py-2 text-xs font-semibold text-white-warm">Editar</Link>
                           <Link href={`/es/products/${product.slug}`} target="_blank" className="min-h-9 rounded-xs border border-ink/25 px-3 py-2 text-xs font-semibold">Vista previa</Link>
                         </div>
                         <form action={toggleStatus}>
@@ -188,7 +188,7 @@ export default async function AdminProductsPage({
                   href={`/admin/products?${new URLSearchParams({ ...(q ? { q } : {}), page: String(p) }).toString()}`}
                   aria-current={p === page ? 'page' : undefined}
                   className={`flex min-h-10 min-w-10 items-center justify-center rounded-xs border text-sm ${
-                    p === page ? 'border-rose bg-rose/10 font-semibold text-rose-deep' : 'border-line text-body hover:border-ink'
+                    p === page ? 'border-caramel bg-caramel/10 font-semibold text-caramel-deep' : 'border-line text-body hover:border-ink'
                   }`}
                 >
                   {p}

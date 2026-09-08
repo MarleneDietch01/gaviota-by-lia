@@ -43,7 +43,7 @@ export function TrustStrip({ locale }: { locale: Locale }) {
         <h2 id="trust-strip-heading" className="sr-only">
           {pick(locale, 'Why shop with us', 'Por qué comprar con nosotras')}
         </h2>
-        <ul className="grid gap-5 sm:grid-cols-3 sm:gap-0 sm:divide-x sm:divide-rose-deep/20">
+        <ul className="grid gap-5 sm:grid-cols-3 sm:gap-0 sm:divide-x sm:divide-caramel-deep/20">
           {points.map((point) => {
             const Icon = point.icon;
             return (
@@ -51,8 +51,8 @@ export function TrustStrip({ locale }: { locale: Locale }) {
                 key={point.title}
                 className="trust-point flex items-center justify-center gap-3 text-left sm:px-4"
               >
-                <span className="grid size-10 shrink-0 place-items-center rounded-full border border-rose-deep/20">
-                  <Icon className="size-4 text-rose-deep" strokeWidth={1.5} aria-hidden="true" />
+                <span className="grid size-10 shrink-0 place-items-center rounded-full border border-caramel-deep/20">
+                  <Icon className="size-4 text-caramel-deep" strokeWidth={1.5} aria-hidden="true" />
                 </span>
                 <div>
                   <p className="text-meta font-semibold leading-snug text-ink">{point.title}</p>

@@ -20,7 +20,7 @@ export function AdminNav({ mobile = false }: { mobile?: boolean }) {
         const active = item.href === '/admin' ? pathname === item.href : pathname.startsWith(item.href);
         return <li key={item.href} className={mobile ? 'contents' : undefined}>
           <Link href={item.href} aria-current={active ? 'page' : undefined}
-            className={`flex min-h-10 shrink-0 items-center rounded-xs px-3 text-sm font-medium transition-colors ${active ? 'bg-rose text-white-warm' : 'text-ink hover:bg-ivory hover:text-rose'}`}>
+            className={`flex min-h-10 shrink-0 items-center rounded-xs px-3 text-sm font-medium transition-colors ${active ? 'bg-caramel text-white-warm' : 'text-ink hover:bg-ivory hover:text-caramel'}`}>
             {item.label}
           </Link>
         </li>;

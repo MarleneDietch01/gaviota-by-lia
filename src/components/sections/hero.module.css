@@ -25,7 +25,7 @@
   flex-shrink: 0;
   width: 1.5rem;
   height: 1px;
-  background: var(--color-rose);
+  background: var(--color-caramel);
 }
 .title {
   --rise-delay: 80ms;
@@ -39,7 +39,7 @@
   white-space: nowrap;
 }
 .title em {
-  color: var(--color-rose);
+  color: var(--color-caramel);
   font-weight: 300;
 }
 .body {
@@ -81,7 +81,7 @@
     text-decoration-color 200ms;
 }
 .secondary:hover {
-  color: var(--color-rose);
+  color: var(--color-caramel);
   text-decoration-color: currentColor;
 }
 .origin {
@@ -96,7 +96,7 @@
   text-transform: uppercase;
 }
 .origin > span {
-  color: var(--color-rose);
+  color: var(--color-caramel);
   font-size: 1.5rem;
 }
 .visual {
@@ -167,7 +167,7 @@
 }
 .explore:hover .down {
   background: var(--color-blush);
-  border-color: var(--color-rose);
+  border-color: var(--color-caramel);
 }
 .footer > p {
   display: none;

@@ -25,7 +25,7 @@ export function WhatsAppButton({ locale }: { locale: Locale }) {
       // `bottom-5` este botón quedaba encima de esa barra, tapando la acción
       // de compra. A partir de `lg` la barra ya no existe (`lg:hidden` en la
       // ficha), así que ahí sí vuelve a la esquina ajustada.
-      className="fixed bottom-24 right-5 z-30 inline-flex min-h-12 items-center justify-center gap-2 rounded-pill bg-rose-deep px-3.5 text-sm font-semibold text-white-warm shadow-lift transition-[background-color,transform] duration-300 ease-soft hover:bg-rose-ink motion-safe:hover:-translate-y-0.5 sm:right-6 sm:px-5 lg:bottom-6"
+      className="fixed bottom-24 right-5 z-30 inline-flex min-h-12 items-center justify-center gap-2 rounded-pill bg-caramel-deep px-3.5 text-sm font-semibold text-white-warm shadow-lift transition-[background-color,transform] duration-300 ease-soft hover:bg-espresso motion-safe:hover:-translate-y-0.5 sm:right-6 sm:px-5 lg:bottom-6"
     >
       <WhatsAppIcon className="size-5 shrink-0" />
       <span className="hidden sm:inline">WhatsApp</span>

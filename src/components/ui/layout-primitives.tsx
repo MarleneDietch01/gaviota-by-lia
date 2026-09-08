@@ -78,7 +78,7 @@ const TONES = {
    *  rejillas de producto grandes donde `powder` a plena saturación pesa
    *  demasiado (Colección). */
   blush: 'bg-blush text-ink',
-  wine: 'on-dark bg-wine text-on-dark',
+  espresso: 'on-dark bg-espresso text-on-dark',
 } as const;
 
 const PADDINGS = {
@@ -147,7 +147,7 @@ export function SectionHeader({
   className?: string;
 }) {
   const eyebrowTone =
-    tone === 'dark' ? 'text-on-dark-soft' : tone === 'powder' ? 'text-rose-deep' : 'text-rose';
+    tone === 'dark' ? 'text-on-dark-soft' : tone === 'powder' ? 'text-caramel-deep' : 'text-caramel';
   const subtitleTone = tone === 'dark' ? 'text-on-dark-soft' : 'text-body';
 
   return (

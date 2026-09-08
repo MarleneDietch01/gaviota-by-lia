@@ -64,14 +64,14 @@ export default async function AdminOrderDetailPage({
 
   return (
     <div className="max-w-3xl">
-      <Link href="/admin/orders" className="inline-flex items-center gap-1.5 text-sm font-medium text-body hover:text-rose">
+      <Link href="/admin/orders" className="inline-flex items-center gap-1.5 text-sm font-medium text-body hover:text-caramel">
         <ArrowLeft className="size-4" aria-hidden="true" />
         Volver a pedidos
       </Link>
 
       <div className="mt-4 flex flex-wrap items-center gap-3">
         <h1 className="font-display text-h2">{order.order_number}</h1>
-        <span className="inline-flex rounded-pill bg-powder/40 px-2.5 py-1 text-xs font-semibold text-rose-deep">
+        <span className="inline-flex rounded-pill bg-powder/40 px-2.5 py-1 text-xs font-semibold text-caramel-deep">
           {STATUS_LABEL[order.order_status] ?? order.order_status}
         </span>
       </div>
@@ -177,7 +177,7 @@ export default async function AdminOrderDetailPage({
             </div>
             <button
               type="submit"
-              className="min-h-11 rounded-xs bg-rose px-6 text-sm font-semibold text-white-warm transition-colors hover:bg-rose-deep"
+              className="min-h-11 rounded-xs bg-caramel px-6 text-sm font-semibold text-white-warm transition-colors hover:bg-caramel-deep"
             >
               {shipment?.tracking_number ? 'Actualizar envío' : 'Marcar como enviado'}
             </button>
@@ -297,7 +297,7 @@ export default async function AdminOrderDetailPage({
       </section>
       <section aria-labelledby="history-heading" className="mt-6 rounded-sm border border-line bg-white-warm p-5">
         <h2 id="history-heading" className="text-h3">Historial</h2>
-        {order.order_status_history?.length ? <ol className="mt-3 space-y-3">{[...order.order_status_history].sort((a,b)=>b.created_at.localeCompare(a.created_at)).map(entry=><li key={entry.id} className="border-l-2 border-rose/40 pl-3 text-sm"><strong>{STATUS_LABEL[entry.new_status] ?? entry.new_status}</strong><p className="text-xs text-muted">{formatDate(entry.created_at)}{entry.note?` · ${entry.note}`:''}</p></li>)}</ol>:<p className="mt-2 text-sm text-muted">Sin cambios registrados.</p>}
+        {order.order_status_history?.length ? <ol className="mt-3 space-y-3">{[...order.order_status_history].sort((a,b)=>b.created_at.localeCompare(a.created_at)).map(entry=><li key={entry.id} className="border-l-2 border-caramel/40 pl-3 text-sm"><strong>{STATUS_LABEL[entry.new_status] ?? entry.new_status}</strong><p className="text-xs text-muted">{formatDate(entry.created_at)}{entry.note?` · ${entry.note}`:''}</p></li>)}</ol>:<p className="mt-2 text-sm text-muted">Sin cambios registrados.</p>}
       </section>
     </div>
   );

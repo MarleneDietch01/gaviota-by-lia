@@ -86,7 +86,7 @@ export default async function ProductPage({ params }: Props) {
             <ProductGallery images={product.images} priority />
 
             <div className="self-center lg:py-5">
-              <p className="eyebrow hero-rise text-rose">
+              <p className="eyebrow hero-rise text-caramel">
                 {pick(lang, 'Body care', 'Cuidado corporal')}
               </p>
               <h1
@@ -139,7 +139,7 @@ export default async function ProductPage({ params }: Props) {
                   const Icon = point.icon;
                   return (
                     <li key={point.title} className="flex gap-3 sm:px-4 sm:first:pl-0 sm:not-last:border-r sm:not-last:border-line">
-                      <Icon className="mt-0.5 size-4 shrink-0 text-rose" aria-hidden="true" />
+                      <Icon className="mt-0.5 size-4 shrink-0 text-caramel" aria-hidden="true" />
                       <div>
                         <p className="text-meta font-semibold leading-snug text-ink">{point.title}</p>
                         <p className="mt-0.5 text-caption leading-snug text-body">{point.body}</p>
@@ -157,7 +157,7 @@ export default async function ProductPage({ params }: Props) {
           <Container>
             <div className="grid gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-20">
               <div className="max-w-md">
-                <p className="eyebrow mb-4 text-rose-deep">{pick(lang, 'The ritual', 'El ritual')}</p>
+                <p className="eyebrow mb-4 text-caramel-deep">{pick(lang, 'The ritual', 'El ritual')}</p>
                 <h2 className="text-h2">{pick(lang, 'Make time for your skin.', 'Haz espacio para tu piel.')}</h2>
                 <p className="mt-5 text-lead text-body">
                   {pick(
@@ -176,8 +176,8 @@ export default async function ProductPage({ params }: Props) {
                 {product.usageInstructions ? (
                   <details className="group p-6 sm:p-8" open>
                     <summary className="flex cursor-pointer list-none items-center justify-between gap-4 [&::-webkit-details-marker]:hidden">
-                      <span className="eyebrow text-rose">{pick(lang, 'How to use', 'Modo de uso')}</span>
-                      <span aria-hidden="true" className="text-lg text-rose transition-transform duration-200 group-open:rotate-45">+</span>
+                      <span className="eyebrow text-caramel">{pick(lang, 'How to use', 'Modo de uso')}</span>
+                      <span aria-hidden="true" className="text-lg text-caramel transition-transform duration-200 group-open:rotate-45">+</span>
                     </summary>
                     <p className="mt-3 text-body-sm leading-relaxed text-body">
                       {product.usageInstructions}
@@ -187,8 +187,8 @@ export default async function ProductPage({ params }: Props) {
                 {product.ingredients ? (
                   <details className="group p-6 sm:p-8">
                     <summary className="flex cursor-pointer list-none items-center justify-between gap-4 [&::-webkit-details-marker]:hidden">
-                      <span className="eyebrow text-rose">{pick(lang, 'Ingredients', 'Ingredientes')}</span>
-                      <span aria-hidden="true" className="text-lg text-rose transition-transform duration-200 group-open:rotate-45">+</span>
+                      <span className="eyebrow text-caramel">{pick(lang, 'Ingredients', 'Ingredientes')}</span>
+                      <span aria-hidden="true" className="text-lg text-caramel transition-transform duration-200 group-open:rotate-45">+</span>
                     </summary>
                     <p className="mt-3 text-body-sm leading-relaxed text-body">{product.ingredients}</p>
                   </details>
@@ -196,8 +196,8 @@ export default async function ProductPage({ params }: Props) {
                 {product.precautions ? (
                   <details className="group p-6 sm:p-8">
                     <summary className="flex cursor-pointer list-none items-center justify-between gap-4 [&::-webkit-details-marker]:hidden">
-                      <span className="eyebrow text-rose">{pick(lang, 'Precautions', 'Precauciones')}</span>
-                      <span aria-hidden="true" className="text-lg text-rose transition-transform duration-200 group-open:rotate-45">+</span>
+                      <span className="eyebrow text-caramel">{pick(lang, 'Precautions', 'Precauciones')}</span>
+                      <span aria-hidden="true" className="text-lg text-caramel transition-transform duration-200 group-open:rotate-45">+</span>
                     </summary>
                     <p className="mt-3 text-body-sm leading-relaxed text-body">{product.precautions}</p>
                   </details>
@@ -215,7 +215,7 @@ export default async function ProductPage({ params }: Props) {
       {related.length > 0 ? (
       <Section tone="white">
         <Container>
-          <p className="eyebrow text-rose">{pick(lang, 'Your next step', 'Tu siguiente paso')}</p>
+          <p className="eyebrow text-caramel">{pick(lang, 'Your next step', 'Tu siguiente paso')}</p>
           <h2 className="mt-4 text-h2">{pick(lang, 'Complete your ritual.', 'Completa tu ritual.')}</h2>
           <p className="mt-4 max-w-xl text-lead text-body">
             {pick(

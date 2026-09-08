@@ -59,7 +59,7 @@ export default async function AdminDashboardLayout({ children }: { children: Rea
         <div>
           <Link
             href="/"
-            className="mb-5 inline-flex min-h-9 items-center gap-1.5 text-sm font-medium text-body transition-colors hover:text-rose"
+            className="mb-5 inline-flex min-h-9 items-center gap-1.5 text-sm font-medium text-body transition-colors hover:text-caramel"
           >
             <ArrowLeft className="size-4" aria-hidden="true" />
             Volver al inicio

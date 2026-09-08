@@ -229,7 +229,7 @@ export function SiteHeader({ locale }: { locale: Locale }) {
                 {bagCount > 0 ? (
                   <span
                     aria-hidden="true"
-                    className="tabular absolute right-1 top-1 grid min-w-[1.125rem] place-items-center rounded-pill bg-rose px-1 text-2xs font-bold leading-[1.125rem] text-white-warm"
+                    className="tabular absolute right-1 top-1 grid min-w-[1.125rem] place-items-center rounded-pill bg-caramel px-1 text-2xs font-bold leading-[1.125rem] text-white-warm"
                   >
                     {bagCount > 9 ? '9+' : bagCount}
                   </span>
@@ -248,7 +248,7 @@ export function SiteHeader({ locale }: { locale: Locale }) {
             tabIndex={-1}
             aria-hidden="true"
             onClick={() => setMenuOpen(false)}
-            className="absolute inset-0 h-full w-full cursor-default bg-wine/45 backdrop-blur-[2px]"
+            className="absolute inset-0 h-full w-full cursor-default bg-espresso/45 backdrop-blur-[2px]"
           />
 
           <div
@@ -285,7 +285,7 @@ export function SiteHeader({ locale }: { locale: Locale }) {
             >
               <Link
                 href={localizedHref(locale, '/shop')}
-                className="flex min-h-13 items-center justify-center rounded-xs bg-rose px-6 text-sm font-semibold tracking-[0.02em] text-white-warm"
+                className="flex min-h-13 items-center justify-center rounded-xs bg-caramel px-6 text-sm font-semibold tracking-[0.02em] text-white-warm"
               >
                 {pick(locale, 'Shop the collection', 'Ver la colección')}
               </Link>
@@ -322,7 +322,7 @@ export function SiteHeader({ locale }: { locale: Locale }) {
               <hr className="rule-champagne my-7" />
 
               <div className="flex items-center justify-between">
-                <span className="eyebrow text-rose">
+                <span className="eyebrow text-caramel">
                   {pick(locale, 'Language', 'Idioma')}
                 </span>
                 <div className="flex items-center gap-1">
@@ -364,13 +364,13 @@ function HeaderLink({
         // alcance los 44px de ancho de objetivo táctil. El filete va en el
         // <span>, así que el padding no lo estira.
         'group flex min-h-11 min-w-11 items-center justify-center px-3 text-meta font-medium tracking-[0.03em] transition-colors duration-300',
-        active ? 'text-rose' : 'text-ink hover:text-rose',
+        active ? 'text-caramel' : 'text-ink hover:text-caramel',
       )}
     >
       <span
         className={cn(
           'relative',
-          'after:absolute after:inset-x-0 after:-bottom-1 after:h-px after:origin-left after:bg-rose after:transition-transform after:duration-300 after:ease-editorial',
+          'after:absolute after:inset-x-0 after:-bottom-1 after:h-px after:origin-left after:bg-caramel after:transition-transform after:duration-300 after:ease-editorial',
           active ? 'after:scale-x-100' : 'after:scale-x-0 group-hover:after:scale-x-100',
         )}
       >
@@ -395,7 +395,7 @@ function DrawerGroup({
 }) {
   return (
     <nav aria-label={title} className="mt-8">
-      <h2 className="eyebrow mb-2 text-rose">{title}</h2>
+      <h2 className="eyebrow mb-2 text-caramel">{title}</h2>
       <ul>
         {items.map((item) => {
           const active = isActive(item.href);
@@ -408,14 +408,14 @@ function DrawerGroup({
                 className={cn(
                   'flex min-h-11 items-center text-body-sm transition-colors',
                   active
-                    ? 'font-semibold text-rose'
+                    ? 'font-semibold text-caramel'
                     : muted
                       ? 'text-body hover:text-ink'
-                      : 'text-ink hover:text-rose',
+                      : 'text-ink hover:text-caramel',
                 )}
               >
                 {active ? (
-                  <span aria-hidden="true" className="mr-2 h-4 w-px bg-rose" />
+                  <span aria-hidden="true" className="mr-2 h-4 w-px bg-caramel" />
                 ) : null}
                 {label(item, locale)}
               </Link>
@@ -437,7 +437,7 @@ function LocaleChip({ locale, current, href }: { locale: Locale; current: Locale
       className={cn(
         'grid min-h-11 min-w-11 place-items-center rounded-xs border text-caption font-bold tracking-[0.12em] transition-colors',
         active
-          ? 'border-rose bg-rose text-white-warm'
+          ? 'border-caramel bg-caramel text-white-warm'
           : 'border-line-strong text-body hover:border-ink hover:text-ink',
       )}
     >

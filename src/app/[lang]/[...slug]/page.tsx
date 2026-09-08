@@ -92,7 +92,7 @@ export default async function CatchAllPage({ params }: Props) {
     return (
       <Section tone="ivory">
         <Container>
-          <p className="eyebrow text-rose">
+          <p className="eyebrow text-caramel">
             {key === 'cart' ? (lang === 'es' ? 'Tu compra' : 'Your purchase') : (lang === 'es' ? 'Guardados' : 'Saved')}
           </p>
           <h1 className="mt-3 text-h1">
@@ -118,7 +118,7 @@ export default async function CatchAllPage({ params }: Props) {
               `<h2>` pensado para secciones dentro de una página — aquí es el
               título de la página entera y debe ser `<h1>`. */}
           <header className="mb-10 max-w-2xl sm:mb-14">
-            <p className="eyebrow mb-3 text-rose">{localizedCopy(page.eyebrow, lang)}</p>
+            <p className="eyebrow mb-3 text-caramel">{localizedCopy(page.eyebrow, lang)}</p>
             <h1 className="text-h1">{localizedCopy(page.title, lang)}</h1>
             <p className="mt-4 text-lead text-body">{localizedCopy(page.body[0]!, lang)}</p>
           </header>
@@ -141,7 +141,7 @@ export default async function CatchAllPage({ params }: Props) {
       <Section tone="ivory">
         <Container>
           <header className="mx-auto mb-10 max-w-2xl text-center sm:mb-14">
-            <p className="eyebrow text-rose">{localizedCopy(page.eyebrow, lang)}</p>
+            <p className="eyebrow text-caramel">{localizedCopy(page.eyebrow, lang)}</p>
             <h1 className="mt-4 text-h1">{localizedCopy(page.title, lang)}</h1>
             <p className="mt-4 text-lead text-body">{localizedCopy(page.body[0]!, lang)}</p>
           </header>
@@ -152,7 +152,7 @@ export default async function CatchAllPage({ params }: Props) {
             </Reveal>
 
             <Reveal delay={80}>
-              <aside className="on-dark rounded-md bg-wine p-6 text-on-dark sm:p-8">
+              <aside className="on-dark rounded-md bg-espresso p-6 text-on-dark sm:p-8">
                 <p className="eyebrow text-on-dark-soft">
                   {lang === 'es' ? 'Contacto directo' : 'Direct contact'}
                 </p>
@@ -245,7 +245,7 @@ export default async function CatchAllPage({ params }: Props) {
             </Reveal>
 
             <Reveal delay={80} className="max-w-[34rem]">
-              <p className="eyebrow mb-4 text-rose">{localizedCopy(page.eyebrow, lang)}</p>
+              <p className="eyebrow mb-4 text-caramel">{localizedCopy(page.eyebrow, lang)}</p>
               <h1 className="text-h1">{localizedCopy(page.title, lang)}</h1>
               <Rule className="my-7 max-w-24" />
               {page.body.map((paragraph) => (
@@ -269,7 +269,7 @@ export default async function CatchAllPage({ params }: Props) {
                       <h2 className="text-h3">
                         <Link
                           href={localizedHref(lang, `/products/${product.slug}`)}
-                          className="transition-colors hover:text-rose"
+                          className="transition-colors hover:text-caramel"
                         >
                           {product.name}
                         </Link>
@@ -277,14 +277,14 @@ export default async function CatchAllPage({ params }: Props) {
                       <span className="text-sm text-muted">{product.sizeLabel}</span>
                     </div>
 
-                    <h3 className="eyebrow mt-6 text-rose">
+                    <h3 className="eyebrow mt-6 text-caramel">
                       {pick(lang, 'Ingredients (INCI)', 'Ingredientes (INCI)')}
                     </h3>
                     <p className="mt-2 text-body-sm leading-relaxed text-body">{product.ingredients}</p>
 
                     {product.usageInstructions ? (
                       <div className="mt-5">
-                        <h3 className="eyebrow text-rose">{pick(lang, 'How to use', 'Modo de uso')}</h3>
+                        <h3 className="eyebrow text-caramel">{pick(lang, 'How to use', 'Modo de uso')}</h3>
                         <p className="mt-2 text-body-sm leading-relaxed text-body">
                           {product.usageInstructions}
                         </p>
@@ -293,7 +293,7 @@ export default async function CatchAllPage({ params }: Props) {
 
                     {product.precautions ? (
                       <div className="mt-5">
-                        <h3 className="eyebrow text-rose">{pick(lang, 'Precautions', 'Precauciones')}</h3>
+                        <h3 className="eyebrow text-caramel">{pick(lang, 'Precautions', 'Precauciones')}</h3>
                         <p className="mt-2 text-body-sm leading-relaxed text-body">
                           {product.precautions}
                         </p>
@@ -343,7 +343,7 @@ export default async function CatchAllPage({ params }: Props) {
             </Reveal>
 
             <Reveal delay={80} className="max-w-[34rem]">
-              <p className="eyebrow mb-4 text-rose">{localizedCopy(page.eyebrow, lang)}</p>
+              <p className="eyebrow mb-4 text-caramel">{localizedCopy(page.eyebrow, lang)}</p>
               <h1 className="text-h1">{localizedCopy(page.title, lang)}</h1>
               <Rule className="my-7 max-w-24" />
               {page.body.map((paragraph) => (
@@ -362,7 +362,7 @@ export default async function CatchAllPage({ params }: Props) {
   return (
     <Section tone="ivory">
       <Container size="narrow">
-        <p className="eyebrow text-rose">{localizedCopy(page.eyebrow, lang)}</p>
+        <p className="eyebrow text-caramel">{localizedCopy(page.eyebrow, lang)}</p>
         <h1 className="mt-4 text-h1">{localizedCopy(page.title, lang)}</h1>
         <Rule className="my-8" />
         {page.body.map((paragraph) => (
