@@ -1,0 +1,239 @@
+.hero {
+  max-width: 90rem;
+  margin-inline: auto;
+  padding: 1.25rem 1.25rem 0;
+}
+.grid {
+  display: grid;
+  gap: 1.75rem;
+}
+.content {
+  align-self: center;
+  min-width: 0;
+}
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  max-width: 25rem;
+  margin-bottom: 1.25rem;
+  font-size: 0.625rem;
+  line-height: 1.7;
+  letter-spacing: 0.14em;
+}
+.eyebrow > span {
+  flex-shrink: 0;
+  width: 1.5rem;
+  height: 1px;
+  background: var(--color-rose);
+}
+.title {
+  --rise-delay: 80ms;
+  font-size: clamp(3.25rem, 12.5vw, 5.5rem);
+  font-weight: 400;
+  line-height: 0.99;
+  letter-spacing: -0.045em;
+}
+.title > span {
+  display: block;
+  white-space: nowrap;
+}
+.title em {
+  color: var(--color-rose);
+  font-weight: 300;
+}
+.body {
+  --rise-delay: 160ms;
+  max-width: 24rem;
+  margin-top: 1.5rem;
+  color: var(--color-body);
+  font-size: 0.9375rem;
+  line-height: 1.8;
+}
+.actions {
+  --rise-delay: 240ms;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1.75rem;
+  margin-top: 1.75rem;
+}
+.actions .primary {
+  min-height: 3.5rem;
+  padding-inline: 1.5rem;
+  gap: 1.5rem;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+}
+.secondary {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--color-ink);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: var(--color-line-strong);
+  text-underline-offset: 0.4rem;
+  transition:
+    color 200ms,
+    text-decoration-color 200ms;
+}
+.secondary:hover {
+  color: var(--color-rose);
+  text-decoration-color: currentColor;
+}
+.origin {
+  --rise-delay: 320ms;
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  margin-top: 1.25rem;
+  color: var(--color-muted);
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.origin > span {
+  color: var(--color-rose);
+  font-size: 1.5rem;
+}
+.visual {
+  min-width: 0;
+}
+.photo {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 1.2;
+  border-radius: 3.5rem 0.5rem 3.5rem 0.5rem;
+  background: var(--color-powder);
+}
+.photo picture {
+  display: block;
+  height: 100%;
+}
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 50%;
+}
+.caption {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.875rem;
+  color: var(--color-muted);
+  font-size: 0.625rem;
+}
+.caption > span:last-child {
+  flex-shrink: 0;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-style: italic;
+}
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.75rem;
+  padding-block: 1rem;
+  border-top: 1px solid var(--color-line-strong);
+}
+.explore {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--color-body);
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+.down {
+  display: grid;
+  width: 2.5rem;
+  height: 2.5rem;
+  place-items: center;
+  border: 1px solid var(--color-line-strong);
+  border-radius: 50%;
+  transition:
+    background-color 200ms,
+    border-color 200ms;
+}
+.explore:hover .down {
+  background: var(--color-blush);
+  border-color: var(--color-rose);
+}
+.footer > p {
+  display: none;
+  color: var(--color-muted);
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-style: italic;
+}
+@media (min-width: 640px) {
+  .hero {
+    padding: 2rem 2rem 0;
+  }
+  .grid {
+    gap: 2.5rem;
+  }
+  .content {
+    padding-inline: 1rem;
+  }
+  .photo {
+    aspect-ratio: 1.6;
+  }
+  .eyebrow {
+    font-size: 0.6875rem;
+  }
+  .footer > p {
+    display: block;
+  }
+}
+@media (min-width: 1024px) {
+  .hero {
+    padding: 1.5rem 3rem 0;
+  }
+  .grid {
+    grid-template-columns: 45fr 55fr;
+    gap: 2rem;
+  }
+  .content {
+    padding: 1.5rem 0;
+  }
+  .title {
+    font-size: clamp(4rem, 6.35vw, 5.75rem);
+  }
+  .eyebrow {
+    margin-bottom: 1.75rem;
+  }
+  .body {
+    margin-top: 1.75rem;
+    font-size: 1rem;
+  }
+  .origin {
+    margin-top: 1.75rem;
+  }
+  .photo {
+    aspect-ratio: auto;
+    height: clamp(32rem, calc(100svh - 17rem), 41rem);
+    border-radius: 6rem 0.5rem 6rem 0.5rem;
+  }
+  .footer {
+    margin-top: 1.5rem;
+  }
+}
+@media (min-width: 1280px) {
+  .hero {
+    padding-inline: 4rem;
+  }
+  .grid {
+    gap: 3rem;
+  }
+}

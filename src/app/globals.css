@@ -152,7 +152,7 @@
     -webkit-text-size-adjust: 100%;
 
     /* El header es `sticky`, así que al saltar a un ancla el destino queda
-       DEBAJO de él. Medido: 65px de header en móvil y 81px a partir de `lg`.
+       DEBAJO de él. Medido: 73px de header en móvil y 97px a partir de `lg`.
        Sin esto, el titular de la sección enlazada aparecía cortado por arriba.
        Se reserva la altura del header más un respiro, para que la sección no
        quede pegada al borde inferior de la barra. */

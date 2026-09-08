@@ -38,20 +38,22 @@ export function TrustStrip({ locale }: { locale: Locale }) {
   const points = getTrustPoints(locale);
 
   return (
-    <Section tone="powder" padding="tight" labelledBy="trust-strip-heading">
+    <Section tone="powder" padding="none" className="py-6 sm:py-7" labelledBy="trust-strip-heading">
       <Container>
         <h2 id="trust-strip-heading" className="sr-only">
           {pick(locale, 'Why shop with us', 'Por qué comprar con nosotras')}
         </h2>
-        <ul className="grid gap-5 sm:grid-cols-3 sm:gap-6">
+        <ul className="grid gap-5 sm:grid-cols-3 sm:gap-0 sm:divide-x sm:divide-rose-deep/20">
           {points.map((point) => {
             const Icon = point.icon;
             return (
               <li
                 key={point.title}
-                className="trust-point flex items-center justify-center gap-3 text-center sm:justify-start sm:text-left"
+                className="trust-point flex items-center justify-center gap-3 text-left sm:px-4"
               >
-                <Icon className="size-5 shrink-0 text-rose-deep" aria-hidden="true" />
+                <span className="grid size-10 shrink-0 place-items-center rounded-full border border-rose-deep/20">
+                  <Icon className="size-4 text-rose-deep" strokeWidth={1.5} aria-hidden="true" />
+                </span>
                 <div>
                   <p className="text-meta font-semibold leading-snug text-ink">{point.title}</p>
                   <p className="text-caption leading-snug text-body">{point.body}</p>

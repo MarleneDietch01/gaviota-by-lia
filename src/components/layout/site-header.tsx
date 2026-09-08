@@ -26,9 +26,8 @@ import { BrandLogo } from '@/components/brand/brand-logo';
    `justify-between` y un icono a la izquierda contra tres a la derecha, el
    logotipo se desplazaba visiblemente.
 
-   Sobre el hero el header es transparente; a partir de 24px de scroll pasa a
-   marfil sólido con hairline. La transición es de color, no de layout, así que
-   no provoca reflow.
+   El fondo marfil y el filete delimitan la navegación. A partir de 24px de
+   scroll se aplica transparencia con desenfoque, sin cambiar su altura.
    =========================================================================== */
 
 const ICON_BUTTON = 'grid size-11 place-items-center rounded-pill transition-colors duration-300 ease-soft hover:bg-ink/[0.06]';
@@ -126,7 +125,7 @@ export function SiteHeader({ locale }: { locale: Locale }) {
           'sticky top-0 z-40 transition-[background-color,border-color,box-shadow] duration-300 ease-soft',
           scrolled
             ? 'border-b border-line bg-ivory/95 backdrop-blur-md'
-            : 'border-b border-transparent bg-transparent',
+            : 'border-b border-line-strong/60 bg-ivory',
         )}
       >
         <Container size="wide">
@@ -135,7 +134,7 @@ export function SiteHeader({ locale }: { locale: Locale }) {
               más ancho que el izquierdo la columna se expande y el logotipo se
               desplaza: medido, quedaba 35px a la izquierda del centro real en
               móvil. Así queda centrado sea cual sea el contenido lateral. */}
-          <div className="relative flex h-16 items-center justify-between gap-3 lg:h-20">
+          <div className="relative flex h-18 items-center justify-between gap-3 lg:h-24">
             {/* --- Izquierda: menú (móvil) / navegación (escritorio) --- */}
             <div className="flex items-center justify-start">
               <button
@@ -171,8 +170,8 @@ export function SiteHeader({ locale }: { locale: Locale }) {
             >
               <BrandLogo
                 priority
-                sizes="(min-width: 1024px) 190px, 142px"
-                className="w-[8.9rem] lg:w-[11.875rem]"
+                sizes="(min-width: 1024px) 174px, 132px"
+                className="w-[8.25rem] lg:w-[10.875rem]"
               />
             </Link>
 

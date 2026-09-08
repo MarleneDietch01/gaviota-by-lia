@@ -19,11 +19,10 @@ import { cn } from '@/lib/utils/cn';
      · `wide` (90rem) — SOLO rejillas de 4 columnas de tarjetas o fotografía
        (Colección, Comunidad). Nunca un tercer valor de ancho inventado a
        medio camino entre `default` y `wide`.
-     · Sin `Container` (a sangre completa) — reservado para el hero y el
-       bloque editorial de campaña (`Campaign`, tono vino). Son los dos únicos
-       momentos del home sin contenedor, y ambos son deliberados: el hero
-       porque la fotografía 4:5 necesita su propia composición dividida, la
-       campaña porque es el único bloque de foto+texto a página completa.
+     · Sin `Container` — reservado para el hero y el bloque editorial de
+       campaña (`Campaign`, tono vino). El hero aplica el mismo ancho máximo
+       de 90rem y márgenes mediante su módulo CSS para enmarcar la fotografía.
+       La campaña mantiene su composición de foto+texto a página completa.
        Ningún otro componente de sección debe omitir `Container`.
    =========================================================================== */
 
