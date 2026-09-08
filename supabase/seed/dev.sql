@@ -257,15 +257,17 @@ insert into product_related (product_id, related_id, relation, sort_order) value
 on conflict do nothing;
 
 -- -----------------------------------------------------------------------------
--- Tarifa de envío de DESARROLLO
+-- Tarifa de envío
 -- -----------------------------------------------------------------------------
 -- Los plazos (2 días de proceso + 3-4 de entrega = 5-6) SÍ son reales: constan
 -- en la política de envíos del sitio actual.
--- El importe y el umbral son de prueba: los reales están pendientes
--- (SHIPPING_TODO.md).
+-- El importe ($14.00) y el umbral de envío gratis ($100.00) los confirmó la
+-- propietaria (2026-09-08). Mismos valores que los fallbacks de entorno
+-- (SHIPPING_FLAT_RATE_CENTS / FREE_SHIPPING_THRESHOLD_CENTS) y que el texto de
+-- /shipping-policy.
 -- -----------------------------------------------------------------------------
 insert into shipping_rates (name, country, rate, free_above, estimated_days_min, estimated_days_max, status)
-values ('USPS Priority Mail (DESARROLLO)', 'US', 800, 7500, 5, 6, 'active')
+values ('USPS Priority Mail', 'US', 1400, 10000, 5, 6, 'active')
 on conflict do nothing;
 
 -- -----------------------------------------------------------------------------

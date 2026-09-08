@@ -26,8 +26,8 @@ producto y en el checkout para el mensaje de entrega estimada.
 
 | Dato | Estado | Impacto |
 |---|---|---|
-| **Tarifa de envío** | ❓ | Sin ella no hay checkout |
-| **Umbral de envío gratis** | ❓ | La barra de progreso lo necesita |
+| **Tarifa de envío** | ✅ **$14.00** (confirmada por la propietaria, 2026-09-08) | — |
+| **Umbral de envío gratis** | ✅ **$100.00** (confirmado por la propietaria, 2026-09-08) | — |
 | **Países servidos** | ❓ | USPS sugiere solo EE. UU. |
 | **¿Se envía a Puerto Rico / territorios?** | ❓ | USPS sí llega; el precio cambia |
 | **¿Se envía a República Dominicana?** | ❓ | Marca dominicana, pregunta probable |
@@ -74,8 +74,8 @@ Tabla `shipping_rates`, editable en `/admin/settings` sin tocar código:
 | Nombre | "USPS Priority Mail" | ✅ |
 | País | `US` | ✅ |
 | Estado | `null` = todo el país | ✅ |
-| Tarifa | ❓ pendiente | ✅ |
-| Envío gratis desde | ❓ pendiente | ✅ |
+| Tarifa | $14.00 (`1400`) | ✅ |
+| Envío gratis desde | $100.00 (`10000`) | ✅ |
 | Días mín. | 5 | ✅ |
 | Días máx. | 6 | ✅ |
 | Recogida local | falso | ✅ |
@@ -109,7 +109,7 @@ mecanismos de aumento de ticket más eficaces, pero **necesita un umbral real**.
 
 Contexto de precios: los productos van de $30 a $50; el kit, $120.
 
-- [ ] ¿Cuál es el umbral? (una referencia habitual es ~1,5 × el ticket medio)
+- [x] ¿Cuál es el umbral? **$100.00**, confirmado por la propietaria (2026-09-08).
 - [ ] ¿Se aplica a todos los países o solo a EE. UU.?
 - [ ] ¿Se excluyen los kits?
 
@@ -184,8 +184,8 @@ de datos verifica que el total cuadre.
 
 ## 11. Checklist
 
-- [ ] Tarifa de envío definida
-- [ ] Umbral de envío gratis definido (o descartado)
+- [x] Tarifa de envío definida — $14.00
+- [x] Umbral de envío gratis definido — gratis desde $100.00
 - [ ] Países servidos confirmados
 - [ ] ¿Recogida local? Si sí, dirección y horario
 - [ ] Política de envíos completa y publicada

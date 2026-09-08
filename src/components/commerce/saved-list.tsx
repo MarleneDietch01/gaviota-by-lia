@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useMemo, useState, useSyncExternalStore } from 'react';
+import { ProductImage } from '@/components/media/site-image';
 import type { Product } from '@/lib/catalog/products';
 import { cents, formatMoney, type Cents } from '@/lib/commerce/money';
 import {
@@ -132,7 +133,28 @@ export function SavedList({
     <div className="grid gap-8 lg:grid-cols-[1fr_20rem]">
       <ul className="divide-y divide-line rounded-sm border border-line bg-white-warm px-5">
         {lines.map(({ product, quantity }) => (
-          <li key={product.slug} className="grid grid-cols-[1fr_auto] gap-4 py-5">
+          <li key={product.slug} className="grid grid-cols-[auto_1fr] items-start gap-4 py-5 sm:grid-cols-[auto_1fr_auto]">
+            {/* El mismo packshot del catálogo, en un tile cuadrado con el fondo
+                propio del producto: la bolsa se reconoce de un vistazo y la
+                relación de aspecto es idéntica en todas las líneas. Decorativa
+                (alt vacío, fuera del orden de tabulación) porque el enlace del
+                nombre, justo al lado, lleva al mismo sitio. */}
+            <Link
+              aria-hidden="true"
+              tabIndex={-1}
+              className="block size-20 shrink-0 overflow-hidden rounded-xs sm:size-24"
+              href={localizedHref(locale, `/products/${product.slug}`)}
+              style={{ backgroundColor: product.imageBackground }}
+            >
+              <ProductImage
+                src={product.image}
+                alt=""
+                width={product.imageWidth}
+                height={product.imageHeight}
+                sizes="96px"
+                quality={75}
+              />
+            </Link>
             <div>
               <Link
                 className="font-semibold hover:text-rose"
@@ -150,7 +172,7 @@ export function SavedList({
               ) : null}
             </div>
             {kind === 'cart' ? (
-              <div className="flex items-center gap-2">
+              <div className="col-span-2 flex items-center justify-end gap-2 sm:col-span-1">
                 <button
                   className="size-11 rounded-xs border border-line"
                   aria-label={pick(locale, `Decrease ${product.name}`, `Reducir ${product.name}`)}
@@ -171,7 +193,7 @@ export function SavedList({
                 </button>
               </div>
             ) : (
-              <button className="min-h-11 px-3 text-sm underline" onClick={() => toggleFavorite(product.slug)}>
+              <button className="col-span-2 min-h-11 justify-self-end px-3 text-sm underline sm:col-span-1" onClick={() => toggleFavorite(product.slug)}>
                 {pick(locale, 'Remove', 'Quitar')}
               </button>
             )}
