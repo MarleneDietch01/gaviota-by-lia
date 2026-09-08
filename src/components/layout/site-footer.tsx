@@ -11,6 +11,7 @@ import {
 } from '@/lib/content/navigation';
 import { localizedHref, pick, type Locale } from '@/lib/i18n';
 import { BrandLogo } from '@/components/brand/brand-logo';
+import { PaymentMarks } from '@/components/icons/payment-marks';
 
 const COLUMNS: readonly { title: { en: string; es: string }; items: readonly NavItem[] }[] = [
   { title: { en: 'Shop', es: 'Tienda' }, items: CATEGORY_NAV },
@@ -113,7 +114,9 @@ export function SiteFooter({ locale }: { locale: Locale }) {
 
           <Rule className="my-12 opacity-45" />
 
-          <div className="flex flex-col gap-4 text-xs leading-relaxed text-on-dark-soft sm:flex-row sm:items-start sm:justify-between">
+          <PaymentMarks locale={locale} />
+
+          <div className="mt-8 flex flex-col gap-4 text-xs leading-relaxed text-on-dark-soft sm:flex-row sm:items-start sm:justify-between">
             <p>
               © {new Date().getFullYear()} Gaviota By Lia LLC.{' '}
               {pick(locale, 'All rights reserved.', 'Todos los derechos reservados.')}
