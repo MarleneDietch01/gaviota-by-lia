@@ -46,7 +46,7 @@ export default async function AccountPage({ params }: Props) {
   return (
     <Section tone="ivory">
       <Container size="narrow">
-        <p className="eyebrow mb-3 text-caramel">{pick(lang, 'Account', 'Cuenta')}</p>
+        <p className="eyebrow mb-3 text-gold-deep">{pick(lang, 'Account', 'Cuenta')}</p>
         <h1 className="text-h1">
           {pick(lang, 'Hello, ', 'Hola, ')}
           {user.firstName ?? user.email}

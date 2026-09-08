@@ -127,7 +127,7 @@ export function NeedCard({
         </h3>
         <p className="mt-1.5 text-sm leading-snug text-body">{t(need.body, locale)}</p>
 
-        <span className="mt-4 inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-caramel">
+        <span className="mt-4 inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-gold-deep">
           {locale === 'es' ? 'Ver' : 'Explore'}
           <ArrowRight
             className="size-3.5 transition-transform duration-300 ease-editorial motion-safe:group-hover:translate-x-1"

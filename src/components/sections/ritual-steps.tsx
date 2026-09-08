@@ -67,7 +67,7 @@ export async function RitualSteps({ locale }: { locale: Locale }) {
 
                 <Link
                   href={localizedHref(locale, step.href)}
-                  className="group mt-4 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-caramel transition-colors hover:text-caramel-deep"
+                  className="group mt-4 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-gold-deep transition-colors hover:text-gold-ink"
                 >
                   {t(step.product, locale)}
                   <ArrowRight

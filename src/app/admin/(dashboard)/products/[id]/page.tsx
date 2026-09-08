@@ -110,7 +110,7 @@ export default async function AdminProductEditPage({
 
   return (
     <div className="max-w-3xl">
-      <Link href="/admin/products" className="inline-flex items-center gap-1.5 text-sm font-medium text-body hover:text-caramel">
+      <Link href="/admin/products" className="inline-flex items-center gap-1.5 text-sm font-medium text-body hover:text-gold-deep">
         <ArrowLeft className="size-4" aria-hidden="true" />
         Volver a productos
       </Link>
@@ -124,7 +124,7 @@ export default async function AdminProductEditPage({
         </p>
       ) : null}
       {warningParam ? (
-        <p role="alert" className="mt-4 rounded-sm border border-caramel/40 bg-powder/30 p-3 text-sm font-medium text-caramel-deep">
+        <p role="alert" className="mt-4 rounded-sm border border-gold-deep/40 bg-powder/30 p-3 text-sm font-medium text-gold-ink">
           Guardado. {warningParam}
         </p>
       ) : null}
@@ -214,7 +214,7 @@ export default async function AdminProductEditPage({
             <div className="flex gap-3">
               <button
                 type="submit"
-                className="min-h-10 rounded-xs bg-caramel px-5 text-sm font-semibold text-white-warm transition-colors hover:bg-caramel-deep"
+                className="min-h-10 rounded-xs bg-gold-deep px-5 text-sm font-semibold text-white-warm transition-colors hover:bg-gold-ink"
               >
                 Subir foto
               </button>
@@ -273,7 +273,7 @@ export default async function AdminProductEditPage({
               </div>
               <button
                 type="submit"
-                className="min-h-10 rounded-xs bg-caramel px-5 text-sm font-semibold text-white-warm transition-colors hover:bg-caramel-deep"
+                className="min-h-10 rounded-xs bg-gold-deep px-5 text-sm font-semibold text-white-warm transition-colors hover:bg-gold-ink"
               >
                 Guardar
               </button>
@@ -385,7 +385,7 @@ export default async function AdminProductEditPage({
             real (constraint `compare_at_needs_dates`), y este formulario no
             intenta esquivar esa regla, la explica. */}
         <fieldset className="rounded-xs border border-dashed border-line-strong p-4">
-          <legend className="px-1 text-sm font-semibold text-caramel-deep">Precio anterior (opcional)</legend>
+          <legend className="px-1 text-sm font-semibold text-gold-ink">Precio anterior (opcional)</legend>
           <p className="text-xs text-muted">
             Solo se muestra tachado en el sitio si tiene fecha de inicio y fin reales. Un descuento permanente no está
             permitido — es publicidad engañosa.
@@ -470,7 +470,7 @@ export default async function AdminProductEditPage({
 
         <button
           type="submit"
-          className="min-h-11 rounded-xs bg-caramel px-6 text-sm font-semibold text-white-warm transition-colors hover:bg-caramel-deep"
+          className="min-h-11 rounded-xs bg-gold-deep px-6 text-sm font-semibold text-white-warm transition-colors hover:bg-gold-ink"
         >
           Guardar cambios
         </button>

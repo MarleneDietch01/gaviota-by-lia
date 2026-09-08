@@ -113,7 +113,7 @@ export function SavedList({
           )}
         </p>
         <Link
-          className="mt-6 inline-flex min-h-11 items-center rounded-xs bg-caramel px-6 text-sm font-semibold text-white-warm"
+          className="mt-6 inline-flex min-h-11 items-center rounded-xs bg-gold-deep px-6 text-sm font-semibold text-white-warm"
           href={localizedHref(locale, '/shop')}
         >
           {pick(locale, 'Explore products', 'Explorar productos')}
@@ -157,7 +157,7 @@ export function SavedList({
             </Link>
             <div>
               <Link
-                className="font-semibold hover:text-caramel"
+                className="font-semibold hover:text-gold-deep"
                 href={localizedHref(locale, `/products/${product.slug}`)}
               >
                 {product.name}
@@ -210,7 +210,7 @@ export function SavedList({
           </p>
 
           {freeShippingThresholdCents !== null ? (
-            <p className="mt-3 text-sm font-medium text-caramel-deep">
+            <p className="mt-3 text-sm font-medium text-gold-ink">
               {subtotal >= freeShippingThresholdCents
                 ? pick(locale, "You've unlocked free shipping.", 'Desbloqueaste el envío gratis.')
                 : pick(
@@ -249,7 +249,7 @@ export function SavedList({
             type="button"
             onClick={handleCheckout}
             disabled={checkoutPending || hasOutOfStockLine}
-            className="mt-6 min-h-12 w-full rounded-xs bg-ink px-5 text-sm font-semibold text-white-warm transition-colors hover:bg-espresso disabled:pointer-events-none disabled:opacity-55"
+            className="mt-6 min-h-12 w-full rounded-xs bg-ink px-5 text-sm font-semibold text-white-warm transition-colors hover:bg-plum disabled:pointer-events-none disabled:opacity-55"
           >
             {checkoutPending
               ? pick(locale, 'Starting checkout…', 'Iniciando el pago…')

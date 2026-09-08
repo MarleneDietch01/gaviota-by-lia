@@ -73,7 +73,7 @@ export function CampaignFlyers({ locale }: { locale: Locale }) {
             <ul className="space-y-5">
               {CAMPAIGN_BENEFITS.map((benefit) => (
                 <li key={benefit.title.en} className="flex gap-3.5">
-                  <span className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-powder/55 text-espresso">
+                  <span className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-powder/55 text-plum">
                     <Check className="size-3.5" strokeWidth={2.25} aria-hidden="true" />
                   </span>
                   <div className="min-w-0">
@@ -85,7 +85,7 @@ export function CampaignFlyers({ locale }: { locale: Locale }) {
             </ul>
 
             <div className="mt-8">
-              <LinkButton href={localizedHref(locale, '/shop')} variant="espresso">
+              <LinkButton href={localizedHref(locale, '/shop')} variant="plum">
                 {pick(locale, 'Shop the collection', 'Ver la colección')}
               </LinkButton>
             </div>

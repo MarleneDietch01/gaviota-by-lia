@@ -27,7 +27,7 @@ export async function Faq({ locale }: { locale: Locale }) {
                 {pick(locale, item.question.en, item.question.es)}
                 <span
                   aria-hidden="true"
-                  className="shrink-0 text-lg text-caramel transition-transform duration-200 group-open:rotate-45"
+                  className="shrink-0 text-lg text-gold-deep transition-transform duration-200 group-open:rotate-45"
                 >
                   +
                 </span>

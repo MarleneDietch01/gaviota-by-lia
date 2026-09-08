@@ -8,7 +8,7 @@ import { pick, type Locale } from '@/lib/i18n';
 
 const initialState: ContactState = {};
 const fieldClass =
-  'min-h-12 w-full rounded-xs border border-line-strong bg-white-warm px-4 text-sm text-ink transition-colors focus:border-caramel';
+  'min-h-12 w-full rounded-xs border border-line-strong bg-white-warm px-4 text-sm text-ink transition-colors focus:border-gold-deep';
 
 export function ContactForm({ locale }: { locale: Locale }) {
   const [state, formAction, pending] = useActionState(submitContact, initialState);

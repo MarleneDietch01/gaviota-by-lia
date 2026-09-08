@@ -18,7 +18,7 @@
  * en origen:
  *
  *   1. Toda variación estructural de un componente pasa por una PROP tipada
- *      (`<Section padding="none" tone="espresso">`), nunca por `className`. La prop
+ *      (`<Section padding="none" tone="plum">`), nunca por `className`. La prop
  *      elige una única clase de un mapa, así que no hay dos reglas compitiendo.
  *   2. `className` queda para lo aditivo (posicionamiento, `col-span`, ids de
  *      test). Si necesitas cambiar algo que ya controla una prop, añade un valor

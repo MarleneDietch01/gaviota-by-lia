@@ -14,7 +14,7 @@ export default async function NewProductPage({ searchParams }: { searchParams: P
   }
   const input = 'mt-1 min-h-11 w-full rounded-xs border border-line-strong bg-white-warm px-3 text-sm';
   return <div className="max-w-2xl">
-    <Link href="/admin/products" className="text-sm font-medium text-body hover:text-caramel">← Volver a productos</Link>
+    <Link href="/admin/products" className="text-sm font-medium text-body hover:text-gold-deep">← Volver a productos</Link>
     <h1 className="mt-4 font-display text-h2">Crear producto</h1>
     <p className="mt-1 text-sm text-body">Se crea como borrador. Podrás completar imágenes, textos y stock antes de publicarlo.</p>
     {error ? <p role="alert" className="mt-4 rounded-sm border border-danger/40 bg-danger/10 p-3 text-sm text-danger">{error}</p> : null}
@@ -26,7 +26,7 @@ export default async function NewProductPage({ searchParams }: { searchParams: P
         <div><label htmlFor="price" className="text-sm font-medium">Precio USD</label><input id="price" name="price" type="number" min="0.01" step="0.01" required className={input}/></div>
         <div><label htmlFor="sizeLabel" className="text-sm font-medium">Presentación</label><input id="sizeLabel" name="sizeLabel" placeholder="236 mL" className={input}/></div>
       </div>
-      <button className="min-h-11 rounded-xs bg-caramel px-6 text-sm font-semibold text-white-warm hover:bg-caramel-deep">Crear borrador</button>
+      <button className="min-h-11 rounded-xs bg-gold-deep px-6 text-sm font-semibold text-white-warm hover:bg-gold-ink">Crear borrador</button>
     </form>
   </div>;
 }

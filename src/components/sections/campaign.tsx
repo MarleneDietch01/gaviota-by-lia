@@ -18,7 +18,7 @@ export async function Campaign({ locale }: { locale: Locale }) {
   if (!c) return null;
 
   return (
-    <Section tone="espresso" padding="none" labelledBy="campaign-title" className="overflow-hidden">
+    <Section tone="plum" padding="none" labelledBy="campaign-title" className="overflow-hidden">
       <div className="grid lg:grid-cols-2">
         {/* La imagen llena su mitad de verdad: el contenedor se estira con la
             fila de la rejilla y la foto usa `object-cover` a altura completa.

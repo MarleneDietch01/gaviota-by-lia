@@ -8,7 +8,7 @@ export function Stars({ rating, size = 'size-4' }: { rating: number; size?: stri
   return (
     <div className="flex gap-0.5" aria-hidden="true">
       {[1, 2, 3, 4, 5].map((n) => (
-        <Star key={n} className={cn(size, n <= rating ? 'fill-caramel text-caramel' : 'text-line-strong')} />
+        <Star key={n} className={cn(size, n <= rating ? 'fill-gold-deep text-gold-deep' : 'text-line-strong')} />
       ))}
     </div>
   );

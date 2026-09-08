@@ -30,7 +30,7 @@ export default async function AdminReviewsPage() {
                   </p>
                   <p className="text-xs text-muted">{review.profiles?.email ?? 'Cliente sin correo'}</p>
                 </div>
-                <span className="rounded-pill bg-powder/40 px-2.5 py-1 text-xs font-semibold text-caramel-deep">
+                <span className="rounded-pill bg-powder/40 px-2.5 py-1 text-xs font-semibold text-gold-ink">
                   {review.rating} / 5
                 </span>
               </div>
@@ -43,7 +43,7 @@ export default async function AdminReviewsPage() {
                   <input type="hidden" name="reviewId" value={review.id} />
                   <button
                     type="submit"
-                    className="min-h-10 rounded-xs bg-caramel px-5 text-sm font-semibold text-white-warm transition-colors hover:bg-caramel-deep"
+                    className="min-h-10 rounded-xs bg-gold-deep px-5 text-sm font-semibold text-white-warm transition-colors hover:bg-gold-ink"
                   >
                     Aprobar
                   </button>

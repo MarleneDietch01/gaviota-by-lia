@@ -22,7 +22,7 @@ const COLUMNS: readonly { title: { en: string; es: string }; items: readonly Nav
 
 export function SiteFooter({ locale }: { locale: Locale }) {
   return (
-    <footer className="on-dark bg-espresso text-on-dark">
+    <footer className="on-dark bg-plum text-on-dark">
       <Container size="wide">
         <div className="py-16 lg:py-20">
           <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-[1.3fr_repeat(4,1fr)] lg:gap-10">

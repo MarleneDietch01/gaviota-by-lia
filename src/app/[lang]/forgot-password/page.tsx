@@ -20,7 +20,7 @@ export default async function ForgotPasswordPage({ params }: Props) {
     <Section tone="ivory">
       <Container size="narrow">
         <div className="mx-auto w-full max-w-sm">
-          <p className="eyebrow mb-3 text-caramel">{pick(lang, 'Account', 'Cuenta')}</p>
+          <p className="eyebrow mb-3 text-gold-deep">{pick(lang, 'Account', 'Cuenta')}</p>
           <h1 className="text-h1">{pick(lang, 'Reset your password', 'Restablecer contraseña')}</h1>
           <p className="mt-4 text-lead text-body">
             {pick(

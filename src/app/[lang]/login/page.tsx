@@ -25,7 +25,7 @@ export default async function LoginPage({ params }: Props) {
     <Section tone="ivory">
       <Container size="narrow">
         <div className="mx-auto w-full max-w-sm">
-          <p className="eyebrow mb-3 text-caramel">{pick(lang, 'Account', 'Cuenta')}</p>
+          <p className="eyebrow mb-3 text-gold-deep">{pick(lang, 'Account', 'Cuenta')}</p>
           <h1 className="text-h1">{pick(lang, 'Sign in', 'Iniciar sesión')}</h1>
           <p className="mt-4 text-lead text-body">
             {pick(
@@ -42,13 +42,13 @@ export default async function LoginPage({ params }: Props) {
           <div className="mt-6 flex flex-wrap items-center justify-between gap-3 text-sm">
             <Link
               href={localizedHref(lang, '/forgot-password')}
-              className="font-semibold text-caramel underline decoration-caramel/35 underline-offset-4 hover:text-caramel-deep"
+              className="font-semibold text-gold-deep underline decoration-gold-deep/35 underline-offset-4 hover:text-gold-ink"
             >
               {pick(lang, 'Forgot your password?', '¿Olvidaste tu contraseña?')}
             </Link>
             <Link
               href={localizedHref(lang, '/register')}
-              className="font-semibold text-ink underline decoration-ink/25 underline-offset-4 hover:text-caramel"
+              className="font-semibold text-ink underline decoration-ink/25 underline-offset-4 hover:text-gold-deep"
             >
               {pick(lang, 'Create an account', 'Crear una cuenta')}
             </Link>

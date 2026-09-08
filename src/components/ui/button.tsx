@@ -6,33 +6,32 @@ import { cn } from '@/lib/utils/cn';
  * Jerarquía de botones. Cuatro niveles, y solo UNO primario por pantalla visible.
  *
  * Contraste medido:
- *   primary   blanco sobre caramel #8A5A3C ............  5.62:1 AA
- *             :hover sobre caramel-deep ................  9.81:1 AA
- *             :active sobre espresso .................... 12.90:1 AA
- *   espresso  blanco sobre espresso #3D2B26 ............ 12.90:1 AA
- *             :hover sobre espresso-deep ............... 15.14:1 AA
- *   secondary ink sobre marfil, borde ink .............. 11.93:1 AA
- *   onDark    espresso sobre blanco cálido ............. 12.90:1 AA
- *             :hover espresso sobre polvo ..............  8.98:1 AA
- *   quiet     caramel sobre marfil .....................  5.20:1 AA
+ *   primary   blanco sobre gold-deep #6A5304 ...........  7.11:1 AA
+ *             :hover/:active sobre gold-ink ........... 10.80:1 AA
+ *   plum      blanco sobre ciruela #4A2340 ............ 12.90:1 AA
+ *             :hover sobre plum-deep .................. 15.43:1 AA
+ *   secondary ink sobre crema, borde ink .............. 11.84:1 AA
+ *   onDark    ciruela sobre blanco cálido ............. 12.63:1 AA
+ *             :hover ciruela sobre polvo ..............  8.41:1 AA
+ *   quiet     gold-deep sobre crema ...................  6.53:1 AA
  *
  * `active:scale` se aplica solo con motion-safe: en reduced-motion el botón
  * responde igual pero sin deformarse.
  */
 
 const VARIANTS = {
-  primary: 'bg-caramel text-white-warm hover:bg-caramel-deep active:bg-espresso motion-safe:active:scale-[0.98]',
-  // `ink` y `espresso` son el mismo hex, así que el hover/active heredados del
+  primary: 'bg-gold-deep text-white-warm hover:bg-gold-ink active:bg-gold-ink motion-safe:active:scale-[0.98]',
+  // `ink` y `plum` son el mismo hex, así que el hover/active heredados del
   // sistema rosa (bg-wine -> hover:bg-rose-ink, ambos #6e2239) no cambiaban
   // nada. Sobre un plano ya oscuro la respuesta tiene que ser oscurecer.
-  espresso: 'bg-espresso text-white-warm hover:bg-espresso-deep active:bg-espresso-deep motion-safe:active:scale-[0.98]',
+  plum: 'bg-plum text-white-warm hover:bg-plum-deep active:bg-plum-deep motion-safe:active:scale-[0.98]',
   secondary:
     'border border-ink/25 bg-transparent text-ink hover:border-ink hover:bg-ink hover:text-ivory',
   onDark:
-    'bg-white-warm text-espresso hover:bg-powder active:bg-powder motion-safe:active:scale-[0.98]',
+    'bg-white-warm text-plum hover:bg-powder active:bg-powder motion-safe:active:scale-[0.98]',
   onDarkOutline: 'border border-on-dark-soft/50 bg-transparent text-on-dark hover:border-on-dark-soft hover:bg-white-warm/10',
   quiet:
-    'bg-transparent text-caramel underline decoration-caramel/35 underline-offset-[6px] hover:text-caramel-deep hover:decoration-caramel-deep',
+    'bg-transparent text-gold-deep underline decoration-gold-deep/35 underline-offset-[6px] hover:text-gold-ink hover:decoration-gold-ink',
 } as const;
 
 /** Alturas 44/48/52px. 44 es el mínimo táctil accesible; en móvil se sube. */

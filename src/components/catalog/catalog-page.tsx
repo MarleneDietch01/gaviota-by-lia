@@ -45,7 +45,7 @@ export async function CatalogPage({
         <Breadcrumbs items={breadcrumbs} locale={locale} />
 
         <header className="max-w-3xl pb-10 pt-8 sm:pb-12 lg:pb-14 lg:pt-12">
-          <p className="eyebrow mb-3 text-caramel">{eyebrow}</p>
+          <p className="eyebrow mb-3 text-gold-deep">{eyebrow}</p>
           <h1 className="text-h1">{title}</h1>
           <p className="mt-4 max-w-2xl text-lead text-body">{description}</p>
         </header>
@@ -95,7 +95,7 @@ export async function CatalogPage({
               <option value="price-desc">{pick(locale, 'Price: high to low', 'Precio: mayor a menor')}</option>
             </SelectField>
 
-            <button type="submit" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xs bg-caramel px-6 text-sm font-semibold text-white-warm transition-colors hover:bg-espresso sm:self-end lg:self-auto">
+            <button type="submit" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xs bg-gold-deep px-6 text-sm font-semibold text-white-warm transition-colors hover:bg-plum sm:self-end lg:self-auto">
               <SlidersHorizontal className="size-4" aria-hidden="true" />
               {pick(locale, 'Apply', 'Aplicar')}
             </button>
@@ -110,7 +110,7 @@ export async function CatalogPage({
               : pick(locale, 'products', 'productos')}
           </p>
           {(query.q || query.category || (query.sort && query.sort !== 'featured')) ? (
-            <Link href={shopHref} className="min-h-11 py-3 text-sm font-semibold text-caramel underline underline-offset-4">
+            <Link href={shopHref} className="min-h-11 py-3 text-sm font-semibold text-gold-deep underline underline-offset-4">
               {pick(locale, 'Clear filters', 'Limpiar filtros')}
             </Link>
           ) : null}

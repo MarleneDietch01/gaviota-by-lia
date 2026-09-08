@@ -25,7 +25,7 @@ export default async function RegisterPage({ params }: Props) {
     <Section tone="ivory">
       <Container size="narrow">
         <div className="mx-auto w-full max-w-sm">
-          <p className="eyebrow mb-3 text-caramel">{pick(lang, 'Account', 'Cuenta')}</p>
+          <p className="eyebrow mb-3 text-gold-deep">{pick(lang, 'Account', 'Cuenta')}</p>
           <h1 className="text-h1">{pick(lang, 'Create an account', 'Crear una cuenta')}</h1>
           <p className="mt-4 text-lead text-body">
             {pick(
@@ -43,7 +43,7 @@ export default async function RegisterPage({ params }: Props) {
             {pick(lang, 'Already have an account? ', '¿Ya tienes una cuenta? ')}
             <Link
               href={localizedHref(lang, '/login')}
-              className="font-semibold text-caramel underline decoration-caramel/35 underline-offset-4 hover:text-caramel-deep"
+              className="font-semibold text-gold-deep underline decoration-gold-deep/35 underline-offset-4 hover:text-gold-ink"
             >
               {pick(lang, 'Sign in', 'Inicia sesión')}
             </Link>

@@ -67,7 +67,7 @@ export async function Founder({ locale }: { locale: Locale }) {
               (544px) fijo dejaba una franja vacía a la derecha del párrafo en
               pantallas anchas — el bloque se leía más plano de lo que es. */}
           <Reveal delay={80} className="max-w-[30rem] lg:max-w-none">
-            {c.eyebrow ? <p className="eyebrow mb-4 text-caramel">{c.eyebrow}</p> : null}
+            {c.eyebrow ? <p className="eyebrow mb-4 text-gold-deep">{c.eyebrow}</p> : null}
 
             <h2 id="story-title" className="text-h2">
               {pick(locale, 'Dominican beauty, made into ', 'Belleza dominicana hecha ')}

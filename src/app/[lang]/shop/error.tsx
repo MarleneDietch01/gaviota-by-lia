@@ -6,7 +6,7 @@ export default function ShopError({ reset }: { error: Error & { digest?: string 
   const es = useParams().lang === 'es';
   return (
     <div className="mx-auto max-w-xl px-5 py-24 text-center">
-      <p className="eyebrow mb-3 text-caramel">{es ? 'Catálogo' : 'Catalog'}</p>
+      <p className="eyebrow mb-3 text-gold-deep">{es ? 'Catálogo' : 'Catalog'}</p>
       <h1 className="text-h1">
         {es ? 'No pudimos cargar la colección.' : "We couldn't load the collection."}
       </h1>
@@ -18,7 +18,7 @@ export default function ShopError({ reset }: { error: Error & { digest?: string 
       <button
         type="button"
         onClick={reset}
-        className="mt-8 min-h-12 rounded-xs bg-caramel px-7 text-sm font-semibold text-white-warm hover:bg-espresso"
+        className="mt-8 min-h-12 rounded-xs bg-gold-deep px-7 text-sm font-semibold text-white-warm hover:bg-plum"
       >
         {es ? 'Reintentar' : 'Try again'}
       </button>

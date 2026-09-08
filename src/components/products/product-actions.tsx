@@ -94,13 +94,13 @@ export function QuickAdd({
             : variant === 'solid'
               ? // Acción principal a ancho completo (tarjeta de producto):
                 // vino sólido, igual receta que `Button` variant="primary".
-                'bg-caramel text-white-warm hover:bg-caramel-deep active:bg-espresso'
+                'bg-gold-deep text-white-warm hover:bg-gold-ink active:bg-plum'
               : // Borde a 0.55 y no a 0.25: sobre la tarjeta marfil el trazo
                 // anterior quedaba casi invisible y la acción principal de la
                 // tarjeta no se leía como acción. El hover pasa a vino de marca
                 // en vez de a tinta neutra — el cambio es inequívoco y sigue
                 // siendo de la paleta.
-                'border border-ink/55 text-ink hover:border-caramel-deep hover:bg-caramel-deep hover:text-on-dark',
+                'border border-ink/55 text-ink hover:border-gold-ink hover:bg-gold-ink hover:text-on-dark',
         )}
       >
         {added ? (
@@ -171,14 +171,14 @@ export function FavoriteToggle({
           ? cn(
               'rounded-pill border backdrop-blur-sm',
               active
-                ? 'border-caramel bg-white-warm/90 text-caramel'
-                : 'border-white-warm/70 bg-white-warm/70 text-ink hover:border-caramel hover:text-caramel',
+                ? 'border-gold-deep bg-white-warm/90 text-gold-deep'
+                : 'border-white-warm/70 bg-white-warm/70 text-ink hover:border-gold-deep hover:text-gold-deep',
             )
           : cn(
               'rounded-xs border',
               active
-                ? 'border-caramel bg-caramel/10 text-caramel'
-                : 'border-ink/30 text-body hover:border-caramel hover:text-caramel',
+                ? 'border-gold-deep bg-gold-deep/10 text-gold-deep'
+                : 'border-ink/30 text-body hover:border-gold-deep hover:text-gold-deep',
             ),
         className,
       )}

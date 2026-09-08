@@ -31,7 +31,7 @@ export async function Community({ locale }: { locale: Locale }) {
   if (!c) return null;
 
   return (
-    <Section tone="espresso" labelledBy="community-title">
+    <Section tone="plum" labelledBy="community-title">
       <Container size="wide">
         <SectionHeader
           id="community-title"

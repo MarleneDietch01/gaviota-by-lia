@@ -15,7 +15,7 @@ export default function ErrorPage({ reset }: { error: Error & { digest?: string 
       <button
         type="button"
         onClick={reset}
-        className="mt-8 min-h-12 rounded-xs bg-caramel px-6 text-sm font-semibold text-white-warm"
+        className="mt-8 min-h-12 rounded-xs bg-gold-deep px-6 text-sm font-semibold text-white-warm"
       >
         {es ? 'Reintentar' : 'Try again'}
       </button>

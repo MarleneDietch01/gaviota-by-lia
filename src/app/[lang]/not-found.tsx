@@ -31,7 +31,7 @@ export default function NotFound() {
     <Section tone="ivory">
       <Container size="narrow">
         <div className="mx-auto max-w-lg text-center">
-          <p className="eyebrow text-caramel">404</p>
+          <p className="eyebrow text-gold-deep">404</p>
           <h1 className="mt-4 text-h1">Page not found · Página no encontrada</h1>
           <p className="mt-5 text-lead text-body">
             The page you&apos;re looking for doesn&apos;t exist or may have moved.
@@ -52,7 +52,7 @@ export default function NotFound() {
             </span>
             <button
               type="submit"
-              className="inline-flex min-h-12 items-center justify-center rounded-xs bg-caramel px-6 text-sm font-semibold text-white-warm transition-colors hover:bg-caramel-deep"
+              className="inline-flex min-h-12 items-center justify-center rounded-xs bg-gold-deep px-6 text-sm font-semibold text-white-warm transition-colors hover:bg-gold-ink"
             >
               Search · Buscar
             </button>
