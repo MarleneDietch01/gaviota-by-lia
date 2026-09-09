@@ -7,6 +7,7 @@ import { requireAdmin } from '@/lib/auth/guards';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { createAdminSupabaseClient } from '@/lib/supabase/admin';
 import { sendOrderConfirmationEmails } from '@/lib/email/order-confirmation';
+import { sendReviewInvitation } from '@/lib/email/review-invitation';
 
 /**
  * "Marcar como enviado" — el flujo de despacho que hoy no existe (ver el
@@ -144,4 +145,54 @@ export async function resendOrderConfirmation(formData: FormData): Promise<void>
 
   revalidatePath(`/admin/orders/${orderId.data}`);
   redirect(`/admin/orders/${orderId.data}?saved=1`);
+}
+
+/**
+ * "Marcar como entregado" — el eslabón que faltaba.
+ *
+ * `delivered` existía en el enum `order_status` y se mostraba como etiqueta
+ * en el panel, pero NINGÚN código lo escribía. Y `has_verified_purchase`
+ * (20260803120014) exige exactamente ese estado para permitir una reseña, así
+ * que hasta ahora ninguna clienta podía reseñar nada: la condición no era
+ * difícil de cumplir, era imposible.
+ *
+ * Al entregar se dispara la invitación a reseñar. Va después de escribir el
+ * estado y su fallo no revierte nada: lo importante es que el pedido quede
+ * entregado. `sendReviewInvitation` no lanza y deja constancia en `email_log`.
+ */
+export async function markOrderDelivered(formData: FormData): Promise<void> {
+  await requireAdmin();
+
+  const parsed = z.uuid().safeParse(formData.get('orderId'));
+  if (!parsed.success) return;
+  const orderId = parsed.data;
+
+  const supabase = await createServerSupabaseClient();
+  const now = new Date().toISOString();
+
+  const { error: orderError } = await supabase
+    .from('orders')
+    .update({ order_status: 'delivered', fulfillment_status: 'delivered' })
+    .eq('id', orderId);
+
+  if (orderError) {
+    redirect(
+      `/admin/orders/${orderId}?error=${encodeURIComponent(
+        `No se pudo marcar como entregado: ${orderError.message}`,
+      )}`,
+    );
+  }
+
+  // El envío puede no existir si el pedido se entregó en mano.
+  await supabase
+    .from('shipments')
+    .update({ status: 'delivered', delivered_at: now })
+    .eq('order_id', orderId);
+
+  const outcome = await sendReviewInvitation(createAdminSupabaseClient(), orderId);
+
+  revalidatePath('/admin/orders');
+  revalidatePath(`/admin/orders/${orderId}`);
+  revalidatePath('/admin');
+  redirect(`/admin/orders/${orderId}?saved=1&invitacion=${outcome}`);
 }

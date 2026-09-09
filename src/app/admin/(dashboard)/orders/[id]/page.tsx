@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { cents, formatMoney } from '@/lib/commerce/money';
-import { markOrderShipped, resendOrderConfirmation, saveOrderNotes } from '../actions';
+import { markOrderDelivered, markOrderShipped, resendOrderConfirmation, saveOrderNotes } from '../actions';
 
 export const metadata = { title: 'Pedido' };
 
@@ -23,6 +23,15 @@ const STATUS_LABEL: Record<string, string> = {
   partially_refunded: 'Reembolso parcial',
 };
 
+/** Resultado del correo de invitación, devuelto por `markOrderDelivered`. */
+const INVITACION_AVISO: Record<string, string> = {
+  sent: 'Invitación a reseñar enviada a la clienta.',
+  already_sent: 'La invitación a reseñar ya se había enviado antes; no se repitió.',
+  no_recipient: 'Pedido sin correo real de clienta: no se envió invitación a reseñar.',
+  no_products: 'El pedido no tiene productos que reseñar.',
+  send_failed: 'No se pudo enviar la invitación a reseñar. Queda registrada en email_log.',
+};
+
 function formatDate(value: string): string {
   return new Date(value).toLocaleDateString('es-DO', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 }
@@ -32,10 +41,10 @@ export default async function AdminOrderDetailPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ error?: string; saved?: string }>;
+  searchParams: Promise<{ error?: string; saved?: string; invitacion?: string }>;
 }) {
   const { id } = await params;
-  const { error: errorParam, saved } = await searchParams;
+  const { error: errorParam, saved, invitacion } = await searchParams;
   const supabase = await createServerSupabaseClient();
 
   const { data: order, error } = await supabase
@@ -61,6 +70,9 @@ export default async function AdminOrderDetailPage({
   const shippingAddress = order.order_addresses?.find((a) => a.address_type === 'shipping');
   const shipment = order.shipments?.[0];
   const canShip = order.payment_status === 'paid' && order.order_status !== 'shipped' && order.order_status !== 'delivered';
+  // Se permite entregar desde 'paid' y no solo desde 'shipped': algunos
+  // pedidos se entregan en mano y nunca pasan por una transportadora.
+  const canDeliver = order.payment_status === 'paid' && order.order_status !== 'delivered';
 
   return (
     <div className="max-w-3xl">
@@ -102,6 +114,11 @@ export default async function AdminOrderDetailPage({
       {saved && !errorParam ? (
         <p role="status" className="mt-4 rounded-sm border border-success/40 bg-success/10 p-3 text-sm font-medium text-success">
           Cambios guardados.
+        </p>
+      ) : null}
+      {invitacion ? (
+        <p role="status" className="mt-3 rounded-sm border border-line-strong bg-ivory p-3 text-sm text-body">
+          {INVITACION_AVISO[invitacion] ?? `Invitación a reseñar: ${invitacion}`}
         </p>
       ) : null}
 
@@ -186,6 +203,28 @@ export default async function AdminOrderDetailPage({
           <p className="mt-3 text-sm text-muted">Este pedido todavía no está pagado — no se puede despachar.</p>
         ) : (
           <p className="mt-3 text-sm text-muted">Este pedido ya fue enviado o entregado.</p>
+        )}
+
+        {/* Marcar como entregado. Es lo que habilita las reseñas:
+            `has_verified_purchase` exige order_status = 'delivered'. */}
+        {canDeliver ? (
+          <form action={markOrderDelivered} className="mt-4 border-t border-line pt-4">
+            <input type="hidden" name="orderId" value={order.id} />
+            <p className="text-sm text-body">
+              Al marcar el pedido como entregado se envía a la clienta la invitación a reseñar
+              los productos que compró.
+            </p>
+            <button
+              type="submit"
+              className="mt-3 min-h-11 rounded-xs border border-ink/25 px-6 text-sm font-semibold text-ink transition-colors hover:bg-ink hover:text-ivory"
+            >
+              Marcar como entregado
+            </button>
+          </form>
+        ) : (
+          <p className="mt-4 border-t border-line pt-4 text-sm text-muted">
+            Pedido entregado. La invitación a reseñar ya salió (o quedó registrada en email_log).
+          </p>
         )}
       </section>
 

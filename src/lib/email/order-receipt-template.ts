@@ -9,10 +9,10 @@ import type { Locale } from '@/lib/i18n';
 const ESPRESSO = '#3d2b26';
 const IVORY = '#f7f0ec';
 const WHITE_WARM = '#fffaf8';
-const INK = '#3d2b26';
-const BODY = '#5e4a42';
-const LINE = '#ece0e6';
-const CHAMPAGNE = '#c9a44a';
+export const INK = '#3d2b26';
+export const BODY = '#5e4a42';
+export const LINE = '#ece0e6';
+export const CHAMPAGNE = '#c9a44a';
 
 export interface ReceiptItem {
   readonly name: string;
@@ -61,7 +61,7 @@ function formatDate(iso: string, locale: Locale): string {
  * inline a propósito: es lo único que Outlook y Gmail renderizan de forma
  * fiable — un <style> en <head> se pierde en demasiados clientes de correo.
  */
-function layout(opts: { preheader: string; bodyHtml: string; footerHtml: string }): string {
+export function layout(opts: { preheader: string; bodyHtml: string; footerHtml: string }): string {
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -147,10 +147,10 @@ function addressBlock(address: ReceiptAddress, locale: Locale): string {
     </p>`;
 }
 
-const CONTACT_FOOTER_EN = `
+export const CONTACT_FOOTER_EN = `
   Gaviota By Lia LLC — 5 Rangeley Avenue, Providence, RI 02908, United States.<br />
   Questions? Phone / WhatsApp: 401-305-8713 · Email: gaviotabylia@gmail.com`;
-const CONTACT_FOOTER_ES = `
+export const CONTACT_FOOTER_ES = `
   Gaviota By Lia LLC — 5 Rangeley Avenue, Providence, RI 02908, Estados Unidos.<br />
   ¿Dudas? Teléfono / WhatsApp: 401-305-8713 · Correo: gaviotabylia@gmail.com`;
 
