@@ -34,9 +34,14 @@ export async function signIn(_prevState: LoginState, formData: FormData): Promis
   const { email, password } = parsed.data;
 
   // Más estricto que el login de clientas (5/15 min en vez de 5/5 min): es el
-  // objetivo de mayor privilegio del sitio.
-  const allowed = await checkRateLimit(`admin-login:${email}`, 5, 900);
+  // objetivo de mayor privilegio del sitio. Y `failClosed`: si el limitador
+  // no responde, se rechaza el intento en vez de dejar la puerta sin freno.
+  const allowed = await checkRateLimit(`admin-login:${email}`, 5, 900, {
+    failClosed: true,
+  });
   if (!allowed) {
+    // Mismo mensaje para "demasiados intentos" y "el limitador no responde": no
+    // se le dice a quien ataca en cuál de los dos estados está el sistema.
     return { error: 'Demasiados intentos. Espera unos minutos e inténtalo de nuevo.' };
   }
 
