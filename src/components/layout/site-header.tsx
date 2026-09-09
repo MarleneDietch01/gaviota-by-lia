@@ -170,8 +170,8 @@ export function SiteHeader({ locale }: { locale: Locale }) {
             >
               <BrandLogo
                 priority
-                sizes="(min-width: 1024px) 174px, 132px"
-                className="w-[8.25rem] lg:w-[10.875rem]"
+                sizes="(min-width: 1024px) 174px, (min-width: 360px) 132px, 96px"
+                className="w-24 min-[360px]:w-[8.25rem] lg:w-[10.875rem]"
               />
             </Link>
 
@@ -229,7 +229,7 @@ export function SiteHeader({ locale }: { locale: Locale }) {
                 {bagCount > 0 ? (
                   <span
                     aria-hidden="true"
-                    className="tabular absolute right-1 top-1 grid min-w-[1.125rem] place-items-center rounded-pill bg-gold-deep px-1 text-2xs font-bold leading-[1.125rem] text-white-warm"
+                    className="tabular absolute right-1 top-1 grid min-w-[1.125rem] place-items-center rounded-pill bg-champagne px-1 text-2xs font-bold leading-[1.125rem] text-ink"
                   >
                     {bagCount > 9 ? '9+' : bagCount}
                   </span>
@@ -248,7 +248,7 @@ export function SiteHeader({ locale }: { locale: Locale }) {
             tabIndex={-1}
             aria-hidden="true"
             onClick={() => setMenuOpen(false)}
-            className="absolute inset-0 h-full w-full cursor-default bg-plum/45 backdrop-blur-[2px]"
+            className="absolute inset-0 h-full w-full cursor-default bg-espresso/45 backdrop-blur-[2px]"
           />
 
           <div
@@ -285,7 +285,7 @@ export function SiteHeader({ locale }: { locale: Locale }) {
             >
               <Link
                 href={localizedHref(locale, '/shop')}
-                className="flex min-h-13 items-center justify-center rounded-xs bg-gold-deep px-6 text-sm font-semibold tracking-[0.02em] text-white-warm"
+                className="flex min-h-13 items-center justify-center rounded-xs bg-champagne px-6 text-sm font-semibold tracking-[0.02em] text-ink hover:bg-gold"
               >
                 {pick(locale, 'Shop the collection', 'Ver la colección')}
               </Link>
@@ -437,7 +437,7 @@ function LocaleChip({ locale, current, href }: { locale: Locale; current: Locale
       className={cn(
         'grid min-h-11 min-w-11 place-items-center rounded-xs border text-caption font-bold tracking-[0.12em] transition-colors',
         active
-          ? 'border-gold-deep bg-gold-deep text-white-warm'
+          ? 'border-champagne bg-champagne text-ink'
           : 'border-line-strong text-body hover:border-ink hover:text-ink',
       )}
     >

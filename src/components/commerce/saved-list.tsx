@@ -113,7 +113,7 @@ export function SavedList({
           )}
         </p>
         <Link
-          className="mt-6 inline-flex min-h-11 items-center rounded-xs bg-gold-deep px-6 text-sm font-semibold text-white-warm"
+          className="mt-6 inline-flex min-h-11 items-center rounded-xs bg-champagne px-6 text-sm font-semibold text-ink hover:bg-gold"
           href={localizedHref(locale, '/shop')}
         >
           {pick(locale, 'Explore products', 'Explorar productos')}
@@ -249,7 +249,7 @@ export function SavedList({
             type="button"
             onClick={handleCheckout}
             disabled={checkoutPending || hasOutOfStockLine}
-            className="mt-6 min-h-12 w-full rounded-xs bg-ink px-5 text-sm font-semibold text-white-warm transition-colors hover:bg-plum disabled:pointer-events-none disabled:opacity-55"
+            className="mt-6 min-h-12 w-full rounded-xs bg-champagne px-5 text-sm font-semibold text-ink transition-colors hover:bg-gold disabled:pointer-events-none disabled:opacity-55"
           >
             {checkoutPending
               ? pick(locale, 'Starting checkout…', 'Iniciando el pago…')

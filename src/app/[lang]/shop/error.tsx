@@ -18,7 +18,7 @@ export default function ShopError({ reset }: { error: Error & { digest?: string 
       <button
         type="button"
         onClick={reset}
-        className="mt-8 min-h-12 rounded-xs bg-gold-deep px-7 text-sm font-semibold text-white-warm hover:bg-plum"
+        className="mt-8 min-h-12 rounded-xs bg-champagne px-7 text-sm font-semibold text-ink hover:bg-gold"
       >
         {es ? 'Reintentar' : 'Try again'}
       </button>

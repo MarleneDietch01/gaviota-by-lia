@@ -39,7 +39,7 @@
   white-space: nowrap;
 }
 .title em {
-  color: var(--color-gold-deep);
+  color: inherit;
   font-weight: 300;
 }
 .body {

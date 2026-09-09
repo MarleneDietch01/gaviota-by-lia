@@ -92,15 +92,14 @@ export function QuickAdd({
           added
             ? 'bg-success text-white-warm'
             : variant === 'solid'
-              ? // Acción principal a ancho completo (tarjeta de producto):
-                // vino sólido, igual receta que `Button` variant="primary".
-                'bg-gold-deep text-white-warm hover:bg-gold-ink active:bg-plum'
+              ? // Acción principal: champán con texto espresso, igual que `Button`.
+                'bg-champagne text-ink hover:bg-gold active:bg-gold'
               : // Borde a 0.55 y no a 0.25: sobre la tarjeta marfil el trazo
                 // anterior quedaba casi invisible y la acción principal de la
-                // tarjeta no se leía como acción. El hover pasa a vino de marca
+                // tarjeta no se leía como acción. El hover pasa a tinta de marca
                 // en vez de a tinta neutra — el cambio es inequívoco y sigue
                 // siendo de la paleta.
-                'border border-ink/55 text-ink hover:border-gold-ink hover:bg-gold-ink hover:text-on-dark',
+                'border border-ink/55 text-ink hover:border-ink hover:bg-ink hover:text-on-dark',
         )}
       >
         {added ? (

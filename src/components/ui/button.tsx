@@ -6,29 +6,22 @@ import { cn } from '@/lib/utils/cn';
  * Jerarquía de botones. Cuatro niveles, y solo UNO primario por pantalla visible.
  *
  * Contraste medido:
- *   primary   blanco sobre gold-deep #6A5304 ...........  7.11:1 AA
- *             :hover/:active sobre gold-ink ........... 10.80:1 AA
- *   plum      blanco sobre ciruela #4A2340 ............ 12.90:1 AA
- *             :hover sobre plum-deep .................. 15.43:1 AA
- *   secondary ink sobre crema, borde ink .............. 11.84:1 AA
- *   onDark    ciruela sobre blanco cálido ............. 12.63:1 AA
- *             :hover ciruela sobre polvo ..............  8.41:1 AA
- *   quiet     gold-deep sobre crema ...................  6.53:1 AA
+ *   primary   espresso sobre champán ................... 5.66:1 AA
+ *             :hover/:active sobre oro brillante ....... 9.63:1 AA
+ *   secondary espresso sobre crema .................... 11.93:1 AA
+ *   onDark    espresso sobre blanco cálido ............ 12.90:1 AA
+ *   quiet     gold-deep sobre crema .................... 6.53:1 AA
  *
  * `active:scale` se aplica solo con motion-safe: en reduced-motion el botón
  * responde igual pero sin deformarse.
  */
 
 const VARIANTS = {
-  primary: 'bg-gold-deep text-white-warm hover:bg-gold-ink active:bg-gold-ink motion-safe:active:scale-[0.98]',
-  // `ink` y `plum` son el mismo hex, así que el hover/active heredados del
-  // sistema rosa (bg-wine -> hover:bg-rose-ink, ambos #6e2239) no cambiaban
-  // nada. Sobre un plano ya oscuro la respuesta tiene que ser oscurecer.
-  plum: 'bg-plum text-white-warm hover:bg-plum-deep active:bg-plum-deep motion-safe:active:scale-[0.98]',
+  primary: 'bg-champagne text-ink hover:bg-gold active:bg-gold motion-safe:active:scale-[0.98]',
   secondary:
     'border border-ink/25 bg-transparent text-ink hover:border-ink hover:bg-ink hover:text-ivory',
   onDark:
-    'bg-white-warm text-plum hover:bg-powder active:bg-powder motion-safe:active:scale-[0.98]',
+    'bg-white-warm text-espresso hover:bg-powder active:bg-powder motion-safe:active:scale-[0.98]',
   onDarkOutline: 'border border-on-dark-soft/50 bg-transparent text-on-dark hover:border-on-dark-soft hover:bg-white-warm/10',
   quiet:
     'bg-transparent text-gold-deep underline decoration-gold-deep/35 underline-offset-[6px] hover:text-gold-ink hover:decoration-gold-ink',

@@ -38,7 +38,7 @@ export async function Newsletter({ locale }: { locale: Locale }) {
             href="https://www.instagram.com/gaviotabylia/"
             target="_blank"
             rel="noopener noreferrer"
-            className="premium-button mt-9 inline-flex min-h-12 items-center overflow-hidden rounded-xs bg-gold-deep px-7 text-sm font-semibold tracking-[0.02em] text-white-warm transition-[background-color,box-shadow,transform] duration-300 hover:bg-gold-ink"
+            className="premium-button mt-9 inline-flex min-h-12 items-center overflow-hidden rounded-xs bg-champagne px-7 text-sm font-semibold tracking-[0.02em] text-ink transition-[background-color,box-shadow,transform] duration-300 hover:bg-gold"
           >
             {pick(locale, 'Follow updates on Instagram', 'Seguir novedades en Instagram')}
           </a>

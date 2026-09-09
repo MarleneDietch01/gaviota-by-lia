@@ -152,7 +152,7 @@ export default async function CatchAllPage({ params }: Props) {
             </Reveal>
 
             <Reveal delay={80}>
-              <aside className="on-dark rounded-md bg-plum p-6 text-on-dark sm:p-8">
+              <aside className="on-dark rounded-md bg-espresso p-6 text-on-dark sm:p-8">
                 <p className="eyebrow text-on-dark-soft">
                   {lang === 'es' ? 'Contacto directo' : 'Direct contact'}
                 </p>

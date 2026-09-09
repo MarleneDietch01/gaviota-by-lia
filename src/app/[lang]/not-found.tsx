@@ -52,7 +52,7 @@ export default function NotFound() {
             </span>
             <button
               type="submit"
-              className="inline-flex min-h-12 items-center justify-center rounded-xs bg-gold-deep px-6 text-sm font-semibold text-white-warm transition-colors hover:bg-gold-ink"
+              className="inline-flex min-h-12 items-center justify-center rounded-xs bg-champagne px-6 text-sm font-semibold text-ink transition-colors hover:bg-gold"
             >
               Search · Buscar
             </button>

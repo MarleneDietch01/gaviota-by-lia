@@ -1,5 +1,8 @@
 # DESIGN_DIRECTION.md — Dirección visual y comercial
 
+> Paleta vigente: [PALETTE.md](PALETTE.md). Las propuestas de color de este
+> documento son históricas; la implementación usa los tokens de `globals.css`.
+
 **Concepto:** *"Belleza dominicana que se siente, se vive y se convierte en ritual."*
 
 Documento previo a la implementación. Ninguna sección del home se programa hasta que esto

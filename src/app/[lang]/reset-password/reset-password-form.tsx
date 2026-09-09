@@ -113,7 +113,7 @@ export function ResetPasswordForm({ locale }: { locale: Locale }) {
       <button
         type="submit"
         disabled={status === 'saving'}
-        className="inline-flex min-h-12 w-full items-center justify-center rounded-xs bg-gold-deep text-sm font-semibold text-white-warm transition-colors duration-300 hover:bg-gold-ink disabled:pointer-events-none disabled:opacity-60"
+        className="inline-flex min-h-12 w-full items-center justify-center rounded-xs bg-champagne text-sm font-semibold text-ink transition-colors duration-300 hover:bg-gold disabled:pointer-events-none disabled:opacity-60"
       >
         {status === 'saving'
           ? locale === 'es'

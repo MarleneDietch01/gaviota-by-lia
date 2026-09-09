@@ -102,7 +102,7 @@ function MastercardMark() {
 function Tile({ label, wide = false, children }: { label: string; wide?: boolean; children: ReactNode }) {
   return (
     <li
-      className={`inline-flex h-8 items-center justify-center rounded-xs bg-white-warm ${
+      className={`inline-flex h-8 items-center justify-center rounded-xs border border-line bg-white-warm ${
         wide ? 'w-16' : 'w-12'
       }`}
     >
@@ -115,7 +115,7 @@ function Tile({ label, wide = false, children }: { label: string; wide?: boolean
 export function PaymentMarks({ locale }: { locale: Locale }) {
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
-      <h2 className="eyebrow text-on-dark-soft">{pick(locale, 'We accept', 'Aceptamos')}</h2>
+      <h2 className="eyebrow text-gold-deep">{pick(locale, 'We accept', 'Aceptamos')}</h2>
       <ul className="flex flex-wrap items-center gap-2">
         <Tile label="Visa">
           <PathMark mark={MARKS.visa} />

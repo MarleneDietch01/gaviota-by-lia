@@ -95,7 +95,7 @@ export async function CatalogPage({
               <option value="price-desc">{pick(locale, 'Price: high to low', 'Precio: mayor a menor')}</option>
             </SelectField>
 
-            <button type="submit" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xs bg-gold-deep px-6 text-sm font-semibold text-white-warm transition-colors hover:bg-plum sm:self-end lg:self-auto">
+            <button type="submit" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xs bg-champagne px-6 text-sm font-semibold text-ink transition-colors hover:bg-gold sm:self-end lg:self-auto">
               <SlidersHorizontal className="size-4" aria-hidden="true" />
               {pick(locale, 'Apply', 'Aplicar')}
             </button>

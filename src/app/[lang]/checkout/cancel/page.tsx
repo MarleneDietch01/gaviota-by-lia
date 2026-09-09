@@ -31,7 +31,7 @@ export default async function CheckoutCancelPage({ params }: Props) {
 
           <Link
             href={localizedHref(lang, '/cart')}
-            className="mt-9 inline-flex min-h-12 items-center rounded-xs bg-gold-deep px-7 text-sm font-semibold text-white-warm transition-colors hover:bg-gold-ink"
+            className="mt-9 inline-flex min-h-12 items-center rounded-xs bg-champagne px-7 text-sm font-semibold text-ink transition-colors hover:bg-gold"
           >
             {pick(lang, 'Back to bag', 'Volver a la bolsa')}
           </Link>

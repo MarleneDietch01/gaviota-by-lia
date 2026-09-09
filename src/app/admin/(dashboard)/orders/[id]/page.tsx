@@ -177,7 +177,7 @@ export default async function AdminOrderDetailPage({
             </div>
             <button
               type="submit"
-              className="min-h-11 rounded-xs bg-gold-deep px-6 text-sm font-semibold text-white-warm transition-colors hover:bg-gold-ink"
+              className="min-h-11 rounded-xs bg-ink px-6 text-sm font-semibold text-white-warm transition-colors hover:bg-ink-deep"
             >
               {shipment?.tracking_number ? 'Actualizar envío' : 'Marcar como enviado'}
             </button>

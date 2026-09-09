@@ -112,7 +112,7 @@ export function ProductPackshot({
         style={{
           transform: 'translateX(-50%) rotateX(85deg)',
           background:
-            'radial-gradient(ellipse at center, rgb(110 34 57 / 0.4) 0%, rgb(110 34 57 / 0.16) 45%, rgb(110 34 57 / 0) 75%)',
+            'radial-gradient(ellipse at center, rgb(61 43 38 / 0.4) 0%, rgb(61 43 38 / 0.16) 45%, rgb(61 43 38 / 0) 75%)',
         }}
       />
       {/* Sombra ambiental: más grande, más suave, más clara — refuerza el asiento en el suelo. */}
@@ -122,7 +122,7 @@ export function ProductPackshot({
         style={{
           transform: 'translateX(-50%) rotateX(85deg)',
           background:
-            'radial-gradient(ellipse at center, rgb(110 34 57 / 0.16) 0%, rgb(110 34 57 / 0) 70%)',
+            'radial-gradient(ellipse at center, rgb(61 43 38 / 0.16) 0%, rgb(61 43 38 / 0) 70%)',
         }}
       />
     </div>

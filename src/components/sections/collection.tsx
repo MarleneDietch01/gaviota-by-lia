@@ -67,7 +67,7 @@ export async function Collection({ locale }: { locale: Locale }) {
           <div className="-mt-4 mb-10 text-center sm:-mt-6 sm:mb-14">
             <Link
               href={localizedHref(locale, c.buttonUrl)}
-              className="group inline-flex items-center gap-1.5 text-sm font-semibold tracking-[0.01em] text-gold-ink transition-colors hover:text-plum"
+              className="group inline-flex items-center gap-1.5 text-sm font-semibold tracking-[0.01em] text-gold-ink transition-colors hover:text-espresso"
             >
               {c.buttonLabel}
               <ArrowRight

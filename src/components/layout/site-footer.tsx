@@ -22,11 +22,11 @@ const COLUMNS: readonly { title: { en: string; es: string }; items: readonly Nav
 
 export function SiteFooter({ locale }: { locale: Locale }) {
   return (
-    <footer className="on-dark bg-plum text-on-dark">
+    <footer className="border-t border-line-strong bg-ivory text-ink">
       <Container size="wide">
         <div className="py-16 lg:py-20">
           <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-[1.3fr_repeat(4,1fr)] lg:gap-10">
-            <div className="footer-brand-panel flex flex-col rounded-3xl bg-ivory p-8 text-body lg:p-9">
+            <div className="footer-brand-panel flex flex-col rounded-3xl border border-line bg-white-warm p-8 text-body lg:p-9">
               <Link
                 href={localizedHref(locale, '/')}
                 aria-label={pick(locale, 'Gaviota by Lia home', 'Inicio de Gaviota by Lia')}
@@ -59,8 +59,8 @@ export function SiteFooter({ locale }: { locale: Locale }) {
 
             <div className="contents sm:hidden">
               {COLUMNS.map((column) => (
-                <details key={column.title.en} className="group border-b border-line-dark">
-                  <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between text-sm font-semibold text-on-dark [&::-webkit-details-marker]:hidden">
+                <details key={column.title.en} className="group border-b border-line-strong">
+                  <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between text-sm font-semibold text-gold-deep [&::-webkit-details-marker]:hidden">
                     {pick(locale, column.title.en, column.title.es)}
                     <span aria-hidden="true" className="text-lg transition-transform duration-200 group-open:rotate-45">
                       +
@@ -76,7 +76,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
                           <Link
                             href={localizedHref(locale, item.href)}
                             prefetch={false}
-                            className="flex min-h-10 items-center text-sm text-on-dark-soft transition-colors hover:text-on-dark"
+                            className="flex min-h-10 items-center text-sm text-body transition-colors hover:text-gold-deep"
                           >
                             {label(item, locale)}
                           </Link>
@@ -91,7 +91,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
             <div className="hidden sm:contents">
               {COLUMNS.map((column) => (
                 <nav key={column.title.en} aria-label={pick(locale, column.title.en, column.title.es)}>
-                  <h2 className="eyebrow mb-4 text-on-dark-soft">
+                  <h2 className="eyebrow mb-4 text-gold-deep">
                     {pick(locale, column.title.en, column.title.es)}
                   </h2>
                   <ul className="space-y-1">
@@ -100,7 +100,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
                         <Link
                           href={localizedHref(locale, item.href)}
                           prefetch={false}
-                          className="flex min-h-11 items-center text-sm text-on-dark-soft transition-colors hover:text-on-dark"
+                          className="flex min-h-11 items-center text-sm text-body transition-colors hover:text-gold-deep"
                         >
                           {label(item, locale)}
                         </Link>
@@ -112,11 +112,11 @@ export function SiteFooter({ locale }: { locale: Locale }) {
             </div>
           </div>
 
-          <Rule className="my-12 opacity-45" />
+          <Rule className="my-12" />
 
           <PaymentMarks locale={locale} />
 
-          <div className="mt-8 flex flex-col gap-4 text-xs leading-relaxed text-on-dark-soft sm:flex-row sm:items-start sm:justify-between">
+          <div className="mt-8 flex flex-col gap-4 text-xs leading-relaxed text-body sm:flex-row sm:items-start sm:justify-between">
             <p>
               © {new Date().getFullYear()} Gaviota By Lia LLC.{' '}
               {pick(locale, 'All rights reserved.', 'Todos los derechos reservados.')}

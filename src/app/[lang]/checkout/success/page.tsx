@@ -46,7 +46,7 @@ export default async function CheckoutSuccessPage({ params, searchParams }: Prop
 
           <Link
             href={localizedHref(lang, '/account')}
-            className="mt-9 inline-flex min-h-12 items-center rounded-xs bg-gold-deep px-7 text-sm font-semibold text-white-warm transition-colors hover:bg-gold-ink"
+            className="mt-9 inline-flex min-h-12 items-center rounded-xs bg-champagne px-7 text-sm font-semibold text-ink transition-colors hover:bg-gold"
           >
             {pick(lang, 'View my orders', 'Ver mis pedidos')}
           </Link>

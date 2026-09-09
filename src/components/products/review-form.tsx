@@ -79,7 +79,7 @@ export function ReviewForm({ slug, locale }: { slug: string; locale: Locale }) {
       <button
         type="submit"
         disabled={pending}
-        className="inline-flex min-h-12 w-full items-center justify-center rounded-xs bg-gold-deep text-sm font-semibold text-white-warm transition-colors duration-300 hover:bg-gold-ink disabled:pointer-events-none disabled:opacity-60 sm:w-auto sm:px-8"
+        className="inline-flex min-h-12 w-full items-center justify-center rounded-xs bg-champagne text-sm font-semibold text-ink transition-colors duration-300 hover:bg-gold disabled:pointer-events-none disabled:opacity-60 sm:w-auto sm:px-8"
       >
         {pending
           ? locale === 'es'

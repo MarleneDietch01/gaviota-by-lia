@@ -78,7 +78,7 @@ const TONES = {
    *  rejillas de producto grandes donde `powder` a plena saturación pesa
    *  demasiado (Colección). */
   blush: 'bg-blush text-ink',
-  plum: 'on-dark bg-plum text-on-dark',
+  espresso: 'on-dark bg-espresso text-on-dark',
 } as const;
 
 const PADDINGS = {
@@ -141,7 +141,7 @@ export function SectionHeader({
   title: ReactNode;
   subtitle?: string | undefined;
   align?: 'left' | 'center';
-  /** `powder` usa rosa profundo: el rosa base no llega a AA sobre rosa. */
+  /** `powder` usa el acento más oscuro para reforzar el contraste. */
   tone?: 'light' | 'powder' | 'dark';
   id?: string;
   className?: string;

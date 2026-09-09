@@ -43,7 +43,7 @@ export default async function AdminReviewsPage() {
                   <input type="hidden" name="reviewId" value={review.id} />
                   <button
                     type="submit"
-                    className="min-h-10 rounded-xs bg-gold-deep px-5 text-sm font-semibold text-white-warm transition-colors hover:bg-gold-ink"
+                    className="min-h-10 rounded-xs bg-ink px-5 text-sm font-semibold text-white-warm transition-colors hover:bg-ink-deep"
                   >
                     Aprobar
                   </button>
