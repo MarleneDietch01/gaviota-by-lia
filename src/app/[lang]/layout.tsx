@@ -8,7 +8,7 @@ import { AnnouncementBar } from '@/components/layout/announcement-bar';
 import { WhatsAppButton } from '@/components/contact/whatsapp-button';
 import { isLocale, locales, pageAlternates, pick, socialMeta } from '@/lib/i18n';
 import { getSiteUrl } from '@/lib/site-url';
-import { organizationJsonLd, websiteJsonLd } from '@/lib/structured-data';
+import { jsonLdScript, organizationJsonLd, websiteJsonLd } from '@/lib/structured-data';
 import '../globals.css';
 
 export function generateStaticParams() {
@@ -60,15 +60,15 @@ export default async function RootLayout({ children, params }: LayoutProps<'/[la
       data-scroll-behavior="smooth"
     >
       <body className="min-h-dvh antialiased">
-        {/* JSON estático generado en servidor, sin datos de usuario — no hay
-            riesgo de inyección al usar dangerouslySetInnerHTML aquí. */}
+        {/* `jsonLdScript` escapa `<`: sin eso, un valor que contenga
+          `</script>` cerraria la etiqueta y lo siguiente se ejecutaria. */}
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd(siteUrl)) }}
+          dangerouslySetInnerHTML={{ __html: jsonLdScript(organizationJsonLd(siteUrl)) }}
         />
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd(siteUrl, lang)) }}
+          dangerouslySetInnerHTML={{ __html: jsonLdScript(websiteJsonLd(siteUrl, lang)) }}
         />
         <a
           href="#content"

@@ -116,3 +116,20 @@ export function breadcrumbJsonLd(items: readonly BreadcrumbEntry[]) {
     })),
   };
 }
+
+/**
+ * Serializa datos estructurados para incrustarlos en un `<script>`.
+ *
+ * `JSON.stringify` NO escapa `<` ni `/`. Un valor que contenga `</script>`
+ * cierra la etiqueta y todo lo que venga detrás lo ejecuta el navegador como
+ * código. Hoy estos datos salen del panel de administración, así que haría
+ * falta una cuenta con permisos para inyectarlos — pero la CSP declara
+ * `script-src 'unsafe-inline'` (ver next.config.ts), así que si llegara a
+ * pasar, se ejecutaría sin nada que lo frene.
+ *
+ * Escapar `<` basta: neutraliza tanto `</script>` como `<!--`, y el JSON
+ * resultante sigue siendo válido — `\u003c` se decodifica a `<`.
+ */
+export function jsonLdScript(data: unknown): string {
+  return JSON.stringify(data).replace(/</g, '\\u003c');
+}
