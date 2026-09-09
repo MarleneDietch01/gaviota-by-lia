@@ -37,6 +37,7 @@ export type InvitationOutcome =
   | 'already_sent'
   | 'no_recipient'
   | 'no_products'
+  | 'not_configured'
   | 'send_failed';
 
 export async function sendReviewInvitation(
@@ -107,5 +108,8 @@ export async function sendReviewInvitation(
     error: result.ok ? null : `${result.reason}${result.detail ? `: ${result.detail}` : ''}`,
   });
 
-  return result.ok ? 'sent' : 'send_failed';
+  if (result.ok) return 'sent';
+  // "Falta configurar Resend" y "el envío falló" piden acciones distintas de
+  // quien administra: la primera se arregla en Vercel, la segunda se reintenta.
+  return result.reason === 'not_configured' ? 'not_configured' : 'send_failed';
 }

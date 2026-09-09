@@ -29,6 +29,7 @@ const INVITACION_AVISO: Record<string, string> = {
   already_sent: 'La invitación a reseñar ya se había enviado antes; no se repitió.',
   no_recipient: 'Pedido sin correo real de clienta: no se envió invitación a reseñar.',
   no_products: 'El pedido no tiene productos que reseñar.',
+  not_configured: 'Pedido entregado. No se envió la invitación: falta configurar el correo (RESEND_API_KEY / EMAIL_FROM).',
   send_failed: 'No se pudo enviar la invitación a reseñar. Queda registrada en email_log.',
 };
 

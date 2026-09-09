@@ -22,7 +22,7 @@ export async function approveReview(formData: FormData): Promise<void> {
 
   const { data: review, error: fetchError } = await supabase
     .from("reviews")
-    .select("product_id, user_id")
+    .select("product_id, user_id, order_id, products:product_id(slug)")
     .eq("id", reviewId)
     .single();
 
@@ -30,6 +30,14 @@ export async function approveReview(formData: FormData): Promise<void> {
     throw new Error("No se encontró la reseña");
   }
 
+  // Dos formas legítimas de haber comprado, y antes solo se contemplaba una:
+  //   · con cuenta  -> se comprueba contra sus pedidos entregados;
+  //   · sin cuenta  -> la reseña llegó por un enlace firmado, que solo se
+  //     emite al entregar un pedido que contiene ese producto. `order_id` ES
+  //     la prueba.
+  // Sin esta segunda rama, aprobar una reseña de invitada le BORRABA la
+  // insignia de compra verificada, que es justo la señal de confianza por la
+  // que existe el flujo.
   let verifiedPurchase = false;
   if (review.user_id) {
     const { data: eligible } = await supabase.rpc("has_verified_purchase", {
@@ -37,6 +45,8 @@ export async function approveReview(formData: FormData): Promise<void> {
       p_product_id: review.product_id,
     });
     verifiedPurchase = Boolean(eligible);
+  } else if (review.order_id) {
+    verifiedPurchase = true;
   }
 
   const { error } = await supabase
@@ -65,6 +75,13 @@ export async function rejectReview(formData: FormData): Promise<void> {
   if (!reviewId) throw new Error("Datos inválidos");
 
   const supabase = await createServerSupabaseClient();
+
+  const { data: review } = await supabase
+    .from("reviews")
+    .select("products:product_id(slug)")
+    .eq("id", reviewId)
+    .single();
+
   const { error } = await supabase
     .from("reviews")
     .update({
@@ -78,7 +95,21 @@ export async function rejectReview(formData: FormData): Promise<void> {
     throw new Error(`No se pudo rechazar la reseña: ${error.message}`);
   }
 
+  revalidateAfterModeration(review?.products?.slug);
+}
+
+/**
+ * Purga lo que muestra reseñas. La ficha del producto se revalidaba: sin ella,
+ * moderar cambiaba la base pero la página seguía sirviendo el render anterior
+ * — una reseña aprobada aparecía sin su insignia de compra verificada hasta
+ * que algo más invalidara la ruta.
+ */
+function revalidateAfterModeration(slug: string | undefined): void {
   revalidatePath("/admin/reviews");
   revalidatePath("/es");
   revalidatePath("/en");
+  if (slug) {
+    revalidatePath(`/es/products/${slug}`);
+    revalidatePath(`/en/products/${slug}`);
+  }
 }
