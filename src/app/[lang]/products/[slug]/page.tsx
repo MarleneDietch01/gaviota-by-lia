@@ -15,7 +15,7 @@ import { CATEGORIES, getAllProducts, getProductBySlug } from '@/lib/catalog/prod
 import { formatMoney } from '@/lib/commerce/money';
 import { isLocale, localizedHref, pageAlternates, pick, socialMeta } from '@/lib/i18n';
 import { getSiteUrl } from '@/lib/site-url';
-import { breadcrumbJsonLd, productJsonLd } from '@/lib/structured-data';
+import { breadcrumbJsonLd, jsonLdScript, productJsonLd } from '@/lib/structured-data';
 
 type Props = PageProps<'/[lang]/products/[slug]'>;
 
@@ -63,16 +63,16 @@ export default async function ProductPage({ params }: Props) {
 
   return (
     <div className="pb-24 lg:pb-0">
-      {/* JSON estático generado en servidor, sin datos de usuario — no hay
-          riesgo de inyección al usar dangerouslySetInnerHTML aquí. */}
+      {/* `jsonLdScript` escapa `<`: sin eso, un valor que contenga
+          `</script>` cerraria la etiqueta y lo siguiente se ejecutaria. */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd(product, lang, siteUrl)) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdScript(productJsonLd(product, lang, siteUrl)) }}
       />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(
+          __html: jsonLdScript(
             breadcrumbJsonLd([
               { name: pick(lang, 'Home', 'Inicio'), url: `${siteUrl}${localizedHref(lang, '/')}` },
               { name: pick(lang, 'Shop', 'Tienda'), url: `${siteUrl}${localizedHref(lang, '/shop')}` },

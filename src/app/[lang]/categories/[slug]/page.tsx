@@ -4,7 +4,7 @@ import { CatalogPage } from '@/components/catalog/catalog-page';
 import { CATEGORIES, isCatalogSort, isCategorySlug, type CatalogQuery } from '@/lib/catalog/products';
 import { isLocale, localizedHref, pageAlternates, pick, socialMeta } from '@/lib/i18n';
 import { getSiteUrl } from '@/lib/site-url';
-import { breadcrumbJsonLd } from '@/lib/structured-data';
+import { breadcrumbJsonLd, jsonLdScript } from '@/lib/structured-data';
 
 type Params = Promise<{ lang: string; slug: string }>;
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
@@ -39,12 +39,12 @@ export default async function CategoryPage({ params, searchParams }: { params: P
 
   return (
     <>
-      {/* JSON estático generado en servidor, sin datos de usuario — no hay
-          riesgo de inyección al usar dangerouslySetInnerHTML aquí. */}
+      {/* `jsonLdScript` escapa `<`: sin eso, un valor que contenga
+          `</script>` cerraria la etiqueta y lo siguiente se ejecutaria. */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(
+          __html: jsonLdScript(
             breadcrumbJsonLd([
               { name: pick(lang, 'Home', 'Inicio'), url: `${siteUrl}${localizedHref(lang, '/')}` },
               { name: pick(lang, 'Shop', 'Tienda'), url: `${siteUrl}${localizedHref(lang, '/shop')}` },

@@ -22,10 +22,41 @@ if (!url) {
   process.exit(1);
 }
 
-const client = new pg.Client({ connectionString: url, ssl: { rejectUnauthorized: false } });
-await client.connect();
+/** Host del destino, sin exponer usuario ni contraseña de la cadena. */
+function databaseHost(connectionString) {
+  try {
+    return new URL(connectionString).hostname || '(desconocido)';
+  } catch {
+    return '(ilegible)';
+  }
+}
+
+/** Solo el stack local cuenta como local. Cualquier otro host es remoto. */
+function isLocalDatabase(connectionString) {
+  const host = databaseHost(connectionString);
+  return host === 'localhost' || host === '127.0.0.1' || host === '::1';
+}
 
 const mode = process.argv[2];
+
+// Se comprueba ANTES de abrir la conexión: si el destino es el equivocado, no
+// hay por qué llegar siquiera a hablar con él.
+//
+// dev.sql crea cuentas de administración con contraseñas que están en el
+// repositorio, y el repositorio es público. Su salvaguarda interna ("aborta si
+// hay pedidos") no protege una base de producción todavía vacía — que es justo
+// el momento en que alguien la sembraría por error.
+if (mode === 'seed' && !isLocalDatabase(url) && process.env.ALLOW_REMOTE_DEV_SEED !== '1') {
+  console.error(`ABORTADO: DATABASE_URL apunta a "${databaseHost(url)}", que no es local.`);
+  console.error('dev.sql crea admin@ejemplo.test y superadmin@ejemplo.test con una');
+  console.error('contraseña pública. Para el catálogo real usa: npm run db:seed:prod');
+  console.error('Si de verdad quieres sembrar datos de desarrollo en una base remota');
+  console.error('(por ejemplo una rama de Supabase), repite con ALLOW_REMOTE_DEV_SEED=1.');
+  process.exit(1);
+}
+
+const client = new pg.Client({ connectionString: url, ssl: { rejectUnauthorized: false } });
+await client.connect();
 
 try {
   if (mode === 'seed') {
