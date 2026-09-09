@@ -14,7 +14,8 @@ dorado en interacción.
 | Superficie clara                            | white-warm | `#fffaf8` |
 | Rosa suave                                  | blush      | `#f3e4ee` |
 | Franja de confianza y kits                  | powder     | `#e6c6de` |
-| Titulares, incluida la cursiva del hero     | ink        | `#3d2b26` |
+| Titulares                                   | ink        | `#3d2b26` |
+| Cursiva del hero (lámina dorada)            | gold-deep  | `#6a5304` |
 | Pie                                         | ivory      | `#f7f0ec` |
 | Botones principales                         | champagne  | `#c9a44a` |
 | Texto de botones principales                | ink        | `#3d2b26` |
@@ -25,6 +26,12 @@ dorado en interacción.
 | Detalles sobre oscuro                       | gold       | `#ebdaaa` |
 | Antetítulos y detalles pequeños sobre claro | gold-deep  | `#6a5304` |
 | Acentos sobre rosa y foco sobre claro       | gold-ink   | `#4a3903` |
+
+La cursiva del hero no es un color plano: es un degradado de `gold-ink` a
+`gold-deep` recortado sobre el texto (`background-clip: text`), con un barrido
+que solo corre bajo `prefers-reduced-motion: no-preference`. `color` queda en
+`gold-deep` como reserva para navegadores sin `background-clip: text`. Medido
+sobre la crema del hero: 9.92:1 en el extremo oscuro y 6.53:1 en el claro.
 
 El pie usa crema, con el panel del logo en blanco cálido y sombras discretas.
 Sus enlaces y textos corridos usan `body`; los encabezados y estados hover
