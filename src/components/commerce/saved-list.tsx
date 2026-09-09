@@ -165,6 +165,17 @@ export function SavedList({
               <p className="mt-1 text-sm text-body">
                 {product.sizeLabel} · {formatMoney(product.price, 'USD', locale === 'es' ? 'es-US' : 'en-US')}
               </p>
+              {kind === 'cart' ? (
+                <p className="mt-2 text-sm font-semibold text-ink">
+                  {pick(locale, 'Item total', 'Total del producto')}: {' '}
+                  {formatMoney(cents(Number(product.price) * quantity), 'USD', locale === 'es' ? 'es-US' : 'en-US')}
+                </p>
+              ) : null}
+              {kind === 'cart' && product.inStock && quantity >= Math.min(99, product.stockAvailable ?? 99) ? (
+                <p className="mt-1 text-xs text-body">
+                  {pick(locale, 'Maximum quantity reached.', 'Alcanzaste la cantidad máxima.')}
+                </p>
+              ) : null}
               {kind === 'cart' && (!product.inStock || (product.stockAvailable !== null && product.stockAvailable < quantity)) ? (
                 <p className="mt-1 text-sm font-semibold text-danger">
                   {pick(locale, 'Out of stock', 'Agotado')}
@@ -174,16 +185,18 @@ export function SavedList({
             {kind === 'cart' ? (
               <div className="col-span-2 flex items-center justify-end gap-2 sm:col-span-1">
                 <button
-                  className="size-11 rounded-xs border border-line"
+                  className="size-11 rounded-xs border border-line-strong transition-colors hover:bg-ivory disabled:opacity-40 disabled:cursor-not-allowed"
                   aria-label={pick(locale, `Decrease ${product.name}`, `Reducir ${product.name}`)}
+                  disabled={quantity <= 1}
                   onClick={() => setBagQuantity(product.slug, quantity - 1)}
                 >
                   −
                 </button>
                 <span className="min-w-6 text-center tabular">{quantity}</span>
                 <button
-                  className="size-11 rounded-xs border border-line"
+                  className="size-11 rounded-xs border border-line-strong transition-colors hover:bg-ivory disabled:opacity-40 disabled:cursor-not-allowed"
                   aria-label={pick(locale, `Increase ${product.name}`, `Aumentar ${product.name}`)}
+                  disabled={!product.inStock || quantity >= Math.min(99, product.stockAvailable ?? 99)}
                   onClick={() => setBagQuantity(product.slug, quantity + 1)}
                 >
                   +
@@ -233,8 +246,8 @@ export function SavedList({
             <p role="alert" className="mt-4 text-sm font-medium text-danger">
               {pick(
                 locale,
-                'One or more items in your bag are out of stock. Remove them to continue.',
-                'Uno o más productos de tu bolsa están agotados. Quítalos para continuar.',
+                'Check the available quantities. Reduce the quantity or remove unavailable items to continue.',
+                'Revisa las cantidades disponibles. Reduce la cantidad o quita los productos agotados para continuar.',
               )}
             </p>
           ) : null}

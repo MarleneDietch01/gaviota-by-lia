@@ -1,10 +1,13 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Clock } from 'lucide-react';
+import { WhatsAppIcon } from '@/components/icons/whatsapp-icon';
+import { whatsAppHref } from '@/lib/contact/whatsapp';
 import { Breadcrumbs } from '@/components/navigation/breadcrumbs';
 import { ProductCard } from '@/components/products/product-card';
 import { QuickAdd, FavoriteToggle } from '@/components/products/product-actions';
 import { ProductGallery } from '@/components/products/product-gallery';
+import { MobilePurchaseBar } from '@/components/products/mobile-purchase-bar';
 import { ProductReviews } from '@/components/products/product-reviews';
 import { getTrustPoints } from '@/components/sections/trust-strip';
 import { Container, Rule, Section } from '@/components/ui/layout-primitives';
@@ -120,17 +123,27 @@ export default async function ProductPage({ params }: Props) {
               >
                 {pick(
                   lang,
-                  'Availability and final price are verified before checkout. No unconfirmed rating, stock or claim is shown.',
-                  'La disponibilidad y el precio final se verifican antes del checkout. No mostramos ratings, stock ni claims sin confirmar.',
+                  'Add your product to the bag and review your total before paying.',
+                  'Añade tu producto a la bolsa y revisa el total antes de pagar.',
                 )}
               </p>
               <div
                 className="hero-rise mt-7 flex max-w-md gap-3"
                 style={{ '--rise-delay': '340ms' } as React.CSSProperties}
               >
-                <QuickAdd slug={product.slug} productName={product.name} locale={lang} inStock={product.inStock} />
+                <QuickAdd slug={product.slug} productName={product.name} locale={lang} inStock={product.inStock} variant="solid" />
                 <FavoriteToggle slug={product.slug} productName={product.name} locale={lang} />
               </div>
+              <a
+                href={whatsAppHref(pick(lang, `Hello, I have a question about ${product.name}.`, `Hola, tengo una pregunta sobre ${product.name}.`))}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-3 inline-flex min-h-11 items-center gap-2 text-sm text-body underline underline-offset-4 hover:text-ink lg:hidden"
+              >
+                <WhatsAppIcon className="size-4 shrink-0" aria-hidden="true" />
+                {pick(lang, 'Questions? Ask us on WhatsApp', '¿Tienes dudas? Escríbenos por WhatsApp')}
+                <span className="sr-only">{pick(lang, '(opens in a new tab)', '(se abre en una pestaña nueva)')}</span>
+              </a>
 
               {/* Prueba de compra: datos operativos reales, visibles antes de
                   pedir la acción. No se añaden urgencias ni inventario falso. */}
@@ -236,17 +249,13 @@ export default async function ProductPage({ params }: Props) {
       {/* La acción sigue disponible después de explorar ingredientes y productos
           relacionados. Solo aparece en móvil, donde el CTA de la ficha deja de
           estar visible al avanzar por la página. */}
-      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-ivory/95 px-5 py-3 shadow-drawer backdrop-blur-sm lg:hidden [padding-bottom:max(0.75rem,env(safe-area-inset-bottom))]">
-        <div className="mx-auto flex max-w-md items-center gap-3">
-          <div className="min-w-0 shrink">
-            <p className="truncate text-meta font-semibold text-ink">{product.name}</p>
-            <p className="text-caption text-body">
-              {formatMoney(product.price, 'USD', lang === 'es' ? 'es-US' : 'en-US')}
-            </p>
-          </div>
-          <QuickAdd slug={product.slug} productName={product.name} locale={lang} inStock={product.inStock} />
-        </div>
-      </div>
+      <MobilePurchaseBar
+        slug={product.slug}
+        productName={product.name}
+        locale={lang}
+        inStock={product.inStock}
+        priceLabel={formatMoney(product.price, 'USD', lang === 'es' ? 'es-US' : 'en-US')}
+      />
     </div>
   );
 }
