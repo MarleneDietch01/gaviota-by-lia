@@ -72,7 +72,7 @@ export default async function AdminProductsPage({
             {count ?? 0} {count === 1 ? 'producto' : 'productos'} en el catálogo.
           </p>
         </div>
-        <Link href="/admin/products/new" className="min-h-10 rounded-xs bg-ink px-5 py-2.5 text-sm font-semibold text-white-warm hover:bg-ink-deep">
+        <Link href="/admin/products/new" className="min-h-10 rounded-xs bg-champagne px-5 py-2.5 text-sm font-semibold text-ink hover:bg-gold">
           Crear producto
         </Link>
         <form className="flex gap-2" action="/admin/products">
@@ -155,7 +155,7 @@ export default async function AdminProductsPage({
                       <td className="px-4 py-3 text-body">{product.featured ? 'Sí' : 'No'}</td>
                       <td className="px-4 py-3 text-right">
                         <div className="mb-2 flex justify-end gap-2">
-                          <Link href={`/admin/products/${product.id}`} className="min-h-9 rounded-xs bg-ink px-3 py-2 text-xs font-semibold text-white-warm">Editar</Link>
+                          <Link href={`/admin/products/${product.id}`} className="min-h-9 rounded-xs bg-champagne px-3 py-2 text-xs font-semibold text-ink hover:bg-gold">Editar</Link>
                           <Link href={`/es/products/${product.slug}`} target="_blank" className="min-h-9 rounded-xs border border-ink/25 px-3 py-2 text-xs font-semibold">Vista previa</Link>
                         </div>
                         <form action={toggleStatus}>

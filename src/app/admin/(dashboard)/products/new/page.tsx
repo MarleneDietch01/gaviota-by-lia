@@ -26,7 +26,7 @@ export default async function NewProductPage({ searchParams }: { searchParams: P
         <div><label htmlFor="price" className="text-sm font-medium">Precio USD</label><input id="price" name="price" type="number" min="0.01" step="0.01" required className={input}/></div>
         <div><label htmlFor="sizeLabel" className="text-sm font-medium">Presentación</label><input id="sizeLabel" name="sizeLabel" placeholder="236 mL" className={input}/></div>
       </div>
-      <button className="min-h-11 rounded-xs bg-ink px-6 text-sm font-semibold text-white-warm hover:bg-ink-deep">Crear borrador</button>
+      <button className="min-h-11 rounded-xs bg-champagne px-6 text-sm font-semibold text-ink hover:bg-gold">Crear borrador</button>
     </form>
   </div>;
 }

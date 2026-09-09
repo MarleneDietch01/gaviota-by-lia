@@ -1,10 +1,10 @@
-import type { ReactNode } from 'react';
-import Link from 'next/link';
-import { redirect } from 'next/navigation';
-import { ArrowLeft } from 'lucide-react';
-import { AuthorizationError, requireAdmin } from '@/lib/auth/guards';
-import { signOutAdmin } from './actions';
-import { AdminNav } from './admin-nav';
+import type { ReactNode } from "react";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
+import { AuthorizationError, requireAdmin } from "@/lib/auth/guards";
+import { signOutAdmin } from "./actions";
+import { AdminNav } from "./admin-nav";
 
 /**
  * Guard del panel entero.
@@ -15,25 +15,29 @@ import { AdminNav } from './admin-nav';
  * rol admin/super_admin), se redirige al login; cualquier otro error sube tal
  * cual, porque eso sí sería un fallo real que no hay que enmascarar.
  */
-export default async function AdminDashboardLayout({ children }: { children: ReactNode }) {
+export default async function AdminDashboardLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
   let user;
   try {
     user = await requireAdmin();
   } catch (error) {
     if (error instanceof AuthorizationError) {
-      redirect('/admin/login');
+      redirect("/admin/login");
     }
     throw error;
   }
 
   return (
-    <div className="flex min-h-dvh flex-col lg:flex-row">
+    <div className="flex min-h-dvh flex-col bg-blush/35 lg:flex-row">
       {/* Cabecera móvil/tablet: la barra lateral fija de 224px no cabe con
           contenido usable por debajo de `lg` — y la dueña puede despachar un
           pedido desde el teléfono, así que este rango no es secundario. La
           navegación pasa a una fila horizontal con scroll, sin ocultar
           ningún enlace detrás de un menú colapsado. */}
-      <header className="flex items-center justify-between gap-4 border-b border-line bg-white-warm px-4 py-3 lg:hidden">
+      <header className="sticky top-0 z-40 flex items-center justify-between gap-4 border-b border-line bg-white-warm/95 px-4 py-3 backdrop-blur-md lg:hidden">
         <Link href="/admin" className="font-display text-lg">
           Gaviota <span className="accent-word">by Lia</span>
         </Link>
@@ -48,7 +52,7 @@ export default async function AdminDashboardLayout({ children }: { children: Rea
       </header>
       <AdminNav mobile />
 
-      <aside className="hidden w-56 shrink-0 flex-col justify-between border-r border-line bg-white-warm p-5 lg:flex">
+      <aside className="hidden w-64 shrink-0 flex-col justify-between border-r border-line bg-ivory p-6 lg:sticky lg:top-0 lg:flex lg:h-dvh">
         <div>
           <Link href="/admin" className="font-display text-lg">
             Gaviota <span className="accent-word">by Lia</span>
@@ -67,7 +71,7 @@ export default async function AdminDashboardLayout({ children }: { children: Rea
 
           <p className="truncate text-xs text-muted">{user.email}</p>
           <p className="mb-3 text-caption uppercase tracking-[0.1em] text-muted">
-            {user.role === 'super_admin' ? 'Super admin' : 'Admin'}
+            {user.role === "super_admin" ? "Super admin" : "Admin"}
           </p>
           <form action={signOutAdmin}>
             <button
@@ -80,7 +84,9 @@ export default async function AdminDashboardLayout({ children }: { children: Rea
         </div>
       </aside>
 
-      <main className="min-w-0 flex-1 p-4 sm:p-8 lg:p-10">{children}</main>
+      <main className="min-w-0 flex-1 p-4 sm:p-8 lg:p-10 xl:p-12">
+        <div className="mx-auto w-full max-w-[90rem]">{children}</div>
+      </main>
     </div>
   );
 }

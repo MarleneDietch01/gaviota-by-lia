@@ -1,8 +1,8 @@
-import Link from 'next/link';
-import { createServerSupabaseClient } from '@/lib/supabase/server';
-import { cents, formatMoney } from '@/lib/commerce/money';
+import Link from "next/link";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { cents, formatMoney } from "@/lib/commerce/money";
 
-export const metadata = { title: 'Panel' };
+export const metadata = { title: "Panel" };
 
 /**
  * Panel — rediseño 2026-08.
@@ -40,10 +40,10 @@ export const metadata = { title: 'Panel' };
  * -----------------------------------------------------------------------------
  */
 
-const TEST_EMAIL_SUFFIX = '@gaviotabylia.test';
+const TEST_EMAIL_SUFFIX = "@gaviotabylia.test";
 // Ver el mismo comentario en `orders/page.tsx`: correo de relleno de checkout,
 // no una clienta real.
-const PLACEHOLDER_EMAIL = 'sin-correo@pendiente.gaviotabylia.com';
+const PLACEHOLDER_EMAIL = "sin-correo@pendiente.gaviotabylia.com";
 
 // "Pedidos recientes" es "los últimos por fecha", no "los que necesitan
 // atención" — para eso están las tarjetas de arriba. Sin el estado visible,
@@ -51,23 +51,27 @@ const PLACEHOLDER_EMAIL = 'sin-correo@pendiente.gaviotabylia.com';
 // borrar por el trigger de auditoría) se lee como actividad real sin
 // explicación. Mismo mapa que `orders/page.tsx`.
 const STATUS_LABEL: Record<string, string> = {
-  pending_payment: 'Pago pendiente',
-  paid: 'Pagado',
-  processing: 'En proceso',
-  ready_to_ship: 'Listo para enviar',
-  shipped: 'Enviado',
-  delivered: 'Entregado',
-  cancelled: 'Cancelado',
-  refunded: 'Reembolsado',
-  partially_refunded: 'Reembolso parcial',
+  pending_payment: "Pago pendiente",
+  paid: "Pagado",
+  processing: "En proceso",
+  ready_to_ship: "Listo para enviar",
+  shipped: "Enviado",
+  delivered: "Entregado",
+  cancelled: "Cancelado",
+  refunded: "Reembolsado",
+  partially_refunded: "Reembolso parcial",
 };
 
-export default async function AdminDashboardPage({ searchParams }: { searchParams: Promise<{ period?: string }> }) {
-  const { period = 'month' } = await searchParams;
+export default async function AdminDashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ period?: string }>;
+}) {
+  const { period = "month" } = await searchParams;
   const supabase = await createServerSupabaseClient();
   const startOfMonth = new Date();
-  if (period === '7d') startOfMonth.setDate(startOfMonth.getDate() - 7);
-  else if (period === '30d') startOfMonth.setDate(startOfMonth.getDate() - 30);
+  if (period === "7d") startOfMonth.setDate(startOfMonth.getDate() - 7);
+  else if (period === "30d") startOfMonth.setDate(startOfMonth.getDate() - 30);
   else startOfMonth.setDate(1);
   startOfMonth.setHours(0, 0, 0, 0);
 
@@ -84,10 +88,10 @@ export default async function AdminDashboardPage({ searchParams }: { searchParam
     // Pedidos pagados: lo que de verdad se vendió, sin importar en qué punto
     // del despacho estén.
     supabase
-      .from('orders')
-      .select('id', { count: 'exact', head: true })
-      .eq('payment_status', 'paid')
-      .not('customer_email', 'ilike', `%${TEST_EMAIL_SUFFIX}`),
+      .from("orders")
+      .select("id", { count: "exact", head: true })
+      .eq("payment_status", "paid")
+      .not("customer_email", "ilike", `%${TEST_EMAIL_SUFFIX}`),
     // Pendientes de enviar: pagados que aún no salieron de la tienda. Es la
     // cifra que dice qué hacer HOY, no cuánto se vendió en total. Misma
     // exclusión de `.test` que "Pedidos pagados" — de lo contrario la fila de
@@ -95,62 +99,90 @@ export default async function AdminDashboardPage({ searchParams }: { searchParam
     // mientras "Pedidos pagados" ya la excluye, y las dos cifras se
     // contradicen en la primera pantalla que ella ve.
     supabase
-      .from('orders')
-      .select('id', { count: 'exact', head: true })
-      .eq('payment_status', 'paid')
-      .in('order_status', ['paid', 'processing', 'ready_to_ship'])
-      .not('customer_email', 'ilike', `%${TEST_EMAIL_SUFFIX}`),
+      .from("orders")
+      .select("id", { count: "exact", head: true })
+      .eq("payment_status", "paid")
+      .in("order_status", ["paid", "processing", "ready_to_ship"])
+      .not("customer_email", "ilike", `%${TEST_EMAIL_SUFFIX}`),
     // Carritos abandonados: `pending_payment`, etiquetados como tal y APARTE
     // de cualquier cifra de venta — nunca se suman a "pagados".
     supabase
-      .from('orders')
-      .select('id', { count: 'exact', head: true })
-      .eq('order_status', 'pending_payment'),
+      .from("orders")
+      .select("id", { count: "exact", head: true })
+      .eq("order_status", "pending_payment"),
     supabase
-      .from('orders')
-      .select('grand_total, customer_email')
-      .eq('payment_status', 'paid')
-      .gte('created_at', startOfMonth.toISOString()),
+      .from("orders")
+      .select("grand_total, customer_email")
+      .eq("payment_status", "paid")
+      .gte("created_at", startOfMonth.toISOString()),
     // Ver el comentario en el dashboard original: sigue siendo el respaldo
     // dentro del sitio, no el mecanismo principal de gestión de disputas.
     // Mismo criterio de exclusión que el resto de las métricas: una disputa
     // en un pedido `.test` no es una disputa real.
     supabase
-      .from('payments')
-      .select('id, orders!inner(customer_email)', { count: 'exact', head: true })
-      .eq('status', 'disputed')
-      .not('orders.customer_email', 'ilike', `%${TEST_EMAIL_SUFFIX}`),
-    supabase.from('reviews').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
+      .from("payments")
+      .select("id, orders!inner(customer_email)", {
+        count: "exact",
+        head: true,
+      })
+      .eq("status", "disputed")
+      .not("orders.customer_email", "ilike", `%${TEST_EMAIL_SUFFIX}`),
     supabase
-      .from('products')
-      .select('id, track_inventory, product_variants(stock_quantity, reserved_quantity, low_stock_threshold)')
-      .eq('status', 'active'),
+      .from("reviews")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "pending"),
     supabase
-      .from('orders')
-      .select('id, order_number, customer_email, grand_total, order_status, payment_status, created_at')
-      .order('created_at', { ascending: false })
+      .from("products")
+      .select(
+        "id, track_inventory, product_variants(stock_quantity, reserved_quantity, low_stock_threshold)",
+      )
+      .eq("status", "active"),
+    supabase
+      .from("orders")
+      .select(
+        "id, order_number, customer_email, grand_total, order_status, payment_status, created_at",
+      )
+      .order("created_at", { ascending: false })
       .limit(8),
   ]);
 
   const [{ data: refundedPayments }, { data: soldItems }] = await Promise.all([
-    supabase.from('payments').select('amount, status, orders!inner(customer_email, created_at)')
-      .in('status', ['refunded', 'partially_refunded']).gte('orders.created_at', startOfMonth.toISOString())
-      .not('orders.customer_email', 'ilike', `%${TEST_EMAIL_SUFFIX}`),
-    supabase.from('order_items').select('product_name, quantity, orders!inner(payment_status, customer_email, created_at)')
-      .eq('orders.payment_status', 'paid').gte('orders.created_at', startOfMonth.toISOString())
-      .not('orders.customer_email', 'ilike', `%${TEST_EMAIL_SUFFIX}`),
+    supabase
+      .from("payments")
+      .select("amount, status, orders!inner(customer_email, created_at)")
+      .in("status", ["refunded", "partially_refunded"])
+      .gte("orders.created_at", startOfMonth.toISOString())
+      .not("orders.customer_email", "ilike", `%${TEST_EMAIL_SUFFIX}`),
+    supabase
+      .from("order_items")
+      .select(
+        "product_name, quantity, orders!inner(payment_status, customer_email, created_at)",
+      )
+      .eq("orders.payment_status", "paid")
+      .gte("orders.created_at", startOfMonth.toISOString())
+      .not("orders.customer_email", "ilike", `%${TEST_EMAIL_SUFFIX}`),
   ]);
   // `payments.amount` es el importe COBRADO, no el devuelto. En un reembolso
   // total coinciden; en uno parcial no, y el webhook (charge.refunded) no
   // guarda el monto devuelto en ninguna columna. Así que solo se suman los
   // totales —donde amount sí es el reembolso— y los parciales se cuentan
   // aparte para que la propietaria sepa que el número es un mínimo.
-  const fullyRefunded = (refundedPayments ?? []).filter((p) => p.status === 'refunded');
-  const partialRefundCount = (refundedPayments ?? []).filter((p) => p.status === 'partially_refunded').length;
+  const fullyRefunded = (refundedPayments ?? []).filter(
+    (p) => p.status === "refunded",
+  );
+  const partialRefundCount = (refundedPayments ?? []).filter(
+    (p) => p.status === "partially_refunded",
+  ).length;
   const refundCents = fullyRefunded.reduce((sum, p) => sum + p.amount, 0);
-  const bestSellerMap = new Map<string,number>();
-  for (const item of soldItems ?? []) bestSellerMap.set(item.product_name,(bestSellerMap.get(item.product_name)??0)+item.quantity);
-  const bestSellers=[...bestSellerMap].sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const bestSellerMap = new Map<string, number>();
+  for (const item of soldItems ?? [])
+    bestSellerMap.set(
+      item.product_name,
+      (bestSellerMap.get(item.product_name) ?? 0) + item.quantity,
+    );
+  const bestSellers = [...bestSellerMap]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5);
 
   const monthlyRevenueCents = (monthlyPaidOrders ?? [])
     .filter((o) => !o.customer_email.toLowerCase().endsWith(TEST_EMAIL_SUFFIX))
@@ -160,23 +192,55 @@ export default async function AdminDashboardPage({ searchParams }: { searchParam
     if (!product.track_inventory) return false;
     const variant = product.product_variants?.[0];
     if (!variant) return false;
-    return variant.stock_quantity - variant.reserved_quantity <= variant.low_stock_threshold;
+    return (
+      variant.stock_quantity - variant.reserved_quantity <=
+      variant.low_stock_threshold
+    );
   });
 
   const hasActionItems =
-    (pendingShipmentCount ?? 0) > 0 || (pendingReviewsCount ?? 0) > 0 || outOfStockProducts.length > 0;
+    (pendingShipmentCount ?? 0) > 0 ||
+    (pendingReviewsCount ?? 0) > 0 ||
+    outOfStockProducts.length > 0;
 
   return (
     <div>
-      <h1 className="font-display text-h2">Panel</h1>
-      <p className="mt-1 text-sm text-body">Lo que necesita tu atención hoy.</p>
-      <form className="mt-4"><label className="text-sm font-medium">Período <select name="period" defaultValue={period} className="ml-2 min-h-9 rounded-xs border border-line-strong bg-white-warm px-3"><option value="month">Este mes</option><option value="7d">Últimos 7 días</option><option value="30d">Últimos 30 días</option></select></label><button className="ml-2 min-h-9 rounded-xs border border-ink/25 px-3 text-sm">Aplicar</button></form>
+      <header className="rounded-md border border-line bg-white-warm p-6 shadow-subtle sm:p-8">
+        <div className="flex flex-wrap items-end justify-between gap-6">
+          <div>
+            <p className="eyebrow text-gold-deep">Resumen del negocio</p>
+            <h1 className="mt-2 font-display text-h2">Panel</h1>
+            <p className="mt-2 text-sm text-body">
+              Lo que necesita tu atención hoy.
+            </p>
+          </div>
+          <form className="flex flex-wrap items-end gap-2 rounded-sm bg-ivory p-2">
+            <label className="text-caption font-semibold uppercase tracking-[0.08em] text-body">
+              <span className="sr-only">Período</span>
+              <select
+                name="period"
+                defaultValue={period}
+                className="min-h-10 rounded-xs border border-line-strong bg-white-warm px-3 text-sm font-medium normal-case tracking-normal text-ink"
+              >
+                <option value="month">Este mes</option>
+                <option value="7d">Últimos 7 días</option>
+                <option value="30d">Últimos 30 días</option>
+              </select>
+            </label>
+            <button className="min-h-10 rounded-xs bg-champagne px-4 text-sm font-semibold text-ink hover:bg-gold">
+              Aplicar
+            </button>
+          </form>
+        </div>
+      </header>
 
       {disputedCount ? (
         <div className="mt-6 rounded-sm border border-danger/40 bg-danger/10 p-4">
           <p className="text-sm font-semibold text-danger">
-            {disputedCount} {disputedCount === 1 ? 'pago en disputa' : 'pagos en disputa'} — revisa y responde
-            en el dashboard del proveedor de pago antes de que venza el plazo.
+            {disputedCount}{" "}
+            {disputedCount === 1 ? "pago en disputa" : "pagos en disputa"} —
+            revisa y responde en el dashboard del proveedor de pago antes de que
+            venza el plazo.
           </p>
         </div>
       ) : null}
@@ -184,8 +248,10 @@ export default async function AdminDashboardPage({ searchParams }: { searchParam
       {/* ---------------------------------------------------------------- */}
       {/* Qué hacer hoy — acciones, no solo cifras                          */}
       {/* ---------------------------------------------------------------- */}
-      <section aria-labelledby="today-heading" className="mt-8">
-        <h2 id="today-heading" className="text-h3">Hoy</h2>
+      <section aria-labelledby="today-heading" className="mt-10">
+        <h2 id="today-heading" className="text-h3">
+          Hoy
+        </h2>
         {hasActionItems ? (
           <ul className="mt-4 space-y-3">
             {(pendingShipmentCount ?? 0) > 0 ? (
@@ -196,11 +262,18 @@ export default async function AdminDashboardPage({ searchParams }: { searchParam
                 >
                   <span>
                     <span className="block font-semibold text-ink">
-                      {pendingShipmentCount} {pendingShipmentCount === 1 ? 'pedido pagado por enviar' : 'pedidos pagados por enviar'}
+                      {pendingShipmentCount}{" "}
+                      {pendingShipmentCount === 1
+                        ? "pedido pagado por enviar"
+                        : "pedidos pagados por enviar"}
                     </span>
-                    <span className="text-sm text-body">Marca cada uno como enviado y registra el rastreo.</span>
+                    <span className="text-sm text-body">
+                      Marca cada uno como enviado y registra el rastreo.
+                    </span>
                   </span>
-                  <span aria-hidden="true" className="text-gold-ink">→</span>
+                  <span aria-hidden="true" className="text-gold-ink">
+                    →
+                  </span>
                 </Link>
               </li>
             ) : null}
@@ -213,11 +286,18 @@ export default async function AdminDashboardPage({ searchParams }: { searchParam
                 >
                   <span>
                     <span className="block font-semibold text-ink">
-                      {pendingReviewsCount} {pendingReviewsCount === 1 ? 'reseña pendiente de moderar' : 'reseñas pendientes de moderar'}
+                      {pendingReviewsCount}{" "}
+                      {pendingReviewsCount === 1
+                        ? "reseña pendiente de moderar"
+                        : "reseñas pendientes de moderar"}
                     </span>
-                    <span className="text-sm text-body">Apruébalas o recházalas antes de que se publiquen.</span>
+                    <span className="text-sm text-body">
+                      Apruébalas o recházalas antes de que se publiquen.
+                    </span>
                   </span>
-                  <span aria-hidden="true" className="text-gold-ink">→</span>
+                  <span aria-hidden="true" className="text-gold-ink">
+                    →
+                  </span>
                 </Link>
               </li>
             ) : null}
@@ -230,54 +310,112 @@ export default async function AdminDashboardPage({ searchParams }: { searchParam
                 >
                   <span>
                     <span className="block font-semibold text-ink">
-                      {outOfStockProducts.length} {outOfStockProducts.length === 1 ? 'producto con stock bajo' : 'productos con stock bajo'}
+                      {outOfStockProducts.length}{" "}
+                      {outOfStockProducts.length === 1
+                        ? "producto con stock bajo"
+                        : "productos con stock bajo"}
                     </span>
-                    <span className="text-sm text-body">Revisa los niveles mínimos y repón cuando corresponda.</span>
+                    <span className="text-sm text-body">
+                      Revisa los niveles mínimos y repón cuando corresponda.
+                    </span>
                   </span>
-                  <span aria-hidden="true" className="text-gold-ink">→</span>
+                  <span aria-hidden="true" className="text-gold-ink">
+                    →
+                  </span>
                 </Link>
               </li>
             ) : null}
           </ul>
         ) : (
           <p className="mt-4 rounded-sm border border-line bg-white-warm p-5 text-sm text-body">
-            No hay nada urgente pendiente: sin pedidos por enviar, sin reseñas por moderar y sin productos agotados.
+            No hay nada urgente pendiente: sin pedidos por enviar, sin reseñas
+            por moderar y sin productos agotados.
           </p>
         )}
       </section>
 
-      <section className="mt-10 grid gap-4 sm:grid-cols-2" aria-label="Reembolsos y productos más vendidos">
-        <div className="rounded-sm border border-line bg-white-warm p-5"><h2 className="text-h3">Reembolsos</h2><p className="mt-2 text-2xl font-semibold">{formatMoney(cents(refundCents),'USD','es-US')}</p><p className="text-xs text-muted">Reembolsos totales del período.{partialRefundCount>0?` ${partialRefundCount} ${partialRefundCount===1?'reembolso parcial no incluido':'reembolsos parciales no incluidos'} — revisa el importe en el panel del proveedor.`:''}</p></div>
-        <div className="rounded-sm border border-line bg-white-warm p-5"><h2 className="text-h3">Más vendidos</h2>{bestSellers.length?<ol className="mt-3 space-y-2 text-sm">{bestSellers.map(([name,quantity])=><li key={name} className="flex justify-between"><span>{name}</span><strong>{quantity}</strong></li>)}</ol>:<p className="mt-3 text-sm text-muted">No hay ventas cobradas en este período.</p>}</div>
+      <section
+        className="mt-10 grid gap-4 sm:grid-cols-2"
+        aria-label="Reembolsos y productos más vendidos"
+      >
+        <div className="rounded-sm border border-line bg-white-warm p-5">
+          <h2 className="text-h3">Reembolsos</h2>
+          <p className="mt-2 text-2xl font-semibold">
+            {formatMoney(cents(refundCents), "USD", "es-US")}
+          </p>
+          <p className="text-xs text-muted">
+            Reembolsos totales del período.
+            {partialRefundCount > 0
+              ? ` ${partialRefundCount} ${partialRefundCount === 1 ? "reembolso parcial no incluido" : "reembolsos parciales no incluidos"} — revisa el importe en el panel del proveedor.`
+              : ""}
+          </p>
+        </div>
+        <div className="rounded-sm border border-line bg-white-warm p-5">
+          <h2 className="text-h3">Más vendidos</h2>
+          {bestSellers.length ? (
+            <ol className="mt-3 space-y-2 text-sm">
+              {bestSellers.map(([name, quantity]) => (
+                <li key={name} className="flex justify-between">
+                  <span>{name}</span>
+                  <strong>{quantity}</strong>
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <p className="mt-3 text-sm text-muted">
+              No hay ventas cobradas en este período.
+            </p>
+          )}
+        </div>
       </section>
 
       {/* ---------------------------------------------------------------- */}
       {/* Números del negocio — jerarquía real, no cuatro tarjetas iguales  */}
       {/* ---------------------------------------------------------------- */}
       <section aria-labelledby="numbers-heading" className="mt-10">
-        <h2 id="numbers-heading" className="text-h3">Este mes</h2>
+        <h2 id="numbers-heading" className="text-h3">
+          Este mes
+        </h2>
         <div className="mt-4 grid gap-4 sm:grid-cols-3">
-          <div className="rounded-sm border border-line bg-white-warm p-5 sm:col-span-2">
-            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted">Ingresos del mes</p>
-            <p className="tabular mt-2 text-3xl font-semibold text-ink">
-              {formatMoney(cents(monthlyRevenueCents), 'USD', 'es-US')}
+          <div className="rounded-md border border-champagne/45 bg-gold/30 p-6 shadow-subtle sm:col-span-2">
+            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted">
+              Ingresos del mes
             </p>
-            <p className="mt-1 text-xs text-muted">Solo pedidos pagados, sin las filas de prueba.</p>
+            <p className="tabular mt-2 text-3xl font-semibold text-ink">
+              {formatMoney(cents(monthlyRevenueCents), "USD", "es-US")}
+            </p>
+            <p className="mt-1 text-xs text-muted">
+              Solo pedidos pagados, sin las filas de prueba.
+            </p>
           </div>
           <div className="rounded-sm border border-line bg-white-warm p-5">
-            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted">Pedidos pagados</p>
-            <p className="tabular mt-2 text-2xl font-semibold">{paidCount ?? 0}</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted">
+              Pedidos pagados
+            </p>
+            <p className="tabular mt-2 text-2xl font-semibold">
+              {paidCount ?? 0}
+            </p>
           </div>
         </div>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <div className="rounded-sm border border-line bg-white-warm p-5">
-            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted">Pendientes de enviar</p>
-            <p className="tabular mt-2 text-2xl font-semibold">{pendingShipmentCount ?? 0}</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted">
+              Pendientes de enviar
+            </p>
+            <p className="tabular mt-2 text-2xl font-semibold">
+              {pendingShipmentCount ?? 0}
+            </p>
           </div>
           <div className="rounded-sm border border-dashed border-line-strong bg-ivory p-5">
-            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted">Carritos abandonados</p>
-            <p className="tabular mt-2 text-2xl font-semibold text-muted">{abandonedCount ?? 0}</p>
-            <p className="mt-1 text-xs text-muted">Pago nunca completado — no son ventas.</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted">
+              Carritos abandonados
+            </p>
+            <p className="tabular mt-2 text-2xl font-semibold text-muted">
+              {abandonedCount ?? 0}
+            </p>
+            <p className="mt-1 text-xs text-muted">
+              Pago nunca completado — no son ventas.
+            </p>
           </div>
         </div>
       </section>
@@ -287,8 +425,13 @@ export default async function AdminDashboardPage({ searchParams }: { searchParam
       {/* ---------------------------------------------------------------- */}
       <section aria-labelledby="recent-heading" className="mt-10">
         <div className="flex items-center justify-between">
-          <h2 id="recent-heading" className="text-h3">Pedidos recientes</h2>
-          <Link href="/admin/orders" className="text-sm font-medium text-gold-deep hover:text-gold-ink">
+          <h2 id="recent-heading" className="text-h3">
+            Pedidos recientes
+          </h2>
+          <Link
+            href="/admin/orders"
+            className="text-sm font-medium text-gold-deep hover:text-gold-ink"
+          >
             Ver todos
           </Link>
         </div>
@@ -301,10 +444,14 @@ export default async function AdminDashboardPage({ searchParams }: { searchParam
                   href={`/admin/orders/${order.id}`}
                   className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 transition-colors hover:bg-ivory"
                 >
-                  <span className="tabular font-medium">{order.order_number}</span>
+                  <span className="tabular font-medium">
+                    {order.order_number}
+                  </span>
                   <span className="text-sm text-body">
                     {order.customer_email === PLACEHOLDER_EMAIL ? (
-                      <span className="italic text-muted">— Sin datos de cliente</span>
+                      <span className="italic text-muted">
+                        — Sin datos de cliente
+                      </span>
                     ) : (
                       order.customer_email
                     )}
@@ -313,7 +460,7 @@ export default async function AdminDashboardPage({ searchParams }: { searchParam
                     {STATUS_LABEL[order.order_status] ?? order.order_status}
                   </span>
                   <span className="tabular text-sm font-semibold">
-                    {formatMoney(cents(order.grand_total), 'USD', 'es-US')}
+                    {formatMoney(cents(order.grand_total), "USD", "es-US")}
                   </span>
                 </Link>
               </li>

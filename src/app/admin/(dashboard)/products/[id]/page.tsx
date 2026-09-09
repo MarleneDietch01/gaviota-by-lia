@@ -214,7 +214,7 @@ export default async function AdminProductEditPage({
             <div className="flex gap-3">
               <button
                 type="submit"
-                className="min-h-10 rounded-xs bg-ink px-5 text-sm font-semibold text-white-warm transition-colors hover:bg-ink-deep"
+                className="min-h-10 rounded-xs bg-champagne px-5 text-sm font-semibold text-ink transition-colors hover:bg-gold"
               >
                 Subir foto
               </button>
@@ -273,7 +273,7 @@ export default async function AdminProductEditPage({
               </div>
               <button
                 type="submit"
-                className="min-h-10 rounded-xs bg-ink px-5 text-sm font-semibold text-white-warm transition-colors hover:bg-ink-deep"
+                className="min-h-10 rounded-xs bg-champagne px-5 text-sm font-semibold text-ink transition-colors hover:bg-gold"
               >
                 Guardar
               </button>
@@ -470,7 +470,7 @@ export default async function AdminProductEditPage({
 
         <button
           type="submit"
-          className="min-h-11 rounded-xs bg-ink px-6 text-sm font-semibold text-white-warm transition-colors hover:bg-ink-deep"
+          className="min-h-11 rounded-xs bg-champagne px-6 text-sm font-semibold text-ink transition-colors hover:bg-gold"
         >
           Guardar cambios
         </button>

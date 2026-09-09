@@ -16,6 +16,7 @@ import { Community } from '@/components/sections/community';
 import { Sets } from '@/components/sections/sets';
 import { Faq } from '@/components/sections/faq';
 import { Newsletter } from '@/components/sections/newsletter';
+import { HomeReviews } from '@/components/sections/home-reviews';
 
 /**
  * Home.
@@ -40,14 +41,15 @@ import { Newsletter } from '@/components/sections/newsletter';
  *   Ingredientes ...... marfil
  *   Fundadora ......... blanco
  *   Antes/después ..... rosa empolvado  ← oculta, ver abajo
- *   Comunidad ......... vino
+ *   Comunidad ......... espresso
+ *   Reseñas ........... blanco           ← solo con reseñas aprobadas
  *   Sets .............. rosa empolvado
  *   FAQ ............... blanco          ← oculta, ver abajo
  *   Newsletter ........ marfil
- *   Footer ............ vino
+ *   Footer ............ marfil
  *
  * Secciones que existen en el sistema de contenido pero NO se renderizan porque
- * están en `draft`: `home.testimonials`, `home.ugc`, `home.instagram`,
+ * están en `draft`: `home.ugc`, `home.instagram`,
  * `home.beforeAfter`, `home.faq`. `getSection()` devuelve null y el componente
  * no pinta nada. `BeforeAfter`/`Faq` tienen además un candado propio (un
  * array de contenido vacío a propósito, ver `src/lib/content/
@@ -73,6 +75,7 @@ export default async function HomePage({ params }: PageProps<'/[lang]'>) {
       <Founder locale={lang} />
       <BeforeAfter locale={lang} />
       <Community locale={lang} />
+      <HomeReviews locale={lang} />
       <Sets locale={lang} />
       <Faq locale={lang} />
       <Newsletter locale={lang} />
