@@ -11,10 +11,13 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { Client as PgClient } from 'pg';
+import { canRunAgainst } from '../local-database';
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
 const ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '';
-const describeRls = SUPABASE_URL && ANON_KEY ? describe : describe.skip;
+// Nunca contra producción: esta suite intenta escrituras reales.
+const describeRls =
+  ANON_KEY && canRunAgainst(SUPABASE_URL, 'rls') ? describe : describe.skip;
 
 const CUSTOMER_A = { email: 'cliente.a@ejemplo.test', password: 'DevPassword123!' };
 const CUSTOMER_B = { email: 'cliente.b@ejemplo.test', password: 'DevPassword123!' };

@@ -1,7 +1,11 @@
 import { config } from 'dotenv';
 import WebSocket from 'ws';
 
-// Carga .env.local para las pruebas de integración contra Supabase.
+// Las pruebas de integración escriben en una base real, así que su destino
+// se declara aparte: `.env.test.local` (ignorado por git) tiene prioridad
+// sobre `.env.local`, que en un árbol normal apunta a PRODUCCIÓN. dotenv no
+// pisa variables ya definidas, así que el primero que se carga manda.
+config({ path: '.env.test.local' });
 config({ path: '.env.local' });
 config({ path: '.env' });
 
