@@ -24,7 +24,7 @@ severidad. Cada riesgo incluye evidencia, impacto y mitigación.
 | R11 | Todas las fotos son verticales | 🟠 | No |
 | R12 | Contenido contaminado (HTML de ChatGPT, Unicode) | 🟡 | No |
 | R13 | Dependencia de apps de terceros | 🟡 | No |
-| R14 | Correo transaccional desde Gmail | 🟡 | Sí |
+| R14 | Correo transaccional desde Gmail | 🟡 | ✅ resuelto 2026-09-10 |
 | R15 | Sin analítica histórica | 🟡 | No |
 | R16 | La propietaria no es técnica | 🟡 | No |
 | R17 | Concurrencia sobre la última unidad | 🟡 | No |
@@ -342,15 +342,30 @@ no se controla. Sin SPF/DKIM/DMARC sobre dominio propio, las confirmaciones de p
 a spam. Un cliente que paga y no recibe confirmación es una incidencia de atención directa.
 
 **Mitigación.**
-1. Verificar `gaviotabylia.com` en Resend y configurar los registros DNS. **Pendiente — sin esto RESEND_API_KEY no manda nada real.**
+1. Verificar `gaviotabylia.com` en Resend y configurar los registros DNS. ✅ hecho — DKIM (`resend._domainkey`), SPF y MX de rebotes en `send.gaviotabylia.com` resuelven en público; el DNS se gestiona en Vercel (`ns1/ns2.vercel-dns.com`).
 2. Enviar desde `pedidos@gaviotabylia.com`; responder-a puede seguir siendo el Gmail. ✅ hecho — `EMAIL_FROM` en `.env.example`, `replyTo` fijado en `src/lib/email/resend.ts`.
-3. Configurar DMARC en modo monitor antes del lanzamiento. Pendiente (DNS).
-4. Prueba de entrega real a Gmail, Outlook y iCloud antes de abrir la tienda. Pendiente — solo posible una vez configurado el DNS.
+3. Configurar DMARC en modo monitor antes del lanzamiento. ✅ hecho — `_dmarc` TXT = `v=DMARC1; p=none`.
+4. Prueba de entrega real a Gmail, Outlook y iCloud antes de abrir la tienda. Parcial — el 2026-09-10 el recibo y la notificación de venta salieron aceptados por Resend hacia Gmail (`email_log` con `provider_id`). Falta Outlook e iCloud.
 5. Registrar cada envío en base de datos para poder reenviar manualmente desde el panel. ✅ hecho — `email_log` (ya existía) + botón "Reenviar recibo" en `/admin/orders/[id]`.
 
 **Estado del código (2026-09-04):** el recibo de compra a la clienta y la notificación de venta a la propietaria ya están implementados y enganchados a los tres webhooks de pago (`src/lib/email/order-confirmation.ts`). Sin `RESEND_API_KEY` ni `EMAIL_FROM`/`ADMIN_EMAIL` configurados con valores reales, el envío se omite en silencio (se registra en `email_log` como `not_configured`) — un pedido pagado nunca falla por esto, pero tampoco sale ningún correo hasta que se complete el punto 1.
 
-**Responsable:** propietaria (DNS, punto 1 y 3) + desarrollo (hecho: 2, 5). **Estado:** parcialmente resuelto — bloqueado en DNS.
+**Incidente (2026-09-04 → 2026-09-10).** El código de correos se desplegó antes de que
+`RESEND_API_KEY`, `EMAIL_FROM` y `ADMIN_EMAIL` existieran en Vercel. Las variables solo entran
+en el runtime de un despliegue **nuevo**, así que el despliegue que atendió el pedido
+GV-2026-000037 las vio vacías: el recibo quedó en `email_log` como `not_configured` y la
+notificación a la propietaria ni siquiera se intentó (el bloque va dentro de `if (ownerEmail)`).
+Una clienta real pagó el 4 de septiembre y estuvo seis días sin recibo. Se reenvió a mano el
+2026-09-10 desde el panel y las dos filas quedaron en `sent` con `provider_id`.
+
+**Lección y arreglo.** El DNS estaba correcto desde hacía tiempo y este documento lo daba por
+pendiente, lo que enmascaró la causa real — se persiguió el DNS mientras el fallo estaba en
+Vercel. Un documento que no se actualiza deja de ser un mapa. Y `scripts/check-env.mjs` no
+exigía ninguna de las tres variables, así que un despliegue publicaba sin ellas sin protestar.
+✅ corregido el 2026-09-10: las tres son ahora obligatorias en el `prebuild`, porque el
+candado en tiempo de ejecución llega tarde — para entonces el dinero ya se cobró.
+
+**Responsable:** propietaria (DNS, punto 1 y 3) + desarrollo (hecho: 2, 5). **Estado:** resuelto — verificado en producción el 2026-09-10.
 
 ---
 
@@ -477,7 +492,7 @@ desarrollo**:
 | R4 | Pasarela de pago contratada y operativa | Propietaria |
 | R5 | Decisión sobre la estructura de precios | Propietaria |
 | R6/R7 | Inventario contado y tarifa de envío definida | Propietaria |
-| R14 | DNS del dominio para el correo transaccional | Propietaria |
+| R14 | ~~DNS del dominio para el correo transaccional~~ ✅ hecho | Propietaria |
 
 **El desarrollo no está bloqueado por ninguno.** Todo el MVP se construye y se prueba con
 `MockPaymentProvider`, datos seed y tarifa plana de ejemplo. Estas decisiones se necesitan

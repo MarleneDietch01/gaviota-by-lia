@@ -98,6 +98,31 @@ forbid(
 );
 
 // --- Correo transaccional -----------------------------------------------------
+// Se exigen las tres desde el 2026-09-10, a raíz de un incidente real: el
+// código de correos se desplegó antes de que existieran en Vercel, y como las
+// variables solo entran en el runtime de un despliegue NUEVO, el despliegue en
+// curso las vio vacías. `sendEmail()` devuelve `not_configured` en vez de
+// lanzar — a propósito, para que un pedido pagado nunca falle por el correo —
+// así que no hubo error, ni alerta, ni nada roto a la vista. Una clienta real
+// pagó y estuvo seis días sin recibo, y la propietaria sin enterarse de la
+// venta. Ver MIGRATION_RISKS.md R14.
+//
+// De ahí que el candado esté aquí y no en tiempo de ejecución: en ejecución ya
+// es tarde, el dinero ya se cobró. Que falle el build es exactamente el fallo
+// que queremos, porque es el único que alguien mira.
+require_(
+  'RESEND_API_KEY',
+  'Falta RESEND_API_KEY — sin ella no sale ningún correo y la tienda cobra sin mandar recibos (MIGRATION_RISKS.md R14).',
+);
+require_(
+  'EMAIL_FROM',
+  'Falta EMAIL_FROM — sin remitente no sale ningún correo. Debe ser una dirección de un dominio verificado en Resend (hoy: pedidos@gaviotabylia.com).',
+);
+require_(
+  'ADMIN_EMAIL',
+  'Falta ADMIN_EMAIL — sin ella la notificación de venta no se intenta siquiera (el bloque va dentro de `if (ownerEmail)`), y la propietaria no se entera de sus propias ventas.',
+);
+
 if (process.env.EMAIL_FROM?.endsWith('@gmail.com')) {
   problems.push('EMAIL_FROM usa un dominio @gmail.com — Resend no envía desde dominios de correo personal (ver MIGRATION_RISKS.md R14).');
 }
