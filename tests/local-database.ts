@@ -58,3 +58,32 @@ export function canRunAgainst(url: string | undefined, suite: string): boolean {
 
   return true;
 }
+
+/**
+ * ¿Está el stack local levantado?
+ *
+ * `canRunAgainst` comprueba a DÓNDE apuntan las pruebas; esto comprueba que
+ * ahí haya algo escuchando. Sin esta segunda mitad, con Docker apagado las
+ * suites fallan por "fetch failed" y `npm test` queda en rojo por una razón
+ * ambiental — y un rojo permanente enseña a ignorar los rojos.
+ *
+ * Basta con sondear la API: las tres suites dependen del mismo
+ * `supabase start`, así que si la API responde, Postgres también está.
+ */
+export async function localStackIsReachable(apiUrl: string | undefined): Promise<boolean> {
+  if (!apiUrl) return false;
+
+  try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 2000);
+    await fetch(apiUrl, { signal: controller.signal });
+    clearTimeout(timer);
+    return true;
+  } catch {
+    console.warn(
+      `[pruebas de integración] OMITIDAS: no hay nada escuchando en ${apiUrl}. ` +
+        'Arranca el stack con `npx supabase start` para ejecutarlas.',
+    );
+    return false;
+  }
+}

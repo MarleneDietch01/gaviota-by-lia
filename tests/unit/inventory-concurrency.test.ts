@@ -16,7 +16,7 @@
  */
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { Client as PgClient } from 'pg';
-import { canRunAgainst } from '../local-database';
+import { canRunAgainst, localStackIsReachable } from '../local-database';
 
 const PG_URL = process.env.SUPABASE_DB_URL ?? 'postgresql://postgres:postgres@127.0.0.1:54822/postgres';
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
@@ -24,7 +24,11 @@ const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
 // El trabajo real va por PG_URL, así que es ESE destino el que se comprueba:
 // esta suite desactiva triggers y claves ajenas para limpiar lo suyo.
 const describeInv =
-  SUPABASE_URL && canRunAgainst(PG_URL, 'inventory-concurrency') ? describe : describe.skip;
+  SUPABASE_URL &&
+  canRunAgainst(PG_URL, 'inventory-concurrency') &&
+  (await localStackIsReachable(SUPABASE_URL))
+    ? describe
+    : describe.skip;
 
 let admin: PgClient;
 let productId: string;

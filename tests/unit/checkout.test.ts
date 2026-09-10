@@ -18,6 +18,7 @@
  */
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import { canRunAgainst, localStackIsReachable } from '../local-database';
 
 vi.mock('next/headers', () => ({
   cookies: async () => ({
@@ -32,7 +33,13 @@ vi.mock('server-only', () => ({}));
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
 const ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '';
-const canRun = Boolean(SUPABASE_URL && ANON_KEY);
+// Solo lectura, así que no puede ensuciar nada — pero leer producción para
+// decidir si el checkout suma bien tampoco tiene sentido: los datos cambian
+// bajo los pies de la prueba. Mismo destino local que el resto.
+const canRun =
+  Boolean(ANON_KEY) &&
+  canRunAgainst(SUPABASE_URL, 'checkout') &&
+  (await localStackIsReachable(SUPABASE_URL));
 const describeCheckout = canRun ? describe : describe.skip;
 
 /**
