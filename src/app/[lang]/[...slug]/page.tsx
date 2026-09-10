@@ -370,6 +370,31 @@ export default async function CatchAllPage({ params }: Props) {
             {localizedCopy(paragraph, lang)}
           </p>
         ))}
+
+        {/* Las páginas con `sections` (las legales) bajan a `text-body-sm`: son
+            para consultar, no para leer de corrido, y en `text-lead` una
+            política entera se vuelve una pared. */}
+        {page.sections?.length ? (
+          <div className="mt-12 space-y-9">
+            {page.sections.map((section) => (
+              <section key={section.heading.en}>
+                <h2 className="text-h3 text-ink">{localizedCopy(section.heading, lang)}</h2>
+                {section.body.map((paragraph) => (
+                  <p key={paragraph.en} className="mt-3 text-body-sm leading-relaxed text-body">
+                    {localizedCopy(paragraph, lang)}
+                  </p>
+                ))}
+              </section>
+            ))}
+          </div>
+        ) : null}
+
+        {page.updated ? (
+          <p className="mt-12 border-t border-line pt-5 text-caption text-muted">
+            {localizedCopy(page.updated, lang)}
+          </p>
+        ) : null}
+
         <PageLinks page={page} lang={lang} />
       </Container>
     </Section>
