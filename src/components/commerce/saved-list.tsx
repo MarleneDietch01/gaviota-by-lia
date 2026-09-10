@@ -8,6 +8,7 @@ import { cents, formatMoney, type Cents } from '@/lib/commerce/money';
 import {
   getBag,
   getFavorites,
+  markCheckoutStarted,
   removeFromBag,
   setBagQuantity,
   subscribeBag,
@@ -89,6 +90,9 @@ export function SavedList({
         throw new Error(data.error ?? 'checkout_failed');
       }
 
+      // Antes de salir del sitio: al volver, la página de éxito sabrá qué
+      // retirar de la bolsa.
+      markCheckoutStarted(bag.map((line) => line.slug));
       window.location.href = data.url;
     } catch {
       setCheckoutPending(false);

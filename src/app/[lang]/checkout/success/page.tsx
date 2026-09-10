@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { CheckCircle2 } from 'lucide-react';
 import { Container, Section } from '@/components/ui/layout-primitives';
 import { isLocale, localizedHref, pick } from '@/lib/i18n';
+import { ClearPurchasedBag } from './clear-purchased-bag';
 
 type Props = { params: Promise<{ lang: string }>; searchParams: Promise<{ order?: string }> };
 
@@ -26,6 +27,8 @@ export default async function CheckoutSuccessPage({ params, searchParams }: Prop
 
   return (
     <Section tone="ivory">
+      {/* La bolsa vive en localStorage: solo el navegador puede vaciarla. */}
+      <ClearPurchasedBag />
       <Container size="narrow">
         <div className="mx-auto max-w-md text-center">
           <CheckCircle2 className="mx-auto size-12 text-success" strokeWidth={1.5} aria-hidden="true" />

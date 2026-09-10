@@ -19,6 +19,8 @@
 
 const BAG_KEY = 'gaviota.bag.v1';
 const FAVORITES_KEY = 'gaviota.favorites.v1';
+/** Qué líneas salieron hacia Stripe, para saber cuáles retirar al volver. */
+const CHECKOUT_KEY = 'gaviota.bag.pending.v1';
 
 export const BAG_EVENT = 'gaviota:bag';
 export const FAVORITES_EVENT = 'gaviota:favorites';
@@ -106,6 +108,57 @@ export function setBagQuantity(slug: string, quantity: number): void {
 
 export function removeFromBag(slug: string): void {
   write(BAG_KEY, getBag().filter((line) => line.slug !== slug), BAG_EVENT);
+}
+
+/**
+ * Anota qué se está pagando, justo antes de salir hacia Stripe.
+ *
+ * La bolsa NO se vacía aquí: si el pago falla o la clienta cancela, tiene que
+ * encontrar intacto lo que había elegido. Solo se deja constancia de qué
+ * líneas iban en el pedido, para poder retirar exactamente esas —y no las que
+ * añadiera en otra pestaña mientras pagaba— cuando vuelva.
+ *
+ * No emite `BAG_EVENT`: esto no cambia la bolsa, así que nada tiene que
+ * repintarse.
+ */
+export function markCheckoutStarted(slugs: readonly string[]): void {
+  if (typeof window === 'undefined') return;
+  try {
+    window.localStorage.setItem(CHECKOUT_KEY, JSON.stringify(slugs));
+  } catch {
+    /* ver comentario en read() */
+  }
+}
+
+/**
+ * Retira de la bolsa lo que acaba de comprarse. Se llama al volver del pago.
+ *
+ * Si no hay nada anotado no toca nada: es preferible dejar una bolsa de más
+ * que vaciar una que no sabemos atribuir a este pedido.
+ *
+ * Límite conocido: si la clienta paga y cierra la pestaña en Stripe sin
+ * volver, no pasa por aquí y su bolsa se queda llena. El webhook sí sabe que
+ * pagó, pero corre en el servidor y `localStorage` es del navegador. Cerrarlo
+ * del todo exigiría mover la bolsa a la base de datos.
+ *
+ * @returns cuántas líneas se retiraron.
+ */
+export function clearPurchasedLines(): number {
+  const pending = read<string[]>(CHECKOUT_KEY, []);
+  if (pending.length === 0) return 0;
+
+  const bag = getBag();
+  const next = bag.filter((line) => !pending.includes(line.slug));
+
+  if (next.length !== bag.length) write(BAG_KEY, next, BAG_EVENT);
+
+  try {
+    window.localStorage.removeItem(CHECKOUT_KEY);
+  } catch {
+    /* ver comentario en read() */
+  }
+
+  return bag.length - next.length;
 }
 
 export function getFavorites(): string[] {
