@@ -12,7 +12,7 @@ severidad. Cada riesgo incluye evidencia, impacto y mitigación.
 | # | Riesgo | Sev. | ¿Bloquea lanzamiento? |
 |---|---|---|---|
 | R1 | Protector solar sin documentación regulatoria | 🔴 | **Sí** |
-| R2 | Políticas legales con marcadores sin rellenar | 🔴 | **Sí** |
+| R2 | Políticas legales con marcadores sin rellenar | 🔴 | Parcial — redactadas 2026-09-10, falta revisión legal |
 | R3 | Claims de medicamento en 6 de 8 productos | 🔴 | **Sí** |
 | R4 | Sin proveedor de pago definido | 🔴 | **Sí** |
 | R5 | Descuento permanente en todo el catálogo | 🟠 | Sí |
@@ -60,7 +60,7 @@ consecuencia legal directa e inmediata.
 
 ## 🔴 R2 — Políticas legales con marcadores sin rellenar
 
-**Evidencia.** Publicado hoy en producción:
+**Evidencia (tienda Shopify heredada).** Lo que estaba publicado cuando se auditó:
 
 - Reembolsos: `[dirección de correo electrónico]`, `[número de teléfono]`
 - Privacidad: `Last updated: [Date]`, `[INSERT REPRESENTATIVE DETAILS]`,
@@ -74,13 +74,24 @@ alta del comercio: **esto puede bloquear la aprobación de la cuenta**, no solo 
 lanzamiento.
 
 **Mitigación.**
-1. Redactar las cinco políticas de cero con el nombre legal y la dirección reales.
+1. Redactar las cinco políticas de cero con el nombre legal y la dirección reales. ✅ hecho el 2026-09-10 — envíos, devoluciones, privacidad, términos y cookies, en ES y EN, con Gaviota By Lia LLC (Rhode Island) como responsable. **Sin dirección postal, por decisión de la propietaria**: la del registro estatal es un domicilio particular, así que se publican solo gaviotabylia@gmail.com y el WhatsApp.
 2. Revisión por un profesional legal en la jurisdicción correspondiente.
 3. Test automatizado en CI que falle si aparece `[`, `INSERT`, `NOTE TO MERCHANT` o
-   `TODO` en cualquier contenido publicado.
-4. Las políticas se gestionan desde `content_sections`, editables sin tocar código.
+   `TODO` en cualquier contenido publicado. Pendiente, y hoy sin objeto: esos marcadores
+   eran de las plantillas de Shopify y no existen en el contenido actual, que se escribió
+   a mano. Sigue mereciendo la pena como red si alguna vez vuelve a entrar texto de
+   plantilla.
+4. ~~Las políticas se gestionan desde `content_sections`, editables sin tocar código.~~
+   No fue así: viven en `src/lib/content/route-pages.ts` y editarlas exige un despliegue.
+   Es una limitación conocida, no un olvido — un texto legal no debería poder cambiarse
+   sin quedar registrado en el historial.
 
-**Responsable:** propietaria + asesoría legal. **Estado:** abierto. Ver `LEGAL_TODO.md`.
+**Responsable:** propietaria + asesoría legal. **Estado:** parcialmente resuelto — las cinco
+políticas están redactadas y publicadas desde el 2026-09-10, con contenido derivado de cómo
+funciona la tienda de verdad (encargados reales, datos que se piden de verdad, ausencia real
+de analítica). **Falta el punto 2: la revisión por un profesional legal.** Lo publicado es
+cierto y específico, pero no lo ha revisado nadie con licencia para ejercer en Rhode Island.
+Ver `LEGAL_TODO.md`.
 
 ---
 
