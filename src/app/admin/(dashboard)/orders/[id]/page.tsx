@@ -3,7 +3,13 @@ import { notFound } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { cents, formatMoney } from '@/lib/commerce/money';
-import { markOrderDelivered, markOrderShipped, resendOrderConfirmation, saveOrderNotes } from '../actions';
+import {
+  markOrderDelivered,
+  markOrderShipped,
+  resendOrderConfirmation,
+  resendShippingNotification,
+  saveOrderNotes,
+} from '../actions';
 
 export const metadata = { title: 'Pedido' };
 
@@ -165,6 +171,22 @@ export default async function AdminOrderDetailPage({
             ) : null}
             {shipment.shipped_at ? <p className="text-xs text-body">Enviado el {formatDate(shipment.shipped_at)}</p> : null}
           </div>
+        ) : null}
+
+        {/* El formulario de despacho desaparece en cuanto el pedido está
+            enviado (`canShip`), así que sin esto no habría forma de mandar el
+            aviso a un pedido despachado antes de que ese correo existiera, ni
+            de reintentarlo si falló. */}
+        {shipment?.tracking_number ? (
+          <form action={resendShippingNotification} className="mt-4">
+            <input type="hidden" name="orderId" value={order.id} />
+            <button
+              type="submit"
+              className="min-h-10 rounded-xs border border-ink/25 px-4 text-sm font-medium hover:bg-ivory"
+            >
+              Reenviar aviso de envío
+            </button>
+          </form>
         ) : null}
 
         {canShip ? (

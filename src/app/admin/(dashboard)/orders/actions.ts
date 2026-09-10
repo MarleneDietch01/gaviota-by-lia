@@ -103,6 +103,32 @@ export async function markOrderShipped(formData: FormData): Promise<void> {
   redirect(`/admin/orders/${orderId}?saved=1&aviso=${aviso}`);
 }
 
+/**
+ * Reenvía a mano el aviso de envío con el número de rastreo.
+ *
+ * Hace falta porque `markOrderShipped` deja de ser alcanzable: el formulario de
+ * despacho solo se pinta mientras `canShip` es cierto, y eso se apaga en cuanto
+ * el pedido pasa a 'shipped'. Sin este botón, un pedido despachado ANTES de que
+ * el aviso existiera (o uno cuyo correo falló) se quedaba sin forma de avisar a
+ * la clienta.
+ *
+ * Fuerza el envío — es una acción deliberada de quien administra, igual que
+ * "Reenviar recibo": si la pulsas, quieres que salga.
+ */
+export async function resendShippingNotification(formData: FormData): Promise<void> {
+  await requireAdmin();
+
+  const orderId = z.uuid().safeParse(formData.get('orderId'));
+  if (!orderId.success) return;
+
+  const aviso = await sendShippingNotification(createAdminSupabaseClient(), orderId.data, {
+    trackingChanged: true,
+  });
+
+  revalidatePath(`/admin/orders/${orderId.data}`);
+  redirect(`/admin/orders/${orderId.data}?aviso=${aviso}`);
+}
+
 const noteSchema = z.object({
   orderId: z.uuid(),
   internalNotes: z.string().trim().max(2000).optional(),
