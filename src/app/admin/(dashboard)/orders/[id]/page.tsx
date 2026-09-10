@@ -173,21 +173,6 @@ export default async function AdminOrderDetailPage({
           </div>
         ) : null}
 
-        {/* El formulario de despacho desaparece en cuanto el pedido está
-            enviado (`canShip`), así que sin esto no habría forma de mandar el
-            aviso a un pedido despachado antes de que ese correo existiera, ni
-            de reintentarlo si falló. */}
-        {shipment?.tracking_number ? (
-          <form action={resendShippingNotification} className="mt-4">
-            <input type="hidden" name="orderId" value={order.id} />
-            <button
-              type="submit"
-              className="min-h-10 rounded-xs border border-ink/25 px-4 text-sm font-medium hover:bg-ivory"
-            >
-              Reenviar aviso de envío
-            </button>
-          </form>
-        ) : null}
 
         {canShip ? (
           <form action={markOrderShipped} className="mt-4 space-y-3">
@@ -241,6 +226,21 @@ export default async function AdminOrderDetailPage({
         ) : (
           <p className="mt-3 text-sm text-muted">Este pedido ya fue enviado o entregado.</p>
         )}
+        {/* El formulario de despacho desaparece en cuanto el pedido está
+            enviado (`canShip`), así que sin esto no habría forma de mandar el
+            aviso a un pedido despachado antes de que ese correo existiera, ni
+            de reintentarlo si falló. */}
+        {shipment?.tracking_number ? (
+          <form action={resendShippingNotification} className="mt-4">
+            <input type="hidden" name="orderId" value={order.id} />
+            <button
+              type="submit"
+              className="min-h-10 rounded-xs border border-ink/25 px-4 text-sm font-medium hover:bg-ivory"
+            >
+              Reenviar aviso de envío
+            </button>
+          </form>
+        ) : null}
 
         {/* Marcar como entregado. Es lo que habilita las reseñas:
             `has_verified_purchase` exige order_status = 'delivered'. */}
