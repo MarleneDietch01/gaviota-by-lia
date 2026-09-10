@@ -20,6 +20,12 @@ reales**. Extraído literalmente:
 **Total estimado al cliente: 5–6 días hábiles.** Este dato ya puede usarse en la ficha de
 producto y en el checkout para el mensaje de entrega estimada.
 
+**Nota (2026-09-10).** La fila "Tracking" describía lo que la política PROMETÍA, no lo que la
+tienda hacía: durante seis días el número se guardó en `shipments` y solo lo veía quien
+administra. Ya está implementado — `markOrderShipped` envía el aviso con el número y el enlace
+de rastreo (`src/lib/email/shipping-notification.ts`), y queda registrado en `email_log` con
+la plantilla `shipping_notification`.
+
 ---
 
 ## 2. Lo que falta
