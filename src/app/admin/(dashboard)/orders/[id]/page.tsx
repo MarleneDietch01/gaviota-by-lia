@@ -33,6 +33,15 @@ const INVITACION_AVISO: Record<string, string> = {
   send_failed: 'No se pudo enviar la invitación a reseñar. Queda registrada en email_log.',
 };
 
+const AVISO_ENVIO: Record<string, string> = {
+  sent: 'Aviso de envío con el número de rastreo enviado a la clienta.',
+  already_sent: 'La clienta ya había recibido este número de rastreo; no se repitió el aviso.',
+  no_recipient: 'Pedido sin correo real de clienta: no se envió el aviso de envío.',
+  no_tracking: 'Envío guardado sin número de rastreo: no hay nada que avisar.',
+  not_configured: 'Envío guardado. No se avisó a la clienta: falta configurar el correo (RESEND_API_KEY / EMAIL_FROM).',
+  send_failed: 'No se pudo enviar el aviso de envío. Queda registrado en email_log.',
+};
+
 function formatDate(value: string): string {
   return new Date(value).toLocaleDateString('es-DO', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 }
@@ -42,10 +51,10 @@ export default async function AdminOrderDetailPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ error?: string; saved?: string; invitacion?: string }>;
+  searchParams: Promise<{ error?: string; saved?: string; invitacion?: string; aviso?: string }>;
 }) {
   const { id } = await params;
-  const { error: errorParam, saved, invitacion } = await searchParams;
+  const { error: errorParam, saved, invitacion, aviso } = await searchParams;
   const supabase = await createServerSupabaseClient();
 
   const { data: order, error } = await supabase
@@ -120,6 +129,11 @@ export default async function AdminOrderDetailPage({
       {invitacion ? (
         <p role="status" className="mt-3 rounded-sm border border-line-strong bg-ivory p-3 text-sm text-body">
           {INVITACION_AVISO[invitacion] ?? `Invitación a reseñar: ${invitacion}`}
+        </p>
+      ) : null}
+      {aviso ? (
+        <p role="status" className="mt-3 rounded-sm border border-line-strong bg-ivory p-3 text-sm text-body">
+          {AVISO_ENVIO[aviso] ?? `Aviso de envío: ${aviso}`}
         </p>
       ) : null}
 

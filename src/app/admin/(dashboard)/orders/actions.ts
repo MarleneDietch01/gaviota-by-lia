@@ -8,6 +8,7 @@ import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { createAdminSupabaseClient } from '@/lib/supabase/admin';
 import { sendOrderConfirmationEmails } from '@/lib/email/order-confirmation';
 import { sendReviewInvitation } from '@/lib/email/review-invitation';
+import { sendShippingNotification } from '@/lib/email/shipping-notification';
 
 /**
  * "Marcar como enviado" — el flujo de despacho que hoy no existe (ver el
@@ -22,9 +23,12 @@ import { sendReviewInvitation } from '@/lib/email/review-invitation';
  *      (`0017_triggers.sql`) escribe automáticamente en
  *      `order_status_history`; esta acción no inserta ahí a mano.
  *
- * El campo de tracking se guarda aunque todavía no exista el correo de aviso
- * a la clienta (pedido explícito del brief): cuando ese correo se construya,
- * el dato ya está aquí.
+ * Desde el 2026-09-10 también avisa a la clienta. Antes el número se guardaba
+ * y solo lo veía quien administra, mientras /shipping-policy prometía por
+ * escrito "recibirás una confirmación por correo electrónico con número de
+ * seguimiento en cuanto se envíe tu pedido". El aviso no puede tumbar el
+ * despacho: si el correo falla, el envío queda registrado igual y el fallo
+ * aterriza en `email_log` (ver src/lib/email/shipping-notification.ts).
  */
 const markShippedSchema = z.object({
   orderId: z.uuid(),
@@ -54,7 +58,7 @@ export async function markOrderShipped(formData: FormData): Promise<void> {
 
   const { data: existingShipment } = await supabase
     .from('shipments')
-    .select('id')
+    .select('id, tracking_number')
     .eq('order_id', orderId)
     .maybeSingle();
 
@@ -84,10 +88,19 @@ export async function markOrderShipped(formData: FormData): Promise<void> {
     redirect(`/admin/orders/${orderId}?error=${encodeURIComponent(`Envío guardado, pero no se pudo actualizar el estado del pedido: ${orderError.message}`)}`);
   }
 
+  // Un número corregido obliga a volver a avisar: la clienta tiene en su
+  // bandeja uno que no sirve. Repetir el mismo no reenvía nada.
+  const trackingChanged =
+    existingShipment?.tracking_number != null && existingShipment.tracking_number !== trackingNumber;
+
+  const aviso = await sendShippingNotification(createAdminSupabaseClient(), orderId, {
+    trackingChanged,
+  });
+
   revalidatePath('/admin/orders');
   revalidatePath(`/admin/orders/${orderId}`);
   revalidatePath('/admin');
-  redirect(`/admin/orders/${orderId}?saved=1`);
+  redirect(`/admin/orders/${orderId}?saved=1&aviso=${aviso}`);
 }
 
 const noteSchema = z.object({
