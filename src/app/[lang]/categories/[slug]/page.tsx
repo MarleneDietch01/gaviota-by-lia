@@ -5,6 +5,7 @@ import { CATEGORIES, isCatalogSort, isCategorySlug, type CatalogQuery } from '@/
 import { isLocale, localizedHref, pageAlternates, pick, socialMeta } from '@/lib/i18n';
 import { getSiteUrl } from '@/lib/site-url';
 import { breadcrumbJsonLd, jsonLdScript } from '@/lib/structured-data';
+import { CATEGORY_COPY } from '@/lib/content/category-copy';
 
 type Params = Promise<{ lang: string; slug: string }>;
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
@@ -16,11 +17,9 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { lang, slug } = await params;
   if (!isLocale(lang) || !isCategorySlug(slug)) return {};
-  const category = CATEGORIES.find((item) => item.slug === slug)!;
-  const name = lang === 'es' ? category.es : category.en;
-  const description = pick(lang, `Explore ${name.toLowerCase()} by Gaviota by Lia.`, `Descubre ${name.toLowerCase()} de Gaviota by Lia.`);
+  const { title, description } = CATEGORY_COPY[slug][lang];
   return {
-    title: name,
+    title,
     description,
     alternates: pageAlternates(lang, `/categories/${slug}`),
     ...socialMeta(lang, `/categories/${slug}`, description),
@@ -56,8 +55,8 @@ export default async function CategoryPage({ params, searchParams }: { params: P
       <CatalogPage
         locale={lang}
         eyebrow={pick(lang, 'Shop by category', 'Comprar por categoría')}
-        title={name}
-        description={pick(lang, 'A focused edit of body care products selected by format and everyday ritual.', 'Una selección de cuidado corporal organizada por formato y ritual cotidiano.')}
+        title={CATEGORY_COPY[slug][lang].title}
+        description={CATEGORY_COPY[slug][lang].description}
         query={query}
         lockCategory={slug}
         breadcrumbs={[{ label: pick(lang, 'Shop', 'Tienda'), href: '/shop' }, { label: name }]}

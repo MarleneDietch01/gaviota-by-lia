@@ -13,11 +13,22 @@ import type { Locale } from '@/lib/i18n';
 export function organizationJsonLd(siteUrl: string) {
   return {
     '@context': 'https://schema.org',
-    '@type': 'Organization',
+    '@type': 'OnlineStore',
+    '@id': `${siteUrl}/#organization`,
     name: 'Gaviota by Lia',
     legalName: 'Gaviota By Lia LLC',
     url: siteUrl,
-    logo: `${siteUrl}/icon.png`,
+    logo: `${siteUrl}/images/gaviota/favicon/android-chrome-512x512.png`,
+    email: 'gaviotabylia@gmail.com',
+    telephone: '+1-401-305-8713',
+    contactPoint: {
+      '@type': 'ContactPoint',
+      contactType: 'customer service',
+      telephone: '+1-401-305-8713',
+      email: 'gaviotabylia@gmail.com',
+      availableLanguage: ['English', 'Spanish'],
+      areaServed: 'US',
+    },
     address: {
       '@type': 'PostalAddress',
       streetAddress: '5 Rangeley Avenue',
@@ -53,22 +64,28 @@ export function organizationJsonLd(siteUrl: string) {
  * hace falta.
  */
 function toAbsoluteImageUrl(siteUrl: string, image: string): string {
-  return image.startsWith('http') ? image : `${siteUrl}${image}`;
+  return new URL(image, siteUrl).href;
 }
 
 export function productJsonLd(product: Product, lang: Locale, siteUrl: string) {
   return {
     '@context': 'https://schema.org',
     '@type': 'Product',
+    '@id': `${siteUrl}/${lang}/products/${product.slug}#product`,
+    url: `${siteUrl}/${lang}/products/${product.slug}`,
     name: product.name,
     description: product.shortDescription,
-    image: toAbsoluteImageUrl(siteUrl, product.image),
+    image: [...new Set([product.image, ...product.images.map((image) => image.src)])]
+      .map((image) => toAbsoluteImageUrl(siteUrl, image)),
     sku: product.slug,
     brand: { '@type': 'Brand', name: 'Gaviota by Lia' },
     offers: {
       '@type': 'Offer',
       price: toUnits(product.price).toFixed(2),
       priceCurrency: 'USD',
+      itemCondition: 'https://schema.org/NewCondition',
+      seller: { '@id': `${siteUrl}/#organization` },
+      eligibleRegion: { '@type': 'Country', name: 'US' },
       availability: product.inStock
         ? 'https://schema.org/InStock'
         : 'https://schema.org/OutOfStock',
@@ -86,8 +103,11 @@ export function websiteJsonLd(siteUrl: string, lang: Locale) {
   return {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
+    '@id': `${siteUrl}/#website`,
     name: 'Gaviota by Lia',
     url: siteUrl,
+    inLanguage: ['en-US', 'es-US'],
+    publisher: { '@id': `${siteUrl}/#organization` },
     potentialAction: {
       '@type': 'SearchAction',
       target: {

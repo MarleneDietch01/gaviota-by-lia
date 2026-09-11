@@ -18,16 +18,18 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: LayoutProps<'/[lang]'>): Promise<Metadata> {
   const { lang } = await params;
   if (!isLocale(lang)) return {};
-  const title = pick(lang, 'Dominican Body Care', 'Cuidado corporal dominicano');
+  const title = pick(lang, 'Dominican Body Care in the USA', 'Cuidado corporal dominicano en EE. UU.');
   const description = pick(
     lang,
-    'Dominican-inspired body care rituals made to hydrate, soften, and celebrate your skin.',
-    'Rituales de cuidado corporal creados para hidratar, suavizar y celebrar tu piel.',
+    'Shop Dominican body care: stretch mark oils, coconut body scrub, hydrating cream and ingrown hair serum. Shipping within the United States.',
+    'Compra cuidado corporal dominicano: aceites para estrías, exfoliante de coco, crema hidratante y sérum post-depilación. Envíos en Estados Unidos.',
   );
   return {
     metadataBase: new URL(getSiteUrl()),
     title: { default: `Gaviota by Lia | ${title}`, template: '%s | Gaviota by Lia' },
     description,
+    verification: { google: process.env.GOOGLE_SITE_VERIFICATION },
+    robots: { index: true, follow: true, 'max-image-preview': 'large' },
     icons: {
       icon: [
         { url: '/favicon.ico', sizes: 'any' },
@@ -55,7 +57,7 @@ export default async function RootLayout({ children, params }: LayoutProps<'/[la
     // y sin este atributo cada cambio de ruta hace un scroll animado lentísimo
     // hasta arriba en vez de saltar.
     <html
-      lang={lang === 'en' ? 'en-US' : 'es'}
+      lang={lang === 'en' ? 'en-US' : 'es-US'}
       className={fontVariables}
       data-scroll-behavior="smooth"
     >

@@ -1,25 +1,25 @@
 import type { MetadataRoute } from 'next';
 import { CATEGORIES, getAllProducts } from '@/lib/catalog/products';
-import { locales, type Locale } from '@/lib/i18n';
+import { locales, pageAlternates } from '@/lib/i18n';
 import { getSiteUrl } from '@/lib/site-url';
 
 /**
- * Static content routes to include, sourced from `route-pages.ts`'s key set
- * rather than hardcoded twice. Deliberately a subset, not every key there:
- * legal/policy pages (`terms`, `cookies`, `privacy-policy`, `refund-policy`,
- * `shipping-policy`) and `track-order` are real pages but weren't part of the
- * requested sitemap scope — add them here if they should be indexed too.
+ * Only published, indexable pages. Journal and sets are placeholders with
+ * noindex until their content is ready. Policies help shoppers evaluate the
+ * store. No invented lastModified: deployments aren't content updates.
  */
 const STATIC_PATHS = [
   '/shop',
-  '/sets',
   '/rituals',
   '/our-story',
   '/founder',
   '/ingredients',
-  '/journal',
   '/contact',
   '/faq',
+  '/shipping-policy',
+  '/refund-policy',
+  '/privacy-policy',
+  '/terms',
 ];
 
 /**
@@ -31,22 +31,32 @@ const STATIC_PATHS = [
  * hreflang tags.
  */
 function localizedEntries(siteUrl: string, path: string): MetadataRoute.Sitemap {
-  const urlFor = (locale: Locale) => `${siteUrl}/${locale}${path === '/' ? '' : path}`;
-  const languages = Object.fromEntries(locales.map((locale) => [locale, urlFor(locale)]));
-
-  return locales.map((locale) => ({
-    url: urlFor(locale),
-    alternates: { languages },
-  }));
+  return locales.map((locale) => {
+    const { canonical, languages } = pageAlternates(locale, path);
+    return {
+      url: new URL(canonical, siteUrl).href,
+      alternates: {
+        languages: Object.fromEntries(
+          Object.entries(languages).map(([language, url]) => [language, new URL(url, siteUrl).href]),
+        ),
+      },
+    };
+  });
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = getSiteUrl();
-  const products = await getAllProducts();
+  const localizedProducts = await Promise.all(locales.map((locale) => getAllProducts(locale)));
 
   const homeAndStatic = ['/', ...STATIC_PATHS].flatMap((path) => localizedEntries(siteUrl, path));
   const categories = CATEGORIES.flatMap((category) => localizedEntries(siteUrl, `/categories/${category.slug}`));
-  const productPages = products.flatMap((product) => localizedEntries(siteUrl, `/products/${product.slug}`));
+  const productPages = localizedProducts.flatMap((products, index) =>
+    products.map((product) => ({
+      ...localizedEntries(siteUrl, `/products/${product.slug}`)[index]!,
+      images: [...new Set([product.image, ...product.images.map((image) => image.src)])]
+        .map((image) => new URL(image, siteUrl).href),
+    })),
+  );
 
   return [...homeAndStatic, ...categories, ...productPages];
 }

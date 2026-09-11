@@ -8,7 +8,9 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: ['/admin/', '/api/', '/checkout/', '/account', '/cart'],
+      // Keep storefront utility pages crawlable so Google can read noindex.
+      // Blocking /en/cart here would prevent its noindex from being seen.
+      disallow: ['/admin', '/api/'],
     },
     sitemap: `${siteUrl}/sitemap.xml`,
   };

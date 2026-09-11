@@ -65,6 +65,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { lang, slug } = await params;
   if (!isLocale(lang)) return {};
   const key = slug.join('/');
+  // These routes render before ROUTE_PAGES lookup and have no content entry.
+  if (key === 'cart' || key === 'wishlist') {
+    return {
+      title: key === 'cart' ? pick(lang, 'Your bag', 'Tu bolsa') : pick(lang, 'Favorites', 'Favoritos'),
+      alternates: pageAlternates(lang, `/${key}`),
+      robots: { index: false, follow: true },
+    };
+  }
   const page = ROUTE_PAGES[key];
   if (!page) return {};
   const description = localizedCopy(page.body[0]!, lang);
@@ -74,8 +82,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     alternates: pageAlternates(lang, `/${key}`),
     ...socialMeta(lang, `/${key}`, description),
     robots:
-      key === 'track-order' || key === 'cart' || key === 'wishlist'
-        ? { index: false }
+      key === 'track-order' || key === 'journal' || key === 'sets'
+        ? { index: false, follow: true }
         : undefined,
   };
 }

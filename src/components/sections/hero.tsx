@@ -97,8 +97,8 @@ export async function Hero({ locale }: { locale: Locale }) {
             <span aria-hidden="true">✳</span>
             {pick(
               locale,
-              "Made in the Dominican Republic",
-              "Hecho en República Dominicana",
+              "Made in the Dominican Republic · Ships within the USA",
+              "Hecho en República Dominicana · Envíos en Estados Unidos",
             )}
           </p>
         </div>

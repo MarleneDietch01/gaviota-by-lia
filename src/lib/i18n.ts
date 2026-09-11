@@ -35,8 +35,10 @@ export function pageAlternates(lang: Locale, path: string) {
   return {
     canonical: `/${lang}${suffix}`,
     languages: {
+      en: `/en${suffix}`,
       'en-US': `/en${suffix}`,
       es: `/es${suffix}`,
+      'es-US': `/es${suffix}`,
       'x-default': `/en${suffix}`,
     },
   };
@@ -76,7 +78,8 @@ export function socialMeta(lang: Locale, path: string, description: string, imag
   return {
     openGraph: {
       type: 'website' as const,
-      locale: lang === 'en' ? 'en_US' : 'es_DO',
+      locale: lang === 'en' ? 'en_US' : 'es_US',
+      alternateLocale: [lang === 'en' ? 'es_US' : 'en_US'],
       siteName: 'Gaviota by Lia',
       description,
       url,

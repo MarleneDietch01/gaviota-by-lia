@@ -9,7 +9,7 @@ type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 export async function generateMetadata({ params }: PageProps<'/[lang]/shop'>): Promise<Metadata> {
   const { lang } = await params;
   if (!isLocale(lang)) return {};
-  const description = pick(lang, 'Explore Gaviota by Lia body oils, creams, scrubs and serums.', 'Descubre aceites, cremas, exfoliantes y sérums corporales Gaviota by Lia.');
+  const description = pick(lang, 'Shop Dominican body oils, coconut scrub, hydrating cream and ingrown hair serum. Gaviota by Lia body care with shipping within the USA.', 'Compra aceites corporales, exfoliante de coco, crema hidratante y sérum post-depilación. Cuidado corporal dominicano con envíos en Estados Unidos.');
   return {
     title: pick(lang, 'Shop Body Care', 'Tienda de cuidado corporal'),
     description,
@@ -28,7 +28,7 @@ export default async function ShopPage({ params, searchParams }: PageProps<'/[la
       locale={lang}
       eyebrow={pick(lang, 'The collection', 'La colección')}
       title={pick(lang, 'Body care, made into ritual.', 'Cuidado corporal hecho ritual.')}
-      description={pick(lang, 'Explore thoughtful formulas created to hydrate, soften and elevate your everyday body care.', 'Descubre fórmulas creadas para hidratar, suavizar y elevar tu cuidado corporal de cada día.')}
+      description={pick(lang, 'Discover Dominican body care for your everyday ritual: body oils, coconut scrub, hydrating cream and post-hair-removal serum. Shop in USD with shipping within the United States.', 'Descubre cuidado corporal dominicano para tu ritual diario: aceites, exfoliante de coco, crema hidratante y sérum post-depilación. Compra en dólares con envíos dentro de Estados Unidos.')}
       query={query}
       breadcrumbs={[{ label: pick(lang, 'Shop', 'Tienda') }]}
     />
