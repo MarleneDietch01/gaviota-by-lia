@@ -17,6 +17,7 @@ import {
 } from '@/lib/commerce/bag';
 import { localizedHref, pick, type Locale } from '@/lib/i18n';
 import { parsePromotionCode, promotionDiscount } from '@/lib/commerce/promotion';
+import { getSavedPromotion, savePromotion, subscribePromotion } from '@/lib/commerce/promotion-storage';
 
 const EMPTY_BAG: readonly { slug: string; quantity: number }[] = [];
 const EMPTY_FAVORITES: readonly string[] = [];
@@ -34,8 +35,10 @@ export function SavedList({
 }) {
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const [checkoutPending, setCheckoutPending] = useState(false);
-  const [promotionInput, setPromotionInput] = useState('');
-  const [appliedCode, setAppliedCode] = useState<string | null>(null);
+  const savedPromotion = useSyncExternalStore(subscribePromotion, getSavedPromotion, () => null);
+  const [promotionDraft, setPromotionDraft] = useState<string | null>(null);
+  const promotionInput = promotionDraft ?? savedPromotion ?? '';
+  const appliedCode = promotionDraft === null ? savedPromotion : null;
   const [promotionError, setPromotionError] = useState(false);
 
   const bagCount = useSyncExternalStore(
@@ -81,7 +84,8 @@ export function SavedList({
       setPromotionError(true);
       return;
     }
-    setAppliedCode(promotion.code);
+    savePromotion(promotion.code);
+    setPromotionDraft(null);
     setCheckoutPending(true);
 
     try {
@@ -239,7 +243,8 @@ export function SavedList({
             event.preventDefault();
             const promotion = parsePromotionCode(promotionInput);
             setPromotionError(!promotion.ok);
-            setAppliedCode(promotion.ok ? promotion.code : null);
+            savePromotion(promotion.ok ? promotion.code : null);
+            if (promotion.ok) setPromotionDraft(null);
             setCheckoutError(null);
           }}>
             <label htmlFor="promotion-code" className="text-sm font-medium">
@@ -251,8 +256,8 @@ export function SavedList({
                 name="promotionCode"
                 value={promotionInput}
                 onChange={(event) => {
-                  setPromotionInput(event.target.value);
-                  setAppliedCode(null);
+                  setPromotionDraft(event.target.value);
+                  savePromotion(null);
                   setPromotionError(false);
                   setCheckoutError(null);
                 }}
@@ -275,7 +280,7 @@ export function SavedList({
                 <p>
                   {pick(locale, `${appliedCode}: 10% off products.`, `${appliedCode}: 10% de descuento en productos.`)}{' '}
                   <button type="button" disabled={checkoutPending} className="min-h-11 underline" onClick={() => {
-                    setPromotionInput(''); setAppliedCode(null); setPromotionError(false); setCheckoutError(null);
+                    savePromotion(null); setPromotionDraft(null); setPromotionError(false); setCheckoutError(null);
                   }}>{pick(locale, 'Remove', 'Quitar')}</button>
                 </p>
               ) : null}

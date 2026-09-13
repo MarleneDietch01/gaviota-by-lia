@@ -9,6 +9,13 @@ También se valida al pulsar **Ir a pagar** si se escribió el código sin pulsa
 Aplicar. Se aceptan minúsculas y espacios al principio o al final. Se puede
 quitar el código antes de iniciar el pago.
 
+La barra superior anuncia el 10 % en inglés y español, permite copiar el código
+y ofrece **Comprar con descuento**. Este enlace guarda `GAVIOTA10` en el
+navegador y abre la tienda. La bolsa recupera el código al navegar o recargar;
+quitarlo desde la bolsa también elimina la selección guardada. La validación
+del servidor sigue siendo obligatoria. La barra tiene una entrada suave,
+desactivada cuando la visitante solicita movimiento reducido.
+
 - Descuento del 10 % sobre todos los productos del pedido, incluidas cantidades múltiples.
 - Sin mínimo de compra ni fecha de vencimiento configurados.
 - No se descuenta el envío. Su tarifa y la elegibilidad del envío gratis se
@@ -59,5 +66,11 @@ aprobadas. Se comprobó la interfaz compilada con Playwright en español a 390 p
 y en inglés a 1440 px: aplicar/quitar, código inválido, envío del código al pago
 y ausencia de desbordamiento horizontal. El endpoint de pago se interceptó en
 esa prueba para evitar pedidos reales.
+
+La barra se comprobó adicionalmente en español a 320/390 px y en inglés a
+390/1440 px: copiar, alternativa de copia manual, activar desde la tienda,
+recuperar el descuento tras recargar, quitarlo de forma persistente y respetar
+movimiento reducido. Compilación, TypeScript, ESLint y 34 pruebas de promoción
+aprobadas tras integrar la barra.
 
 Referencia: [descuentos en Stripe Checkout](https://docs.stripe.com/payments/checkout/discounts).
