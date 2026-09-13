@@ -10,6 +10,9 @@ import { computeShipping, createPendingOrder, validateCheckoutLines } from '@/li
 import { isSameOriginRequest } from '@/lib/security/origin';
 import { parseOptionalCheckoutEmail } from '@/lib/validation/checkout';
 import { isLocale, type Locale } from '@/lib/i18n';
+import { parsePromotionCode, promotionDiscount } from '@/lib/commerce/promotion';
+import { ensureGaviotaCoupon } from '@/lib/stripe/promotion';
+import { cents } from '@/lib/commerce/money';
 
 /**
  * Crea una Checkout Session de Stripe.
@@ -53,14 +56,19 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'invalid_json' }, { status: 400 });
   }
 
-  const { lines, lang, customerEmail } = (body ?? {}) as {
+  const { lines, lang, customerEmail, promotionCode } = (body ?? {}) as {
     lines?: unknown;
     lang?: unknown;
     customerEmail?: unknown;
+    promotionCode?: unknown;
   };
 
   const locale: Locale = typeof lang === 'string' && isLocale(lang) ? lang : 'es';
   const email = parseOptionalCheckoutEmail(customerEmail);
+  const promotion = parsePromotionCode(promotionCode);
+  if (!promotion.ok) {
+    return NextResponse.json({ error: promotion.error }, { status: 400 });
+  }
 
   // Límite por IP: crear sesiones de Stripe sin límite es una forma barata de
   // agotar la cuota de la cuenta o de martillar la base de datos con pedidos
@@ -83,6 +91,15 @@ export async function POST(request: NextRequest) {
   const admin = createAdminSupabaseClient();
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
   const idempotencyKey = randomUUID();
+  const discount = promotion.code ? promotionDiscount(subtotal) : cents(0);
+  let couponId: string | undefined;
+  if (promotion.code) {
+    try { couponId = await ensureGaviotaCoupon(stripe); }
+    catch (error) {
+      console.error('[checkout] promotion unavailable:', error);
+      return NextResponse.json({ error: 'promotion_not_available' }, { status: 503 });
+    }
+  }
 
   // Se resuelve ANTES de crear el pedido, igual que la config de Stripe más
   // arriba: si no hay ninguna tarifa configurada (ni en `shipping_rates` ni
@@ -100,6 +117,8 @@ export async function POST(request: NextRequest) {
     items,
     subtotal,
     shipping: shipping.shippingCents,
+    discount,
+    promotionCode: promotion.code,
     provider: 'stripe',
     idempotencyKey,
     locale,
@@ -117,6 +136,7 @@ export async function POST(request: NextRequest) {
   // envío, no como mercancía, al calcular el impuesto por estado.
   const baseParams: Stripe.Checkout.SessionCreateParams = {
     mode: 'payment',
+    ...(couponId ? { discounts: [{ coupon: couponId }] } : {}),
     line_items: items.map((item) => ({
       quantity: item.quantity,
       price_data: {
@@ -130,12 +150,12 @@ export async function POST(request: NextRequest) {
     })),
     ...(email ? { customer_email: email } : {}),
     client_reference_id: orderId,
-    metadata: { order_id: orderId, order_number: orderNumber },
+    metadata: { order_id: orderId, order_number: orderNumber, ...(promotion.code ? { promotion_code: promotion.code } : {}) },
     // Sin esto, el `PaymentIntent` que Stripe crea detrás de la Checkout
     // Session NO hereda los metadatos de la sesión: `payment_intent.succeeded`
     // y `payment_intent.payment_failed` llegarían sin forma de identificar
     // a qué pedido pertenecen.
-    payment_intent_data: { metadata: { order_id: orderId, order_number: orderNumber } },
+    payment_intent_data: { metadata: { order_id: orderId, order_number: orderNumber, checkout_managed: 'true' } },
     shipping_address_collection: { allowed_countries: ['US'] },
     // La tienda solo vende y envía en EE. UU. — Adaptive Pricing (activo por
     // defecto a nivel de cuenta en Stripe, no algo que este código haya

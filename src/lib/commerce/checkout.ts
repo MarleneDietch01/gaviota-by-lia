@@ -182,9 +182,9 @@ export async function computeShipping(
  * Crea el pedido `pending_payment` + sus líneas + el registro de pago, en
  * Supabase, antes de hablar con el proveedor de pago.
  *
- * `grand_total = subtotal + shipping` — sin descuentos ni impuestos todavía
- * en el MVP (esos los calcula Stripe Tax por su cuenta y no pasan por esta
- * columna; ver `LEGAL_TODO.md` L10 para descuentos). La restricción
+ * `grand_total = subtotal - discount + shipping` antes de impuestos.
+ * Stripe confirma el descuento redondeado y el impuesto al completar el pago.
+ * La restricción
  * `totals_add_up` de la base de datos (`grand_total = subtotal - discount_total
  * + tax_total + shipping_total`) rechaza el insert si esta cuenta no cuadra —
  * es la verificación real, esto solo tiene que dejarle los números correctos.
@@ -198,12 +198,15 @@ export async function createPendingOrder(
     items: readonly CheckoutItem[];
     subtotal: Cents;
     shipping: Cents;
+    discount?: Cents;
+    promotionCode?: string | null;
     provider: 'stripe';
     idempotencyKey: string;
     locale: Locale;
   },
 ): Promise<{ orderId: string; orderNumber: string; grandTotal: Cents } | { error: string }> {
-  const grandTotal = cents(params.subtotal + params.shipping);
+  const discount = params.discount ?? cents(0);
+  const grandTotal = cents(params.subtotal - discount + params.shipping);
 
   const { data: order, error: orderError } = await admin
     .from('orders')
@@ -211,6 +214,8 @@ export async function createPendingOrder(
       customer_email: params.email || 'sin-correo@pendiente.gaviotabylia.com',
       currency: 'USD',
       subtotal: params.subtotal,
+      discount_total: discount,
+      ...(params.promotionCode ? { internal_notes: `Promotional code: ${params.promotionCode} (10%)` } : {}),
       shipping_total: params.shipping,
       grand_total: grandTotal,
       payment_status: 'pending',

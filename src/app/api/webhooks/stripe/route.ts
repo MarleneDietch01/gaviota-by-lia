@@ -7,6 +7,77 @@ import { getStripeClient } from '@/lib/stripe/client';
 import { createAdminSupabaseClient } from '@/lib/supabase/admin';
 import { sendOrderConfirmationEmails } from '@/lib/email/order-confirmation';
 
+async function finalizeCheckoutSession(
+  admin: ReturnType<typeof createAdminSupabaseClient>,
+  session: Stripe.Checkout.Session,
+) {
+  const orderId = session.metadata?.['order_id'];
+  if (!orderId || session.payment_status === 'unpaid') throw new Error('checkout_not_ready');
+
+  // `orders`/`payments` guardan todo en centavos de USD. Con Adaptive
+  // Pricing desactivado (ver /api/checkout) esto siempre debería ser
+  // 'usd', pero se verifica de todos modos: si alguna vez no lo es,
+  // `session.amount_total` vendría en la moneda de presentación, no en
+  // centavos de USD, y grabarlo tal cual corrompería el pedido. Se
+  // prefiere un pago sin procesar (evento marcado 'failed', para
+  // revisión manual) a una orden con el monto equivocado.
+  if (session.currency !== 'usd') {
+    throw new Error(
+      `checkout.session.completed con currency="${session.currency}" (se esperaba "usd") — ` +
+        `order_id=${orderId}. No se escribió ningún monto. Revisar manualmente en el dashboard de Stripe.`,
+    );
+  }
+
+  // Si la sesión llevaba Stripe Tax activado, el impuesto real solo se
+  // conoce AQUÍ — se calculó en la página alojada de Stripe según la
+  // dirección que introdujo la compradora, después de crear el pedido.
+  // `grand_total` se corrige para que siga cuadrando con la restricción
+  // `totals_add_up` (subtotal - descuento + impuesto + envío).
+  const amountTax = session.total_details?.amount_tax ?? 0;
+  const amountDiscount = session.total_details?.amount_discount ?? 0;
+  const amountTotal = session.amount_total ?? undefined;
+
+  const { error: orderUpdateError } = await admin
+    .from('orders')
+    .update({
+      order_status: 'paid',
+      payment_status: 'paid',
+      ...(session.customer_details?.email ? { customer_email: session.customer_details.email } : {}),
+      ...(session.customer_details?.phone ? { customer_phone: session.customer_details.phone } : {}),
+      ...(amountTotal !== undefined ? { discount_total: amountDiscount, tax_total: amountTax, grand_total: amountTotal } : {}),
+    })
+    .eq('id', orderId);
+  // Do not issue a receipt from stale totals if the DB rejects the update.
+  if (orderUpdateError) throw orderUpdateError;
+
+  const { error: paymentUpdateError } = await admin
+    .from('payments')
+    .update({
+      status: 'paid',
+      paid_at: new Date().toISOString(),
+      provider_payment_id: typeof session.payment_intent === 'string' ? session.payment_intent : session.id,
+      ...(amountTotal !== undefined ? { amount: amountTotal } : {}),
+    })
+    .eq('order_id', orderId);
+  if (paymentUpdateError) throw paymentUpdateError;
+
+  const shipping = session.collected_information?.shipping_details;
+  if (shipping?.address && shipping.name) {
+    await admin.from('order_addresses').upsert({
+      order_id: orderId, address_type: 'shipping', recipient_name: shipping.name,
+      phone: session.customer_details?.phone ?? null,
+      address_line_1: shipping.address.line1 ?? '', address_line_2: shipping.address.line2 ?? null,
+      city: shipping.address.city ?? '', state: shipping.address.state ?? null,
+      postal_code: shipping.address.postal_code ?? null,
+      country: (shipping.address.country ?? 'US').slice(0, 2),
+    }, { onConflict: 'order_id,address_type' });
+  }
+
+  await admin.rpc('commit_inventory_sale', { p_order_id: orderId });
+
+  await sendOrderConfirmationEmails(admin, orderId);
+}
+
 /**
  * Webhook de Stripe.
  *
@@ -20,11 +91,10 @@ import { sendOrderConfirmationEmails } from '@/lib/email/order-confirmation';
  *    evento ya existe, se responde 200 sin volver a aplicar el efecto — Stripe
  *    reintenta ante cualquier duda (timeout, 500, lentitud) y sin esto un
  *    reintento duplicaría el pedido pagado.
- * 3. Nunca se confía en `session.amount_total` para decidir si el pedido está
- *    "bien": el monto ya se fijó al crear la sesión desde `orders.grand_total`
- *    en `/api/checkout`, así que aquí solo se lee el `order_id` de los
- *    metadatos y se actualiza SU estado — no se recalcula nada a partir de lo
- *    que devuelve Stripe.
+ * 3. El servidor fija precios y cupón al crear Checkout. Al confirmar el pago,
+ *    se guarda el descuento redondeado, impuesto y total de la sesión firmada
+ *    de Stripe, siempre en USD. Si PaymentIntent llega primero, se recupera
+ *    esa misma sesión antes de guardar importes y enviar el recibo.
  * -----------------------------------------------------------------------------
  */
 export async function POST(request: NextRequest) {
@@ -78,71 +148,11 @@ export async function POST(request: NextRequest) {
 
   try {
     switch (event.type) {
-      case 'checkout.session.completed': {
+      case 'checkout.session.completed':
+      case 'checkout.session.async_payment_succeeded': {
         const session = event.data.object as Stripe.Checkout.Session;
-        const orderId = session.metadata?.['order_id'];
-        if (!orderId) break;
-        if (session.payment_status === 'unpaid') break;
-
-        // `orders`/`payments` guardan todo en centavos de USD. Con Adaptive
-        // Pricing desactivado (ver /api/checkout) esto siempre debería ser
-        // 'usd', pero se verifica de todos modos: si alguna vez no lo es,
-        // `session.amount_total` vendría en la moneda de presentación, no en
-        // centavos de USD, y grabarlo tal cual corrompería el pedido. Se
-        // prefiere un pago sin procesar (evento marcado 'failed', para
-        // revisión manual) a una orden con el monto equivocado.
-        if (session.currency !== 'usd') {
-          throw new Error(
-            `checkout.session.completed con currency="${session.currency}" (se esperaba "usd") — ` +
-              `order_id=${orderId}. No se escribió ningún monto. Revisar manualmente en el dashboard de Stripe.`,
-          );
-        }
-
-        // Si la sesión llevaba Stripe Tax activado, el impuesto real solo se
-        // conoce AQUÍ — se calculó en la página alojada de Stripe según la
-        // dirección que introdujo la compradora, después de crear el pedido.
-        // `grand_total` se corrige para que siga cuadrando con la restricción
-        // `totals_add_up` (subtotal - descuento + impuesto + envío).
-        const amountTax = session.total_details?.amount_tax ?? 0;
-        const amountTotal = session.amount_total ?? undefined;
-
-        await admin
-          .from('orders')
-          .update({
-            order_status: 'paid',
-            payment_status: 'paid',
-            ...(session.customer_details?.email ? { customer_email: session.customer_details.email } : {}),
-            ...(session.customer_details?.phone ? { customer_phone: session.customer_details.phone } : {}),
-            ...(amountTotal !== undefined ? { tax_total: amountTax, grand_total: amountTotal } : {}),
-          })
-          .eq('id', orderId);
-
-        await admin
-          .from('payments')
-          .update({
-            status: 'paid',
-            paid_at: new Date().toISOString(),
-            provider_payment_id: typeof session.payment_intent === 'string' ? session.payment_intent : session.id,
-            ...(amountTotal !== undefined ? { amount: amountTotal } : {}),
-          })
-          .eq('order_id', orderId);
-
-        const shipping = session.collected_information?.shipping_details;
-        if (shipping?.address && shipping.name) {
-          await admin.from('order_addresses').upsert({
-            order_id: orderId, address_type: 'shipping', recipient_name: shipping.name,
-            phone: session.customer_details?.phone ?? null,
-            address_line_1: shipping.address.line1 ?? '', address_line_2: shipping.address.line2 ?? null,
-            city: shipping.address.city ?? '', state: shipping.address.state ?? null,
-            postal_code: shipping.address.postal_code ?? null,
-            country: (shipping.address.country ?? 'US').slice(0, 2),
-          }, { onConflict: 'order_id,address_type' });
-        }
-
-        await admin.rpc('commit_inventory_sale', { p_order_id: orderId });
-
-        await sendOrderConfirmationEmails(admin, orderId);
-
+        if (!session.metadata?.['order_id'] || session.payment_status === 'unpaid') break;
+        await finalizeCheckoutSession(admin, session);
         break;
       }
 
@@ -153,6 +163,18 @@ export async function POST(request: NextRequest) {
         // pago). Aplicar el mismo cambio dos veces es seguro: es un SET, no un
         // incremento.
         const intent = event.data.object as Stripe.PaymentIntent;
+        // PaymentIntent can arrive first or confirm a delayed payment. Fetch
+        // the session so both event paths use its final discount, tax and
+        // address before the idempotent inventory/receipt operations.
+        if (intent.metadata?.['checkout_managed'] === 'true') {
+          const sessions = await stripe.checkout.sessions.list({ payment_intent: intent.id, limit: 1 });
+          const session = sessions.data[0];
+          if (!session || session.metadata?.['order_id'] !== intent.metadata['order_id']) {
+            throw new Error('checkout_session_not_found');
+          }
+          await finalizeCheckoutSession(admin, session);
+          break;
+        }
         const orderId = intent.metadata?.['order_id'];
         if (!orderId) break;
 

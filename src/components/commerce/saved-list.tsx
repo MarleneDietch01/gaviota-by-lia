@@ -16,6 +16,7 @@ import {
   toggleFavorite,
 } from '@/lib/commerce/bag';
 import { localizedHref, pick, type Locale } from '@/lib/i18n';
+import { parsePromotionCode, promotionDiscount } from '@/lib/commerce/promotion';
 
 const EMPTY_BAG: readonly { slug: string; quantity: number }[] = [];
 const EMPTY_FAVORITES: readonly string[] = [];
@@ -33,6 +34,9 @@ export function SavedList({
 }) {
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const [checkoutPending, setCheckoutPending] = useState(false);
+  const [promotionInput, setPromotionInput] = useState('');
+  const [appliedCode, setAppliedCode] = useState<string | null>(null);
+  const [promotionError, setPromotionError] = useState(false);
 
   const bagCount = useSyncExternalStore(
     subscribeBag,
@@ -72,6 +76,12 @@ export function SavedList({
 
   async function handleCheckout() {
     setCheckoutError(null);
+    const promotion = parsePromotionCode(promotionInput);
+    if (!promotion.ok) {
+      setPromotionError(true);
+      return;
+    }
+    setAppliedCode(promotion.code);
     setCheckoutPending(true);
 
     try {
@@ -80,6 +90,7 @@ export function SavedList({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           lang: locale,
+          promotionCode: promotion.code,
           lines: bag.map((line) => ({ slug: line.slug, quantity: line.quantity })),
         }),
       });
@@ -94,10 +105,12 @@ export function SavedList({
       // retirar de la bolsa.
       markCheckoutStarted(bag.map((line) => line.slug));
       window.location.href = data.url;
-    } catch {
+    } catch (error) {
       setCheckoutPending(false);
       setCheckoutError(
-        pick(
+        error instanceof Error && ['invalid_promotion_code', 'promotion_not_available'].includes(error.message)
+          ? pick(locale, 'We could not apply your promotional code. Try again or remove it to continue without the discount.', 'No pudimos aplicar tu código promocional. Inténtalo de nuevo o quítalo para continuar sin el descuento.')
+          : pick(
           locale,
           "Something went wrong starting checkout. Please try again.",
           'Algo falló al iniciar el pago. Inténtalo de nuevo.',
@@ -127,6 +140,7 @@ export function SavedList({
   }
 
   const subtotal = lines.reduce((total, line) => total + Number(line.product.price) * line.quantity, 0);
+  const discount = appliedCode ? promotionDiscount(cents(subtotal)) : cents(0);
   // Un producto puede agotarse mientras ya estaba en la bolsa (localStorage
   // persiste entre visitas). `validateCheckoutLines` ya lo rechazaría en
   // servidor, pero avisar aquí evita el viaje redondo a un checkout que
@@ -221,10 +235,68 @@ export function SavedList({
       {kind === 'cart' ? (
         <aside className="h-fit rounded-sm bg-powder p-6">
           <h2 className="font-display text-2xl">{pick(locale, 'Summary', 'Resumen')}</h2>
+          <form className="mt-5" onSubmit={(event) => {
+            event.preventDefault();
+            const promotion = parsePromotionCode(promotionInput);
+            setPromotionError(!promotion.ok);
+            setAppliedCode(promotion.ok ? promotion.code : null);
+            setCheckoutError(null);
+          }}>
+            <label htmlFor="promotion-code" className="text-sm font-medium">
+              {pick(locale, 'Promotional code', 'Código promocional')}
+            </label>
+            <div className="mt-2 flex gap-2">
+              <input
+                id="promotion-code"
+                name="promotionCode"
+                value={promotionInput}
+                onChange={(event) => {
+                  setPromotionInput(event.target.value);
+                  setAppliedCode(null);
+                  setPromotionError(false);
+                  setCheckoutError(null);
+                }}
+                maxLength={64}
+                autoCapitalize="characters"
+                autoComplete="off"
+                spellCheck={false}
+                disabled={checkoutPending}
+                aria-invalid={promotionError}
+                aria-describedby="promotion-status"
+                className="min-h-11 min-w-0 flex-1 rounded-xs border border-line bg-white-warm px-3 text-sm uppercase"
+              />
+              <button type="submit" disabled={checkoutPending || !promotionInput.trim()} className="min-h-11 rounded-xs border border-line-strong px-3 text-sm font-semibold disabled:opacity-55">
+                {pick(locale, 'Apply', 'Aplicar')}
+              </button>
+            </div>
+            <div id="promotion-status" aria-live="polite" className="mt-2 text-sm">
+              {promotionError ? <p className="text-danger">{pick(locale, 'This code is not valid. Check it or remove it to continue.', 'Este código no es válido. Revísalo o quítalo para continuar.')}</p> : null}
+              {appliedCode ? (
+                <p>
+                  {pick(locale, `${appliedCode}: 10% off products.`, `${appliedCode}: 10% de descuento en productos.`)}{' '}
+                  <button type="button" disabled={checkoutPending} className="min-h-11 underline" onClick={() => {
+                    setPromotionInput(''); setAppliedCode(null); setPromotionError(false); setCheckoutError(null);
+                  }}>{pick(locale, 'Remove', 'Quitar')}</button>
+                </p>
+              ) : null}
+            </div>
+          </form>
           <p className="mt-5 flex justify-between">
             <span>{pick(locale, 'Estimated subtotal', 'Subtotal estimado')}</span>
             <strong>{formatMoney(cents(subtotal), 'USD', locale === 'es' ? 'es-US' : 'en-US')}</strong>
           </p>
+          {appliedCode ? (
+            <div aria-live="polite" className="mt-3 space-y-3 text-sm">
+              <p className="flex justify-between gap-2">
+                <span>{pick(locale, 'Discount', 'Descuento')} ({appliedCode})</span>
+                <strong>-{formatMoney(discount, 'USD', locale === 'es' ? 'es-US' : 'en-US')}</strong>
+              </p>
+              <p className="flex justify-between gap-2 border-t border-line pt-3">
+                <span>{pick(locale, 'Products after discount', 'Productos con descuento')}</span>
+                <strong>{formatMoney(cents(subtotal - discount), 'USD', locale === 'es' ? 'es-US' : 'en-US')}</strong>
+              </p>
+            </div>
+          ) : null}
 
           {freeShippingThresholdCents !== null ? (
             <p className="mt-3 text-sm font-medium text-gold-ink">
