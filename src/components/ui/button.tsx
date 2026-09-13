@@ -57,7 +57,7 @@ interface CommonProps {
 type ButtonProps = CommonProps & Omit<ComponentPropsWithoutRef<'button'>, 'className' | 'children'>;
 type LinkButtonProps = CommonProps & { href: string } & Pick<
     ComponentPropsWithoutRef<'a'>,
-    'target' | 'rel' | 'aria-label'
+    'target' | 'rel' | 'aria-label' | 'onClick' | 'onAuxClick'
   >;
 
 export function Button({
@@ -92,12 +92,16 @@ export function LinkButton({
   className,
   href,
   children,
+  onClick,
   ...rest
 }: LinkButtonProps) {
   return (
     <Link
       href={href}
       className={cn(BASE, VARIANTS[variant], SIZES[size], block && 'w-full', className)}
+      // `LinkProps` redeclara `onClick` sin `| undefined`, así que con
+      // `exactOptionalPropertyTypes` no se puede dejar pasar el hueco vacío.
+      {...(onClick ? { onClick } : {})}
       {...rest}
     >
       {children}

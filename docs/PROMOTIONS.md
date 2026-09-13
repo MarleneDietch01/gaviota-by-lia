@@ -16,6 +16,18 @@ quitarlo desde la bolsa también elimina la selección guardada. La validación
 del servidor sigue siendo obligatoria. La barra tiene una entrada suave,
 desactivada cuando la visitante solicita movimiento reducido.
 
+Además, 1.4 segundos después de cargar la página aparece **una sola vez por
+visitante** el cupón GAVIOTA10: un ticket de dos cuerpos (crema/espresso) que
+entra volando con perspectiva 3D e inclinación por puntero, con el mismo
+código, el mismo enlace **Comprar con descuento** y un botón **Ahora no**.
+Cerrarlo, activarlo o esperar a que reaparezca en otra visita queda marcado en
+el navegador (`gaviota.promotion.coupon-seen.v1`, separado de la selección del
+código); quien ya activó el descuento no vuelve a verlo. Es `<dialog>` modal:
+Escape cierra, el foco entra en el panel y se devuelve al salir, con una
+trampa de Tab propia (medida en Chromium: el trap nativo dejaba un paso suelto
+por `<body>` al llegar al último control). Con movimiento reducido aparece y
+desaparece sin animación ni inclinación, igual de usable.
+
 - Descuento del 10 % sobre todos los productos del pedido, incluidas cantidades múltiples.
 - Sin mínimo de compra ni fecha de vencimiento configurados.
 - No se descuenta el envío. Su tarifa y la elegibilidad del envío gratis se
@@ -72,5 +84,14 @@ La barra se comprobó adicionalmente en español a 320/390 px y en inglés a
 recuperar el descuento tras recargar, quitarlo de forma persistente y respetar
 movimiento reducido. Compilación, TypeScript, ESLint y 34 pruebas de promoción
 aprobadas tras integrar la barra.
+
+El cupón emergente se comprobó en español (1440/768/390/360 px, y 740×380 en
+apaisado bajo) y en inglés (1440/768 px): matriz de contraste medida para cada
+par nuevo, recorrido completo de teclado (Tab y Shift+Tab circulan dentro sin
+escaparse, Escape cierra y devuelve el foco), aparición única por visitante,
+persistencia de "ya visto" tras recargar, guardado del código al pulsar
+Comprar, cierre con "Ahora no", movimiento reducido (aparece sin animación ni
+inclinación) y ausencia de desbordamiento horizontal. TypeScript, ESLint y las
+29 pruebas de promoción existentes aprobadas sin cambios.
 
 Referencia: [descuentos en Stripe Checkout](https://docs.stripe.com/payments/checkout/discounts).
