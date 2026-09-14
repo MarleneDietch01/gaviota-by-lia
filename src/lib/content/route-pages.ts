@@ -107,7 +107,7 @@ export const ROUTE_PAGES: Readonly<Record<string, RoutePage>> = {
   'privacy-policy': {
     eyebrow: c("Policies", "Políticas"),
     title: c("Privacy policy", "Política de privacidad"),
-    body: [c("We collect the minimum needed to get your order to you. No analytics, no advertising pixels, no tracking, and we never sell your data.", "Recogemos lo mínimo necesario para hacerte llegar tu pedido. Sin analítica, sin píxeles publicitarios, sin rastreo, y nunca vendemos tus datos.")],
+    body: [c("We collect the minimum needed to get your order to you. No advertising pixels, no tracking, and we never sell your data. Google Analytics is optional and only runs if you accept it in the cookie banner.", "Recogemos lo mínimo necesario para hacerte llegar tu pedido. Sin píxeles publicitarios, sin rastreo, y nunca vendemos tus datos. Google Analytics es opcional y solo funciona si lo aceptas en el aviso de cookies.")],
     sections: [
       { heading: c("Who is responsible", "Quién es responsable"), body: [
         c("Gaviota By Lia LLC, a limited liability company formed in Rhode Island, United States, operates this store and is responsible for the data described here. Write to gaviotabylia@gmail.com or message us on WhatsApp at +1 401 305 8713.", "Gaviota By Lia LLC, sociedad de responsabilidad limitada constituida en Rhode Island, Estados Unidos, opera esta tienda y es responsable de los datos que se describen aquí. Escríbenos a gaviotabylia@gmail.com o por WhatsApp al +1 401 305 8713."),
@@ -117,13 +117,16 @@ export const ROUTE_PAGES: Readonly<Record<string, RoutePage>> = {
         c("We never see your card. Payment happens entirely on Stripe: your card details do not pass through our servers and are not stored in our database at any point.", "Nunca vemos tu tarjeta. El pago ocurre íntegramente en Stripe: los datos de tu tarjeta no pasan por nuestros servidores ni se guardan en nuestra base de datos en ningún momento."),
         c("If you create an account, which is optional: your email address and a password. The password is handled by our authentication provider and is stored hashed — we cannot see it or recover it for you.", "Si creas una cuenta, que es opcional: tu correo y una contraseña. La contraseña la gestiona nuestro proveedor de autenticación y se guarda cifrada — no podemos verla ni recuperarla por ti."),
         c("If you write to us through the contact form: your name, email, phone, subject and message. If you leave a review: your rating and the text you write.", "Si nos escribes por el formulario de contacto: tu nombre, correo, teléfono, asunto y mensaje. Si dejas una reseña: tu calificación y el texto que escribas."),
+        c("If you accept Google Analytics in the cookie banner: aggregate data about the pages you visit and how you move through the site. This is tied to an anonymous browser identifier, not to your name, email or order.", "Si aceptas Google Analytics en el aviso de cookies: datos agregados sobre las páginas que visitas y cómo te mueves por el sitio. Esto se asocia a un identificador de navegador anónimo, no a tu nombre, correo ni pedido."),
       ] },
       { heading: c("What we use it for", "Para qué los usamos"), body: [
         c("To process and ship your order, to send you the receipt and the tracking number, to answer you when you write to us, and to publish your review if you leave one and it is approved.", "Para procesar y enviar tu pedido, mandarte el recibo y el número de seguimiento, responderte cuando nos escribes, y publicar tu reseña si dejas una y se aprueba."),
+        c("If you accept Google Analytics: to understand which pages and products get the most attention, so we can improve the store. If you decline or say nothing, this never happens.", "Si aceptas Google Analytics: para entender qué páginas y productos reciben más atención, y así mejorar la tienda. Si lo rechazas o no respondes, esto no ocurre nunca."),
         c("We do not send marketing email. Every email this store sends today is transactional: it is about an order you placed.", "No enviamos correo comercial. Todos los correos que manda esta tienda hoy son transaccionales: se refieren a un pedido que hiciste."),
       ] },
       { heading: c("Who we share it with", "Con quién los compartimos"), body: [
         c("Only with the services needed for your order to exist and arrive: Stripe processes the payment, Supabase hosts the database and accounts, Resend delivers our emails, Vercel hosts the site, and USPS delivers the parcel. Each one only receives what its job requires.", "Solo con los servicios necesarios para que tu pedido exista y llegue: Stripe procesa el pago, Supabase aloja la base de datos y las cuentas, Resend entrega nuestros correos, Vercel aloja el sitio y USPS entrega el paquete. Cada uno recibe únicamente lo que su función requiere."),
+        c("If you accept Google Analytics, Google receives the anonymous browsing data described above. It does not receive your name, email, address or order details.", "Si aceptas Google Analytics, Google recibe los datos de navegación anónimos descritos arriba. No recibe tu nombre, correo, dirección ni los detalles de tu pedido."),
         c("We do not sell, rent or trade your data, and we do not share it for advertising purposes with anyone.", "No vendemos, alquilamos ni intercambiamos tus datos, y no los compartimos con nadie con fines publicitarios."),
       ] },
       { heading: c("How long we keep it", "Cuánto tiempo los guardamos"), body: [
@@ -141,7 +144,7 @@ export const ROUTE_PAGES: Readonly<Record<string, RoutePage>> = {
       ] },
     ],
     links: [{ href: '/cookies', label: c("Cookie policy", "Política de cookies") }, { href: '/contact', label: c("Contact us", "Escríbenos") }],
-    updated: c("Last updated: 10 September 2026.", "Última actualización: 10 de septiembre de 2026."),
+    updated: c("Last updated: 14 September 2026.", "Última actualización: 14 de septiembre de 2026."),
   },
   terms: {
     eyebrow: c("Policies", "Políticas"),
@@ -188,7 +191,7 @@ export const ROUTE_PAGES: Readonly<Record<string, RoutePage>> = {
   cookies: {
     eyebrow: c("Privacy choices", "Opciones de privacidad"),
     title: c("Cookie policy", "Política de cookies"),
-    body: [c("We use no advertising or analytics cookies. Only the storage this store needs to keep your bag and your session working.", "No usamos cookies publicitarias ni de analítica. Solo el almacenamiento imprescindible para que tu bolsa y tu sesión funcionen.")],
+    body: [c("We use the storage this store needs to keep your bag and your session working. Google Analytics is the only optional one, and it only runs if you say yes.", "Usamos el almacenamiento imprescindible para que tu bolsa y tu sesión funcionen. Google Analytics es lo único opcional, y solo se activa si dices que sí.")],
     sections: [
       { heading: c("What we store in your browser", "Lo que guardamos en tu navegador"), body: [
         c("Your bag and your saved favourites are kept in your browser local storage. They never travel to our servers or to anyone else: they live on your device, and clearing the site data removes them.", "Tu bolsa y tus favoritos se guardan en el almacenamiento local de tu navegador. Nunca viajan a nuestros servidores ni a nadie más: viven en tu dispositivo, y al borrar los datos del sitio desaparecen."),
@@ -196,19 +199,23 @@ export const ROUTE_PAGES: Readonly<Record<string, RoutePage>> = {
       { heading: c("Session cookie", "Cookie de sesión"), body: [
         c("If you sign in, a cookie keeps your session open so you do not have to log in on every page. It is strictly necessary for the account to work and it goes away when you sign out.", "Si inicias sesión, una cookie mantiene tu sesión abierta para que no tengas que identificarte en cada página. Es estrictamente necesaria para que la cuenta funcione y desaparece al cerrar sesión."),
       ] },
-      { heading: c("What we do not use", "Lo que no usamos"), body: [
-        c("No Google Analytics, no Meta pixel, no TikTok pixel, no advertising networks, no cross-site tracking. This is why the site does not ask you for cookie consent: there is nothing optional to consent to.", "Sin Google Analytics, sin píxel de Meta, sin píxel de TikTok, sin redes publicitarias, sin rastreo entre sitios. Por eso esta web no te pide consentimiento de cookies: no hay nada opcional que consentir."),
-        c("If that ever changes, we will ask you before setting anything, and this page will say so.", "Si eso llegara a cambiar, te lo preguntaremos antes de instalar nada, y esta página lo dirá."),
+      { heading: c("Google Analytics, and only if you say yes", "Google Analytics, y solo si dices que sí"), body: [
+        c("On your first visit, a banner asks whether we can use Google Analytics to see which pages get read and how people move through the store — aggregate numbers, not your name or your purchases. Nothing loads until you accept.", "En tu primera visita, un aviso te pregunta si podemos usar Google Analytics para ver qué páginas se leen y cómo se mueve la gente por la tienda: números agregados, no tu nombre ni tus compras. No se carga nada hasta que lo aceptas."),
+        c("Say no, or ignore the banner, and nothing changes: no script loads and no analytics cookie is set.", "Si dices que no, o ignoras el aviso, no cambia nada: no se carga ningún script ni se instala ninguna cookie de analítica."),
+        c("Changed your mind? Clearing this site's data, as described below, clears your decision too, and you will be asked again on your next visit.", "¿Cambiaste de opinión? Borrar los datos de este sitio, como se explica más abajo, también borra tu decisión, y se te preguntará de nuevo en tu próxima visita."),
+      ] },
+      { heading: c("What we still do not use", "Lo que seguimos sin usar"), body: [
+        c("No Meta pixel, no TikTok pixel, no advertising networks, no cross-site tracking — whether or not you accept analytics.", "Sin píxel de Meta, sin píxel de TikTok, sin redes publicitarias, sin rastreo entre sitios, aceptes o no la analítica."),
       ] },
       { heading: c("During payment", "Durante el pago"), body: [
         c("Checkout takes place on Stripe. Stripe sets its own cookies there, mainly to prevent fraud, and those are governed by Stripe privacy policy, not by this one.", "El pago se realiza en Stripe. Allí Stripe instala sus propias cookies, sobre todo para prevenir el fraude, y se rigen por la política de privacidad de Stripe, no por esta."),
       ] },
       { heading: c("How to remove them", "Cómo borrarlos"), body: [
-        c("Any browser lets you clear a site data from its settings. You will lose your bag and you will need to sign in again. Nothing else is affected.", "Cualquier navegador permite borrar los datos de un sitio desde sus ajustes. Perderás tu bolsa y tendrás que iniciar sesión de nuevo. Nada más se ve afectado."),
+        c("Any browser lets you clear a site data from its settings. You will lose your bag, your session and your analytics choice — you will need to sign in again and the banner will ask you once more. Nothing else is affected.", "Cualquier navegador permite borrar los datos de un sitio desde sus ajustes. Perderás tu bolsa, tu sesión y tu elección de analítica: tendrás que iniciar sesión de nuevo y el aviso volverá a preguntarte. Nada más se ve afectado."),
       ] },
     ],
     links: [{ href: '/privacy-policy', label: c("Privacy policy", "Política de privacidad") }],
-    updated: c("Last updated: 10 September 2026.", "Última actualización: 10 de septiembre de 2026."),
+    updated: c("Last updated: 14 September 2026.", "Última actualización: 14 de septiembre de 2026."),
   },
 };
 

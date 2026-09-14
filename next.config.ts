@@ -41,6 +41,15 @@ import type { NextConfig } from 'next';
  *     navegador la bloquea por CSP — se ve como una foto rota en la tienda,
  *     no como un error de subida. Detectado subiendo una foto real y
  *     comprobando el resultado en /shop, no asumido.
+ *   · www.googletagmanager.com en `script-src` -> `<GoogleAnalytics>`
+ *     (`components/analytics/google-analytics.tsx`) carga gtag.js desde ahí.
+ *     Solo se renderiza cuando `NEXT_PUBLIC_GA_ID` está definida, así que en
+ *     local (sin la variable) este dominio no llega a usarse.
+ *   · *.google-analytics.com en `connect-src` -> gtag.js manda los beacons de
+ *     evento por `fetch`/XHR a `www.google-analytics.com/g/collect`, y en
+ *     cuentas con Consent Mode regional puede resolver a un subdominio tipo
+ *     `region1.google-analytics.com` — de ahí el comodín en vez del host
+ *     exacto.
  *
  * PayPal se retiró el 2026-09-04 (decisión de la propietaria) — con él se fue
  * también su dominio de esta lista (`*.paypal.com`/`*.paypalobjects.com`).
@@ -50,11 +59,11 @@ const isDev = process.env.NODE_ENV === 'development';
 
 const cspDirectives = [
   `default-src 'self'`,
-  `script-src 'self' 'unsafe-inline' https://js.stripe.com${isDev ? " 'unsafe-eval'" : ''}`,
+  `script-src 'self' 'unsafe-inline' https://js.stripe.com https://www.googletagmanager.com${isDev ? " 'unsafe-eval'" : ''}`,
   `style-src 'self' 'unsafe-inline'`,
   `img-src 'self' blob: data: https://*.supabase.co`,
   `font-src 'self' data:`,
-  `connect-src 'self' https://api.stripe.com https://*.supabase.co`,
+  `connect-src 'self' https://api.stripe.com https://*.supabase.co https://*.google-analytics.com`,
   `frame-src 'self' https://js.stripe.com`,
   `object-src 'none'`,
   `base-uri 'self'`,

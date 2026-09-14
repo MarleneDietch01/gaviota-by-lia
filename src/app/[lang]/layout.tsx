@@ -7,6 +7,8 @@ import { SiteFooter } from '@/components/layout/site-footer';
 import { AnnouncementBar } from '@/components/layout/announcement-bar';
 import { PromoCoupon } from '@/components/layout/promo-coupon';
 import { WhatsAppButton } from '@/components/contact/whatsapp-button';
+import { GoogleAnalytics } from '@/components/analytics/google-analytics';
+import { CookieConsentBanner } from '@/components/analytics/cookie-consent-banner';
 import { isLocale, locales, pageAlternates, pick, socialMeta } from '@/lib/i18n';
 import { getSiteUrl } from '@/lib/site-url';
 import { jsonLdScript, organizationJsonLd, websiteJsonLd } from '@/lib/structured-data';
@@ -85,6 +87,8 @@ export default async function RootLayout({ children, params }: LayoutProps<'/[la
         <SiteFooter locale={lang} />
         <WhatsAppButton locale={lang} />
         <PromoCoupon locale={lang} />
+        <GoogleAnalytics />
+        <CookieConsentBanner locale={lang} />
       </body>
     </html>
   );
