@@ -117,8 +117,8 @@ El layout no basta: una Server Action es un endpoint invocable directamente.
 | `/api/contact` | POST | 🌐 | Formulario de contacto (rate limit + antispam) |
 | `/api/newsletter` | POST | 🌐 | Alta en newsletter |
 | `/api/newsletter/unsubscribe` | GET | 🌐 token | Baja con token firmado |
-| `/api/cron/release-reservations` | POST | 🔑 `CRON_SECRET` | Libera reservas de inventario expiradas |
-| `/api/cron/expire-carts` | POST | 🔑 `CRON_SECRET` | Caduca carritos anónimos |
+| `/api/cron/release-reservations` | GET (POST a mano) | 🔑 `CRON_SECRET` | Caduca los checkouts abandonados y devuelve su stock reservado. Diario, programado en `vercel.json`. Es la red: el camino normal lo cierra `checkout.session.expired` en el webhook |
+| ~~`/api/cron/expire-carts`~~ | — | — | **No aplica.** La bolsa vive en `localStorage` (`lib/commerce/bag.ts`); las tablas `carts`/`cart_items` no las escribe nadie |
 | `/api/revalidate` | POST | 🔑 interno | Revalida caché tras editar contenido |
 | `/sitemap.xml` | GET | 🌐 | Sitemap dinámico |
 | `/robots.txt` | GET | 🌐 | Robots |

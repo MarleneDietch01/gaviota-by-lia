@@ -243,8 +243,26 @@ end $$;
 stock ya comprometido. Además, `CHECK (stock_quantity >= 0)` en la tabla garantiza que ni
 un error de programación pueda dejar inventario negativo.
 
-Las reservas expiran mediante `/api/cron/release-reservations` (Vercel Cron, protegido con
-`CRON_SECRET`), que devuelve al stock las reservas de pedidos `pending_payment` caducados.
+Las reservas se sueltan por dos vías, y el orden importa:
+
+1. **Stripe, en media hora.** La Checkout Session se crea con `expires_at` a 31 minutos.
+   Al vencer, Stripe manda `checkout.session.expired` al webhook, que pasa el pedido a
+   `cancelled` y llama a `release_reservation()`. Es el camino normal de un carrito
+   abandonado: la compradora cierra la pestaña y el stock vuelve solo.
+2. **El cron, una vez al día.** `/api/cron/release-reservations` (Vercel Cron, protegido
+   con `CRON_SECRET`, programado en `vercel.json`) ejecuta `expire_stale_reservations()`
+   sobre todo pedido `pending_payment` con `reservation_expires_at` vencido. Cubre lo que
+   la vía 1 no puede: un evento que Stripe no entregó, o un pedido cuya sesión nunca llegó
+   a crearse.
+
+El UPDATE del webhook va condicionado a `order_status = 'pending_payment'`, y eso es el
+cerrojo que impide soltar dos veces la misma reserva — `release_reservation()` resta
+`reserved_quantity` por variante, así que una segunda pasada se comería la reserva de otro
+pedido pendiente con la misma variante.
+
+Ningún pedido se borra: pasa a `cancelled`. `order_status_history` e `inventory_movements`
+tienen triggers `forbid_mutation()` que rechazan DELETE/UPDATE incluso desde `service_role`
+(ver `0017_triggers.sql`), así que el rastro contable es indestructible por diseño.
 
 ---
 

@@ -294,6 +294,51 @@ export async function POST(request: NextRequest) {
         break;
       }
 
+      case 'checkout.session.expired': {
+        // Carrito abandonado: la compradora llegó a Stripe y no terminó. La
+        // sesión se crea con `expires_at` a 31 minutos (ver /api/checkout),
+        // así que este evento llega media hora después de abandonarla.
+        //
+        // Es el mecanismo que impide que `pending_payment` se acumule y, sobre
+        // todo, que el stock reservado en `createPendingOrder()` se quede
+        // retenido para siempre. El cron diario de
+        // /api/cron/release-reservations es solo la red por si este evento no
+        // llega.
+        const session = event.data.object as Stripe.Checkout.Session;
+        const orderId = session.metadata?.['order_id'];
+        if (!orderId) break;
+
+        // El UPDATE condicionado a `pending_payment` hace de cerrojo, y no es
+        // una precaución teórica: `payment_intent.payment_failed` también
+        // suelta la reserva de este mismo pedido, y Stripe puede mandar los
+        // dos eventos. Soltar dos veces NO es inocuo — `release_reservation`
+        // resta `reserved_quantity` por variante, así que la segunda pasada se
+        // comería la reserva de OTRO pedido que tenga la misma variante
+        // pendiente. Si la fila ya no está en `pending_payment`, alguien se
+        // ocupó antes y aquí no hay nada que hacer.
+        const { data: cancelled, error: cancelError } = await admin
+          .from('orders')
+          .update({ order_status: 'cancelled', payment_status: 'cancelled' })
+          .eq('id', orderId)
+          .eq('order_status', 'pending_payment')
+          .select('id');
+
+        if (cancelError) throw cancelError;
+        // Cero filas = ya se pagó (carrera con `checkout.session.completed`) o
+        // ya estaba cancelado. En ninguno de los dos casos se toca el stock.
+        if (!cancelled?.length) break;
+
+        await admin
+          .from('payments')
+          .update({ status: 'cancelled' })
+          .eq('order_id', orderId)
+          .eq('status', 'pending');
+
+        await admin.rpc('release_reservation', { p_order_id: orderId });
+
+        break;
+      }
+
       default:
         // Evento reconocido por Stripe pero no manejado aquí — se registra
         // (ya insertado arriba) y se ignora explícitamente.

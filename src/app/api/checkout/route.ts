@@ -176,6 +176,22 @@ export async function POST(request: NextRequest) {
     ],
     success_url: `${siteUrl}/${locale}/checkout/success?order=${orderNumber}`,
     cancel_url: `${siteUrl}/${locale}/checkout/cancel`,
+    // Caducidad de la sesión. Sin esto Stripe usa 24 horas, y durante esas 24
+    // horas el pedido se queda en `pending_payment` con el inventario
+    // reservado aunque la compradora haya cerrado la pestaña al instante.
+    //
+    // 31 minutos, no 30: la reserva de `createPendingOrder()` dura 30 (ver
+    // `reservation_expires_at`), y Stripe exige que `expires_at` esté AL MENOS
+    // 30 minutos por delante — pedir exactamente el mínimo se rechaza en
+    // cuanto hay un segundo de diferencia de reloj entre este proceso y
+    // Stripe. El minuto extra deja la sesión viva justo hasta después de que
+    // la reserva venza, nunca antes.
+    //
+    // Al vencer, Stripe manda `checkout.session.expired` al webhook, que
+    // cancela el pedido y devuelve el stock. Es lo que convierte un carrito
+    // abandonado en algo que se limpia solo en media hora en vez de quedarse
+    // para siempre.
+    expires_at: Math.floor(Date.now() / 1000) + 31 * 60,
   };
 
   try {
