@@ -1,0 +1,403 @@
+[
+  {
+    "name": "home-desktop",
+    "height": 11308,
+    "overflow": 0,
+    "headings": [
+      {
+        "text": "Tu piel.Tu ritual.Tu momento.",
+        "y": 294
+      },
+      {
+        "text": "Por qué comprar con nosotras",
+        "y": 977
+      },
+      {
+        "text": "Por qué Gaviota by Lia",
+        "y": 1109
+      },
+      {
+        "text": "Tus favoritos del cuidado corporal",
+        "y": 1440
+      },
+      {
+        "text": "¿Qué quieres cuidar hoy?",
+        "y": 3122
+      },
+      {
+        "text": "Suavidad que se convierte en ritual.",
+        "y": 4494
+      },
+      {
+        "text": "Tu momento diario de cuidado.",
+        "y": 5177
+      },
+      {
+        "text": "Tu ritual empieza aquí.",
+        "y": 6675
+      },
+      {
+        "text": "Lo que llevan dentro.",
+        "y": 7702
+      },
+      {
+        "text": "Belleza dominicana hecha ritual.",
+        "y": 8329
+      },
+      {
+        "text": "Así se vive Gaviota.",
+        "y": 8960
+      },
+      {
+        "text": "Tu rutina completa, en un solo kit.",
+        "y": 9794
+      },
+      {
+        "text": "Únete a la comunidad",
+        "y": 10343
+      }
+    ],
+    "cards": [
+      {
+        "y": 1645,
+        "width": 304
+      },
+      {
+        "y": 1645,
+        "width": 304
+      },
+      {
+        "y": 1645,
+        "width": 304
+      },
+      {
+        "y": 1645,
+        "width": 304
+      },
+      {
+        "y": 2296,
+        "width": 304
+      }
+    ],
+    "sections": [
+      {
+        "heading": "Tu piel.Tu ritual.Tu momento.",
+        "y": 157,
+        "height": 793
+      },
+      {
+        "heading": "Por qué comprar con nosotras",
+        "y": 950,
+        "height": 96
+      },
+      {
+        "heading": "Por qué Gaviota by Lia",
+        "y": 1046,
+        "height": 253
+      },
+      {
+        "heading": "Tus favoritos del cuidado corporal",
+        "y": 1299,
+        "height": 1681
+      },
+      {
+        "heading": "¿Qué quieres cuidar hoy?",
+        "y": 2980,
+        "height": 1249
+      },
+      {
+        "heading": "Suavidad que se convierte en ritual.",
+        "y": 4229,
+        "height": 768
+      },
+      {
+        "heading": "Tu momento diario de cuidado.",
+        "y": 4997,
+        "height": 1537
+      },
+      {
+        "heading": "Tu ritual empieza aquí.",
+        "y": 6533,
+        "height": 1015
+      },
+      {
+        "heading": "Lo que llevan dentro.",
+        "y": 7548,
+        "height": 585
+      },
+      {
+        "heading": "Belleza dominicana hecha ritual.",
+        "y": 8132,
+        "height": 686
+      },
+      {
+        "heading": "Así se vive Gaviota.",
+        "y": 8818,
+        "height": 829
+      },
+      {
+        "heading": "Tu rutina completa, en un solo kit.",
+        "y": 9648,
+        "height": 602
+      },
+      {
+        "heading": "Únete a la comunidad",
+        "y": 10250,
+        "height": 403
+      }
+    ]
+  },
+  {
+    "name": "home-tablet",
+    "height": 21747,
+    "overflow": 0,
+    "headings": [
+      {
+        "text": "Tu piel.Tu ritual.Tu momento.",
+        "y": 222
+      },
+      {
+        "text": "Por qué comprar con nosotras",
+        "y": 1356
+      },
+      {
+        "text": "Por qué Gaviota by Lia",
+        "y": 1480
+      },
+      {
+        "text": "Tus favoritos del cuidado corporal",
+        "y": 1937
+      },
+      {
+        "text": "¿Qué quieres cuidar hoy?",
+        "y": 4270
+      },
+      {
+        "text": "Suavidad que se convierte en ritual.",
+        "y": 10131
+      },
+      {
+        "text": "Tu momento diario de cuidado.",
+        "y": 11536
+      },
+      {
+        "text": "Tu ritual empieza aquí.",
+        "y": 12666
+      },
+      {
+        "text": "Lo que llevan dentro.",
+        "y": 16158
+      },
+      {
+        "text": "Belleza dominicana hecha ritual.",
+        "y": 17563
+      },
+      {
+        "text": "Así se vive Gaviota.",
+        "y": 18040
+      },
+      {
+        "text": "Tu rutina completa, en un solo kit.",
+        "y": 19821
+      },
+      {
+        "text": "Únete a la comunidad",
+        "y": 20273
+      }
+    ],
+    "cards": [
+      {
+        "y": 2130,
+        "width": 340
+      },
+      {
+        "y": 2130,
+        "width": 340
+      },
+      {
+        "y": 2787,
+        "width": 340
+      },
+      {
+        "y": 2787,
+        "width": 340
+      },
+      {
+        "y": 3464,
+        "width": 340
+      }
+    ],
+    "sections": [
+      {
+        "heading": "Tu piel.Tu ritual.Tu momento.",
+        "y": 133,
+        "height": 1196
+      },
+      {
+        "heading": "Por qué comprar con nosotras",
+        "y": 1329,
+        "height": 96
+      },
+      {
+        "heading": "Por qué Gaviota by Lia",
+        "y": 1425,
+        "height": 402
+      },
+      {
+        "heading": "Tus favoritos del cuidado corporal",
+        "y": 1827,
+        "height": 2334
+      },
+      {
+        "heading": "¿Qué quieres cuidar hoy?",
+        "y": 4161,
+        "height": 5419
+      },
+      {
+        "heading": "Suavidad que se convierte en ritual.",
+        "y": 9580,
+        "height": 862
+      },
+      {
+        "heading": "Tu momento diario de cuidado.",
+        "y": 10442,
+        "height": 2114
+      },
+      {
+        "heading": "Tu ritual empieza aquí.",
+        "y": 12556,
+        "height": 3473
+      },
+      {
+        "heading": "Lo que llevan dentro.",
+        "y": 16029,
+        "height": 524
+      },
+      {
+        "heading": "Belleza dominicana hecha ritual.",
+        "y": 16553,
+        "height": 1378
+      },
+      {
+        "heading": "Así se vive Gaviota.",
+        "y": 17931,
+        "height": 1209
+      },
+      {
+        "heading": "Tu rutina completa, en un solo kit.",
+        "y": 19140,
+        "height": 1048
+      },
+      {
+        "heading": "Únete a la comunidad",
+        "y": 20187,
+        "height": 374
+      }
+    ]
+  },
+  {
+    "name": "shop-mobile",
+    "height": 5935,
+    "overflow": 0,
+    "headings": [
+      {
+        "text": "Cuidado corporal hecho ritual.",
+        "y": 279
+      }
+    ],
+    "cards": [],
+    "sections": []
+  },
+  {
+    "name": "product-mobile",
+    "height": 5603,
+    "overflow": 0,
+    "headings": [
+      {
+        "text": "Aceite Anti-Estrías",
+        "y": 777
+      },
+      {
+        "text": "Haz espacio para tu piel.",
+        "y": 1462
+      },
+      {
+        "text": "Reseñas",
+        "y": 2099
+      },
+      {
+        "text": "Completa tu ritual.",
+        "y": 2344
+      }
+    ],
+    "cards": [],
+    "sections": [
+      {
+        "heading": "Aceite Anti-Estrías",
+        "y": 157,
+        "height": 1207
+      },
+      {
+        "heading": "Haz espacio para tu piel.",
+        "y": 1364,
+        "height": 671
+      },
+      {
+        "heading": "Reseñas",
+        "y": 2035,
+        "height": 211
+      },
+      {
+        "heading": "Completa tu ritual.",
+        "y": 2246,
+        "height": 2215
+      }
+    ]
+  },
+  {
+    "name": "product-desktop",
+    "height": 3522,
+    "overflow": 0,
+    "headings": [
+      {
+        "text": "Aceite Anti-Estrías",
+        "y": 387
+      },
+      {
+        "text": "Haz espacio para tu piel.",
+        "y": 1075
+      },
+      {
+        "text": "Reseñas",
+        "y": 1604
+      },
+      {
+        "text": "Completa tu ritual.",
+        "y": 1959
+      }
+    ],
+    "cards": [],
+    "sections": [
+      {
+        "heading": "Aceite Anti-Estrías",
+        "y": 157,
+        "height": 772
+      },
+      {
+        "heading": "Haz espacio para tu piel.",
+        "y": 929,
+        "height": 563
+      },
+      {
+        "heading": "Reseñas",
+        "y": 1492,
+        "height": 322
+      },
+      {
+        "heading": "Completa tu ritual.",
+        "y": 1814,
+        "height": 1054
+      }
+    ]
+  }
+]
