@@ -95,6 +95,36 @@ async function finalizeCheckoutSession(
  *    se guarda el descuento redondeado, impuesto y total de la sesión firmada
  *    de Stripe, siempre en USD. Si PaymentIntent llega primero, se recupera
  *    esa misma sesión antes de guardar importes y enviar el recibo.
+ *
+ * -----------------------------------------------------------------------------
+ * EVENTOS QUE EL ENDPOINT DEBE TENER SUSCRITOS EN EL DASHBOARD
+ * -----------------------------------------------------------------------------
+ * Esta lista es la contraparte del `switch` de abajo y hay que mantenerlas
+ * iguales. Un evento manejado aquí pero NO suscrito en el dashboard no da
+ * ningún error: simplemente no llega nunca, y el código que lo espera parece
+ * correcto para siempre mientras el efecto no ocurre.
+ *
+ *   checkout.session.completed
+ *   checkout.session.async_payment_succeeded
+ *   checkout.session.expired          <- ver abajo
+ *   payment_intent.succeeded
+ *   payment_intent.payment_failed
+ *   charge.refunded
+ *   charge.dispute.created
+ *   charge.dispute.closed
+ *
+ * `checkout.session.expired` es el que más caro sale olvidar. Es el ÚNICO
+ * evento que termina una sesión abandonada: cancela el pedido y devuelve el
+ * inventario reservado a la media hora. Sin él, lo único que queda es el cron
+ * diario de `/api/cron/release-reservations`, que en el plan Hobby de Vercel
+ * puede retrasarse hasta 59 minutos sobre su hora — un carrito abandonado
+ * retendría stock hasta un día entero en vez de treinta minutos. La tienda
+ * funciona igual, las ventas entran igual, y el inventario se va quedando
+ * retenido sin que nada lo señale.
+ *
+ * Desde que un rechazo de tarjeta dejó de ser terminal (ver
+ * `payment_intent.payment_failed`), este evento es además el único que limpia
+ * una sesión abandonada tras una tarjeta declinada.
  * -----------------------------------------------------------------------------
  */
 export async function POST(request: NextRequest) {
@@ -279,16 +309,48 @@ export async function POST(request: NextRequest) {
         const orderId = intent.metadata?.['order_id'];
         if (!orderId) break;
 
-        await admin
+        // CON CHECKOUT, UNA TARJETA RECHAZADA NO TERMINA NADA.
+        //
+        // La Checkout Session sigue viva y quien compra puede reintentar con
+        // otra tarjeta en la misma página; Stripe reutiliza el PaymentIntent y
+        // manda un `payment_failed` por cada intento. Cancelar y soltar la
+        // reserva en el primer rechazo rompía justo el reintento que sí acaba
+        // en venta: al pagar por fin, `commit_inventory_sale()` volvía a restar
+        // `reserved_quantity` —su candado de idempotencia es el asiento de
+        // venta, que en ese momento todavía no existía— y esa segunda resta se
+        // comía la reserva de OTRO pedido pendiente con la misma variante.
+        // Riesgo de sobreventa a partir de algo tan corriente como una tarjeta
+        // declinada seguida de otra que sí pasa.
+        //
+        // El evento terminal de una sesión de Checkout es
+        // `checkout.session.expired`, que llega media hora después y cancela y
+        // suelta con su propio cerrojo condicionado a `pending_payment`. Aquí
+        // el rechazo queda registrado en `payment_events` (insertado más
+        // arriba, antes del switch) y no se toca el estado del pedido: el
+        // inventario reservado sigue siendo suyo mientras la sesión viva.
+        //
+        // `checkout_managed` lo pone /api/checkout en `payment_intent_data`
+        // exactamente para poder distinguir estos dos mundos aquí.
+        if (intent.metadata?.['checkout_managed'] === 'true') break;
+
+        // PaymentIntent directo, sin Checkout de por medio (Payment Element,
+        // Fase 4): ahí no hay sesión que caduque ni evento posterior que
+        // limpie, así que el fallo SÍ es terminal y hay que soltar aquí.
+        //
+        // Condicionado a `pending_payment` por lo mismo que el resto:
+        // `release_reservation()` resta y no es idempotente.
+        const { data: cancelled, error: cancelError } = await admin
           .from('orders')
           .update({ order_status: 'cancelled', payment_status: 'failed' })
-          .eq('id', orderId);
+          .eq('id', orderId)
+          .eq('order_status', 'pending_payment')
+          .select('id');
+
+        if (cancelError) throw cancelError;
+        if (!cancelled?.length) break;
 
         await admin.from('payments').update({ status: 'failed' }).eq('order_id', orderId);
 
-        // No-op si no hay variantes reservadas todavía (ver nota en
-        // /api/checkout: el inventario real sigue pendiente de CONTENT_TODO.md
-        // C6) — queda lista para cuando sí las haya.
         await admin.rpc('release_reservation', { p_order_id: orderId });
 
         break;
@@ -309,13 +371,12 @@ export async function POST(request: NextRequest) {
         if (!orderId) break;
 
         // El UPDATE condicionado a `pending_payment` hace de cerrojo, y no es
-        // una precaución teórica: `payment_intent.payment_failed` también
-        // suelta la reserva de este mismo pedido, y Stripe puede mandar los
-        // dos eventos. Soltar dos veces NO es inocuo — `release_reservation`
-        // resta `reserved_quantity` por variante, así que la segunda pasada se
-        // comería la reserva de OTRO pedido que tenga la misma variante
-        // pendiente. Si la fila ya no está en `pending_payment`, alguien se
-        // ocupó antes y aquí no hay nada que hacer.
+        // una precaución teórica: soltar dos veces NO es inocuo —
+        // `release_reservation` resta `reserved_quantity` por variante, así que
+        // la segunda pasada se comería la reserva de OTRO pedido que tenga la
+        // misma variante pendiente. Si la fila ya no está en `pending_payment`
+        // —porque se pagó entre medias, o porque el cron la caducó primero—
+        // alguien se ocupó antes y aquí no hay nada que hacer.
         const { data: cancelled, error: cancelError } = await admin
           .from('orders')
           .update({ order_status: 'cancelled', payment_status: 'cancelled' })

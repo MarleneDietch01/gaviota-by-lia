@@ -147,6 +147,63 @@ describe('checkout.session.expired', () => {
   });
 });
 
+describe('payment_intent.payment_failed', () => {
+  const failedIntent = (metadata: Record<string, string>) => ({
+    id: 'pi_rechazado',
+    metadata,
+  });
+
+  const stubIntent = (metadata: Record<string, string>) =>
+    mocks.construct.mockReturnValue({
+      id: 'evt_failed',
+      type: 'payment_intent.payment_failed',
+      data: { object: failedIntent(metadata) },
+    });
+
+  it('NO cancela ni suelta la reserva de un pago gestionado por Checkout', async () => {
+    // Una tarjeta declinada dentro de Checkout no termina la sesión: se puede
+    // reintentar con otra en la misma página. Si aquí se soltara la reserva y
+    // el segundo intento saliera bien, `commit_inventory_sale()` restaría
+    // `reserved_quantity` una segunda vez —su candado es el asiento de venta,
+    // que todavía no existe— y se comería la reserva de otro pedido.
+    stubIntent({ order_id: 'order-rechazado', checkout_managed: 'true' });
+
+    const response = await stripeWebhook(webhookRequest());
+
+    expect(response.status).toBe(200);
+    expect(mocks.writes.some((w) => w.table === 'orders')).toBe(false);
+    expect(mocks.rpc).not.toHaveBeenCalled();
+  });
+
+  it('sí cancela y suelta un PaymentIntent directo, sin Checkout detrás', async () => {
+    // Sin sesión de Checkout no hay `checkout.session.expired` posterior que
+    // limpie, así que el fallo es terminal y hay que soltar aquí.
+    stubIntent({ order_id: 'order-rechazado' });
+
+    const response = await stripeWebhook(webhookRequest());
+
+    expect(response.status).toBe(200);
+    expect(mocks.writes.find((w) => w.table === 'orders')?.values).toEqual({
+      order_status: 'cancelled',
+      payment_status: 'failed',
+    });
+    expect(mocks.rpc).toHaveBeenCalledWith('release_reservation', {
+      p_order_id: 'order-rechazado',
+    });
+  });
+
+  it('no suelta dos veces si el pedido ya no estaba pendiente', async () => {
+    mocks.cancelledRows = [];
+    stubIntent({ order_id: 'order-rechazado' });
+
+    const response = await stripeWebhook(webhookRequest());
+
+    expect(response.status).toBe(200);
+    expect(mocks.rpc).not.toHaveBeenCalled();
+    expect(mocks.writes.some((w) => w.table === 'payments')).toBe(false);
+  });
+});
+
 describe('/api/cron/release-reservations', () => {
   const cronRequest = (authorization?: string) =>
     new NextRequest('https://example.com/api/cron/release-reservations', {

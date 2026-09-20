@@ -223,7 +223,37 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ url: session.url });
   } catch {
-    await admin.from('orders').update({ order_status: 'cancelled' }).eq('id', orderId);
+    // Aquí el pedido YA existe en `pending_payment` y YA tiene inventario
+    // reservado: `createPendingOrder()` hace las dos cosas antes de hablar con
+    // Stripe. Cancelarlo sin soltar la reserva la deja retenida PARA SIEMPRE —
+    // `expire_stale_reservations()` solo recorre pedidos que siguen en
+    // `pending_payment`, así que el cron nocturno no vuelve a mirar esta fila
+    // nunca, y no hay ningún trigger en `orders` que compense. El síntoma es
+    // silencioso y tardío: un producto que se muestra agotado sin que falte
+    // una sola unidad física.
+    //
+    // El UPDATE va condicionado a `pending_payment` por lo mismo que en el
+    // webhook: `release_reservation()` RESTA `reserved_quantity`, no es
+    // idempotente, y soltar dos veces se come la reserva de otro pedido que
+    // tenga la misma variante pendiente. Si la fila ya no está pendiente,
+    // alguien se ocupó antes y aquí no hay nada que hacer.
+    const { data: cancelled } = await admin
+      .from('orders')
+      .update({ order_status: 'cancelled', payment_status: 'cancelled' })
+      .eq('id', orderId)
+      .eq('order_status', 'pending_payment')
+      .select('id');
+
+    if (cancelled?.length) {
+      await admin
+        .from('payments')
+        .update({ status: 'cancelled' })
+        .eq('order_id', orderId)
+        .eq('status', 'pending');
+
+      await admin.rpc('release_reservation', { p_order_id: orderId });
+    }
+
     return NextResponse.json({ error: 'stripe_session_failed' }, { status: 502 });
   }
 }
