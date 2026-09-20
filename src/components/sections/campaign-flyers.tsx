@@ -21,7 +21,25 @@ import { localizedHref, pick, type Locale } from '@/lib/i18n';
  * criterio que L8. Los archivos originales siguen en `editorial/` por si hace
  * falta recuperar algo puntual, pero ya no los referencia ningún componente.
  *
- * REDISEÑO — dos correcciones sobre la primera reconstrucción:
+ * RECORTE 2026-09-20 — dos piezas fuera, ninguna por estética:
+ *
+ * · El subtítulo era el cuerpo del hero con cuatro palabras delante ("Un
+ *   ritual sencillo de" + "cuidado corporal creado para hidratar, suavizar y
+ *   convertir cada aplicación en un momento para ti"). Leerlo dos veces en la
+ *   misma página no informa: confirma que la página se está repitiendo. El
+ *   titular y los tres beneficios ya dicen de qué va la sección.
+ *
+ * · La imagen panorámica de abajo iba rotulada "imagen ilustrativa" y no
+ *   sostenía ninguna afirmación — estaba para conservar una composición
+ *   solicitada. Era la pieza más cara de la página en píxeles por unidad de
+ *   información. La foto editorial de la izquierda se queda: esa sí compone
+ *   la sección.
+ *
+ * Esta sección era la segunda más alta de la home (13,3 % del total en tablet,
+ * 13,5 % en escritorio) justo detrás de la campaña del mismo producto. Medido,
+ * no estimado — ver docs/DESIGN_AUDIT_2026-09-20.md.
+ *
+ * REDISEÑO ANTERIOR — dos correcciones sobre la primera reconstrucción:
  *
  * 1) El eyebrow decía "Real results" / "Resultados reales" encima de una
  *    lista de beneficios y dos botones de tienda — ningún antes/después, sin
@@ -61,11 +79,6 @@ export function CampaignFlyers({ locale }: { locale: Locale }) {
               id="campaign-flyers-title"
               eyebrow={pick(locale, 'What to expect', 'Lo que puedes esperar')}
               title={pick(locale, 'Your daily moment of care.', 'Tu momento diario de cuidado.')}
-              subtitle={pick(
-                locale,
-                'A simple body-care ritual made to hydrate, soften, and turn every application into a moment of your own.',
-                'Un ritual sencillo de cuidado corporal creado para hidratar, suavizar y convertir cada aplicación en un momento para ti.',
-              )}
               align="left"
               className="mb-8 sm:mb-9"
             />
@@ -92,24 +105,6 @@ export function CampaignFlyers({ locale }: { locale: Locale }) {
           </Reveal>
         </div>
 
-        <Reveal className="campaign-editorial-wide-wrap">
-          <figure className="campaign-editorial-wide">
-            <EditorialImage
-              src="/images/gaviota/products/exfoliante-coco-editorial-mujer-full.webp"
-              alt={pick(
-                locale,
-                'Illustrative side-by-side body-care scene with a woman and Gaviota by Lia Coconut Body Scrub',
-                'Escena ilustrativa de cuidado corporal en paralelo con una mujer y el Exfoliante de Coco Gaviota by Lia',
-              )}
-              width={1440}
-              height={960}
-              sizes="(max-width: 1023px) calc(100vw - 2.5rem), 56rem"
-              focal="50% 50%"
-              fit="contain"
-            />
-          </figure>
-          <p>{pick(locale, 'Illustrative image', 'Imagen ilustrativa')}</p>
-        </Reveal>
       </Container>
     </Section>
   );

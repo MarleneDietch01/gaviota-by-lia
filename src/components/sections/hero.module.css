@@ -121,11 +121,19 @@
   gap: 0.5rem 1.75rem;
   margin-top: 1.75rem;
 }
+/* El CTA del hero era el ÚNICO botón de texto con forma de píldora en toda la
+   web: el primitivo `Button` es `rounded-xs` y lo son también los 128 usos de
+   ese radio en componentes. El sistema tiene dos familias legítimas —
+   rectángulo para acciones de texto, píldora para botones de icono
+   circulares y etiquetas— y este caía en la primera con la forma de la
+   segunda. Quien veía el hero y bajaba se encontraba otra forma de botón.
+   Auditoría del 2026-09-20. El tamaño sí se conserva: es la acción principal
+   de la página y debe pesar más que las demás. */
 .actions .primary {
   min-height: 3.5rem;
   padding-inline: 1.5rem;
   gap: 1.5rem;
-  border-radius: 999px;
+  border-radius: var(--radius-xs);
   font-size: 0.8125rem;
 }
 .secondary {
@@ -169,7 +177,10 @@
   position: relative;
   overflow: hidden;
   aspect-ratio: 1.2;
-  border-radius: 3.5rem 0.5rem 3.5rem 0.5rem;
+  /* Mismo gesto que `frame-arch` (arco, plano, arco, plano en diagonal), a
+     escala de hero. Las esquinas planas pasan del `0.5rem` a mano al token
+     que usa el resto de marcos. */
+  border-radius: 3.5rem var(--radius-xs) 3.5rem var(--radius-xs);
   background: var(--color-powder);
 }
 .photo picture {
@@ -286,7 +297,7 @@
   .photo {
     aspect-ratio: auto;
     height: clamp(32rem, calc(100svh - 17rem), 41rem);
-    border-radius: 6rem 0.5rem 6rem 0.5rem;
+    border-radius: 6rem var(--radius-xs) 6rem var(--radius-xs);
   }
   .footer {
     margin-top: 1.5rem;

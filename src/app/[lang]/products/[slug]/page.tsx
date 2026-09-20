@@ -135,16 +135,33 @@ export default async function ProductPage({ params }: Props) {
                 {formatMoney(product.price, 'USD', lang === 'es' ? 'es-US' : 'en-US')}{' '}
                 <span className="text-sm font-normal text-muted">· {product.sizeLabel}</span>
               </p>
-              <p
-                className="hero-rise mt-5 text-sm leading-relaxed text-body"
-                style={{ '--rise-delay': '280ms' } as React.CSSProperties}
-              >
-                {pick(
-                  lang,
-                  'Add your product to the bag and review your total before paying.',
-                  'Añade tu producto a la bolsa y revisa el total antes de pagar.',
-                )}
-              </p>
+              {/* Junto al precio va el dato que decide la compra: cómo y cada
+                  cuánto se usa. Antes había aquí "Añade tu producto a la bolsa
+                  y revisa el total antes de pagar" — una instrucción sobre el
+                  propio sitio web, igual para los seis productos, en el sitio
+                  de más valor de la página.
+
+                  El texto sale de `usage_instructions`, editable desde
+                  /admin/products, y trae justo lo que hace falta para decidir:
+                  "después del baño, dos veces al día", "dos veces por semana",
+                  "después de la depilación". No se resume ni se trocea — se
+                  muestra tal cual lo escribió la marca.
+
+                  Ya NO se repite abajo en el acordeón: ese queda para
+                  ingredientes y precauciones, que son consulta, no decisión.
+                  Si un producto no lo tiene cargado (hoy: Crema Hidratante),
+                  aquí no aparece nada en vez de un rótulo vacío. */}
+              {product.usageInstructions ? (
+                <div
+                  className="hero-rise mt-5"
+                  style={{ '--rise-delay': '280ms' } as React.CSSProperties}
+                >
+                  <p className="eyebrow text-gold-deep">{pick(lang, 'How to use', 'Modo de uso')}</p>
+                  <p className="mt-1.5 text-sm leading-relaxed text-body">
+                    {product.usageInstructions}
+                  </p>
+                </div>
+              ) : null}
               <div
                 className="hero-rise mt-7 flex max-w-md gap-3"
                 style={{ '--rise-delay': '340ms' } as React.CSSProperties}
@@ -184,7 +201,9 @@ export default async function ProductPage({ params }: Props) {
           </div>
         </Container>
       </Section>
-      {product.ingredients || product.precautions || product.usageInstructions ? (
+      {/* `usageInstructions` ya NO cuenta aquí: subió junto al precio, así que
+          un producto que solo tuviera eso pintaría una caja de acordeón vacía. */}
+      {product.ingredients || product.precautions ? (
         <Section tone="powder">
           <Container>
             <div className="grid gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-20">
@@ -205,19 +224,10 @@ export default async function ProductPage({ params }: Props) {
                   para el icono propio. El primero abierto por defecto — es el
                   que más se consulta antes de comprar. */}
               <div className="divide-y divide-line-strong/60 rounded-sm bg-white-warm shadow-subtle">
-                {product.usageInstructions ? (
-                  <details className="group p-6 sm:p-8" open>
-                    <summary className="flex cursor-pointer list-none items-center justify-between gap-4 [&::-webkit-details-marker]:hidden">
-                      <span className="eyebrow text-gold-deep">{pick(lang, 'How to use', 'Modo de uso')}</span>
-                      <span aria-hidden="true" className="text-lg text-gold-deep transition-transform duration-200 group-open:rotate-45">+</span>
-                    </summary>
-                    <p className="mt-3 text-body-sm leading-relaxed text-body">
-                      {product.usageInstructions}
-                    </p>
-                  </details>
-                ) : null}
+                {/* Abierto por defecto: con "Modo de uso" ya arriba junto al
+                    precio, ingredientes es lo primero que se consulta aquí. */}
                 {product.ingredients ? (
-                  <details className="group p-6 sm:p-8">
+                  <details className="group p-6 sm:p-8" open>
                     <summary className="flex cursor-pointer list-none items-center justify-between gap-4 [&::-webkit-details-marker]:hidden">
                       <span className="eyebrow text-gold-deep">{pick(lang, 'Ingredients', 'Ingredientes')}</span>
                       <span aria-hidden="true" className="text-lg text-gold-deep transition-transform duration-200 group-open:rotate-45">+</span>
@@ -239,7 +249,7 @@ export default async function ProductPage({ params }: Props) {
           </Container>
         </Section>
       ) : null}
-      <Section tone={product.ingredients || product.precautions || product.usageInstructions ? 'ivory' : 'powder'}>
+      <Section tone={product.ingredients || product.precautions ? 'ivory' : 'powder'}>
         <Container size="narrow">
           <ProductReviews slug={product.slug} locale={lang} />
         </Container>
