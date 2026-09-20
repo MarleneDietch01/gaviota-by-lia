@@ -2,6 +2,7 @@
 
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { checkRateLimit } from '@/lib/security/rate-limit';
+import { rateLimitEmailKey, requestIp } from '@/lib/security/rate-limit-keys';
 import { forgotPasswordSchema } from '@/lib/validation/auth';
 import { isLocale, type Locale } from '@/lib/i18n';
 
@@ -25,14 +26,33 @@ export async function requestPasswordReset(
 
   const { email } = parsed.data;
 
-  // 3 correos por dirección cada 10 minutos. El resultado visible es SIEMPRE
-  // "sent: true" pase lo que pase (exista la cuenta o no, esté limitado o no):
-  // devolver un mensaje distinto cuando se excede el límite delataría que ese
-  // correo sí está siendo bombardeado con intento tras intento, que es
-  // información suficiente para confirmar que la cuenta existe.
-  const allowed = await checkRateLimit(`forgot-password:${email}`, 3, 600);
+  // 3 correos por BUZÓN cada 10 minutos, más 10 por IP cada hora. El resultado
+  // visible es SIEMPRE "sent: true" pase lo que pase (exista la cuenta o no,
+  // esté limitado o no): devolver un mensaje distinto cuando se excede el
+  // límite delataría que ese correo sí está siendo bombardeado con intento
+  // tras intento, que es información suficiente para confirmar que la cuenta
+  // existe. Por eso los dos límites de abajo solo deciden si se manda el
+  // correo, nunca lo que se responde.
+  //
+  // La clave era el correo literal y eso no bastaba: Gmail ignora los puntos,
+  // así que repartiéndolos de otra forma se estrenaba contador una y otra vez
+  // contra la MISMA clienta. Quien recibe ese bombardeo es una persona real
+  // registrada aquí, y lo que ve es su bandeja llena de "restablece tu
+  // contraseña" de una tienda donde compró. `rateLimitEmailKey()` reduce todas
+  // esas variantes al buzón que de verdad las recibe.
+  const allowedForMailbox = await checkRateLimit(
+    `forgot-password:${rateLimitEmailKey(email)}`,
+    3,
+    600,
+  );
 
-  if (allowed) {
+  // Y el de IP frena al mismo origen probando direcciones distintas a ver
+  // cuáles están registradas.
+  const allowedForIp = allowedForMailbox
+    ? await checkRateLimit(`forgot-password-ip:${await requestIp()}`, 10, 3600)
+    : false;
+
+  if (allowedForMailbox && allowedForIp) {
     const supabase = await createServerSupabaseClient();
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
 
