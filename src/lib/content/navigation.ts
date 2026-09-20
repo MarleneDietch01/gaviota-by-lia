@@ -40,7 +40,6 @@ export const BRAND_NAV: readonly NavItem[] = [
   { href: '/our-story', en: 'Our story', es: 'Nuestra historia' },
   { href: '/founder', en: 'Our founder', es: 'La fundadora' },
   { href: '/rituals', en: 'Rituals', es: 'Rituales' },
-  { href: '/journal', en: 'Journal', es: 'Diario' },
 ];
 
 export const HELP_NAV: readonly NavItem[] = [

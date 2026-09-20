@@ -1,5 +1,6 @@
 'use client';
 
+import { usePathname } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState, type PointerEvent } from 'react';
 import { ArrowRight, Check, Copy, X } from 'lucide-react';
 import { Button, LinkButton } from '@/components/ui/button';
@@ -27,7 +28,32 @@ import styles from './promo-coupon.module.css';
  * paso antes de volver al primero — el indicador de foco desaparece un
  * instante, que es justo lo que la trampa manual evita.
  */
-const ARRIVE_DELAY_MS = 1400;
+/**
+ * El cupón ya no entra por temporizador.
+ *
+ * Entraba a los 1.400 ms: encima del hero, antes de que nadie hubiera leído
+ * una línea, y con el mismo descuento que la barra superior ya anuncia gratis
+ * (`announcement-bar.tsx` copia el código y enlaza a la tienda). Interrumpir
+ * la lectura inicial para repetir algo que ya está en pantalla es coste sin
+ * contrapartida — auditoría del 2026-09-20.
+ *
+ * Ahora espera a una señal de interés real: que se haya recorrido
+ * `SCROLL_TRIGGER_RATIO` de la página. Quien rebota en el hero no lo ve nunca;
+ * quien baja a mirar producto sí, y para entonces el cupón responde a algo que
+ * esa persona ya estaba haciendo.
+ *
+ * El candado de "una vez por visitante" (`markPromoCouponSeen`) no cambia.
+ */
+const SCROLL_TRIGGER_RATIO = 0.35;
+
+/**
+ * Rutas donde el cupón NO aparece, se haya desplazado lo que se haya
+ * desplazado: son los pasos donde ya se está comprando. Un modal sobre el
+ * resumen de la bolsa o sobre el checkout no informa de nada nuevo —el código
+ * sigue en la barra superior y hay un campo para aplicarlo en la propia
+ * bolsa— y sí puede costar la compra.
+ */
+const SUPPRESSED = /^\/(?:en|es)\/(?:cart|checkout)(?:\/|$)/;
 const LEAVE_MS = 320;
 const TITLE_ID = 'promo-coupon-title';
 
@@ -38,6 +64,7 @@ function prefersReducedMotion(): boolean {
 }
 
 export function PromoCoupon({ locale }: { locale: Locale }) {
+  const pathname = usePathname();
   const [stage, setStage] = useState<Stage>('hidden');
   const [copyState, setCopyState] = useState<'idle' | 'copied' | 'manual'>('idle');
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -47,11 +74,30 @@ export function PromoCoupon({ locale }: { locale: Locale }) {
   const visible = stage !== 'hidden';
 
   useEffect(() => {
-    // Ya lo vio, o ya activó el descuento: no se le interrumpe.
+    // Ya lo vio, o ya activó el descuento, o está en mitad de la compra: no se
+    // le interrumpe.
     if (wasPromoCouponSeen() || getSavedPromotion()) return;
-    const timeout = window.setTimeout(() => setStage('open'), ARRIVE_DELAY_MS);
-    return () => window.clearTimeout(timeout);
-  }, []);
+    if (SUPPRESSED.test(pathname)) return;
+
+    const onScroll = () => {
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      // Página que no llega a una pantalla completa: no hay recorrido que
+      // medir, así que tampoco hay señal de interés. Se queda sin mostrar en
+      // vez de dispararse por una división entre cero.
+      if (scrollable <= 0) return;
+      if (window.scrollY / scrollable < SCROLL_TRIGGER_RATIO) return;
+      // Se suelta AL DISPARARSE, no al desmontar. Sin esto el listener sigue
+      // vivo después de cerrar el cupón y el siguiente desplazamiento lo
+      // vuelve a abrir: el candado de "una vez por visitante" se rompería
+      // dentro de la misma página, que es justo lo contrario de lo que pide
+      // la auditoría.
+      window.removeEventListener('scroll', onScroll);
+      setStage('open');
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [pathname]);
 
   useEffect(() => {
     if (stage !== 'open') return;

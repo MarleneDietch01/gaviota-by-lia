@@ -1,18 +1,13 @@
 import { Container, Section, SectionHeader } from '@/components/ui/layout-primitives';
 import { getFaqItems } from '@/lib/content/faq-items';
 import { getSection } from '@/lib/content/sections';
-import { pick, type Locale } from '@/lib/i18n';
+import Link from 'next/link';
+import { localizedHref, pick, type Locale } from '@/lib/i18n';
 
-/**
- * Preguntas frecuentes en la home — oculta hasta que existan preguntas y
- * respuestas reales. Ver `src/lib/content/faq-items.ts`: el array vive vacío
- * a propósito, mientras `/faq` siga siendo un párrafo genérico a la espera de
- * políticas aprobadas (`route-pages.ts`). Mismo doble candado que
- * `BeforeAfter`: ni activar sin preguntas, ni cargar preguntas sin activar.
- */
+/** Answers come from the same content as the help page. */
 export async function Faq({ locale }: { locale: Locale }) {
   const c = await getSection('home.faq', locale);
-  const items = getFaqItems(locale);
+  const items = getFaqItems();
   if (!c || items.length === 0) return null;
 
   return (
@@ -38,6 +33,9 @@ export async function Faq({ locale }: { locale: Locale }) {
             </details>
           ))}
         </div>
+        <Link href={localizedHref(locale, '/faq')} className="mt-6 inline-flex min-h-11 items-center text-sm font-semibold text-gold-deep underline underline-offset-4">
+          {pick(locale, 'More help with your order', 'Más ayuda con tu compra')}
+        </Link>
       </Container>
     </Section>
   );

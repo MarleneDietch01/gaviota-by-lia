@@ -49,8 +49,8 @@ export async function BuildRitual({ locale }: { locale: Locale }) {
           }
         />
 
-        <div className="grid gap-4 sm:gap-5 lg:grid-cols-4 lg:gap-6">
-          <Reveal className="lg:col-span-2 lg:row-span-2">
+        <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4 lg:gap-6">
+          <Reveal className="col-span-2 lg:row-span-2">
             <NeedCard need={first} locale={locale} feature />
           </Reveal>
 
@@ -90,7 +90,7 @@ export function NeedCard({
           la rejilla, no por tener un recorte de imagen distinto. */}
       <div
         className={
-          feature ? 'aspect-square lg:aspect-auto lg:min-h-0 lg:flex-1' : 'aspect-square'
+          feature ? 'aspect-[4/3] sm:aspect-[2/1] lg:aspect-auto lg:min-h-0 lg:flex-1' : 'aspect-square'
         }
       >
         <EditorialImage
@@ -101,7 +101,7 @@ export function NeedCard({
           sizes={
             feature
               ? '(max-width: 1023px) 100vw, 48vw'
-              : '(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 24vw'
+              : '(max-width: 1023px) 50vw, 24vw'
           }
           focal={need.focal}
           fit={need.fit ?? 'cover'}
@@ -115,7 +115,7 @@ export function NeedCard({
           filas de rejilla, eso dejaba ~350px de marfil vacío debajo del enlace,
           y el bloque se leía como contenido que falta. Sin `flex-1` en el texto,
           todo el sobrante se lo lleva la fotografía, que es lo que debe crecer. */}
-      <div className={feature ? 'flex flex-col p-6 lg:p-8' : 'flex flex-1 flex-col p-5'}>
+      <div className={feature ? 'flex flex-col p-5 lg:p-8' : 'flex flex-1 flex-col p-3 sm:p-5'}>
         <h3
           className={
             feature

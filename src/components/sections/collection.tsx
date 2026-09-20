@@ -35,7 +35,7 @@ const FEATURED_BADGES: Record<string, { en: string; es: string }> = {
  */
 export async function Collection({ locale }: { locale: Locale }) {
   const c = await getSection('home.bestsellers', locale);
-  const products = await getFeaturedProducts(locale);
+  const products = (await getFeaturedProducts(locale)).slice(0, 4);
 
   if (!c || products.length === 0) return null;
 

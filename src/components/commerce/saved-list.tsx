@@ -27,11 +27,18 @@ export function SavedList({
   products,
   locale,
   freeShippingThresholdCents = null,
+  shippingRateCents = null,
 }: {
   kind: 'cart' | 'wishlist';
   products: readonly Product[];
   locale: Locale;
   freeShippingThresholdCents?: Cents | null;
+  /**
+   * Tarifa plana de EE. UU. leída de `shipping_rates` en el servidor, la
+   * misma que aplica `computeShipping` al crear la sesión de Stripe. `null`
+   * en la lista de favoritos, que no tiene resumen de compra.
+   */
+  shippingRateCents?: Cents | null;
 }) {
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const [checkoutPending, setCheckoutPending] = useState(false);
@@ -145,6 +152,23 @@ export function SavedList({
 
   const subtotal = lines.reduce((total, line) => total + Number(line.product.price) * line.quantity, 0);
   const discount = appliedCode ? promotionDiscount(cents(subtotal)) : cents(0);
+
+  /**
+   * Espejo exacto de `computeShipping()` (lib/commerce/checkout.ts), con la
+   * tarifa que llega del servidor desde la misma fila de `shipping_rates`.
+   *
+   * El umbral se compara contra el subtotal ANTES del descuento, igual que en
+   * /api/checkout: ahí `computeShipping(admin, subtotal)` recibe el subtotal
+   * de `validateCheckoutLines`, y el cupón se aplica después, por separado.
+   * Compararlo contra el subtotal ya descontado prometería aquí un envío
+   * gratis que Stripe luego cobraría.
+   */
+  const shippingEstimate =
+    shippingRateCents === null
+      ? null
+      : freeShippingThresholdCents !== null && subtotal >= freeShippingThresholdCents
+        ? cents(0)
+        : shippingRateCents;
   // Un producto puede agotarse mientras ya estaba en la bolsa (localStorage
   // persiste entre visitas). `validateCheckoutLines` ya lo rechazaría en
   // servidor, pero avisar aquí evita el viaje redondo a un checkout que
@@ -315,12 +339,50 @@ export function SavedList({
             </p>
           ) : null}
 
+          {/* El envío deja de ser una incógnita hasta el checkout. La política
+              publicada ya declara la tarifa ($14, gratis desde $100), así que
+              ocultarla aquí no protegía de nada: solo dejaba a quien compra
+              calculando de cabeza hasta la pantalla de pago. Se muestra como
+              estimación —el impuesto sigue dependiendo del estado de envío,
+              que Stripe Tax calcula con la dirección real— y por eso el total
+              se llama "estimado", no "total". */}
+          {shippingEstimate !== null ? (
+            <div className="mt-3 space-y-3 border-t border-line pt-3 text-sm">
+              <p className="flex justify-between gap-2">
+                <span>{pick(locale, 'Estimated shipping (U.S.)', 'Envío estimado (EE. UU.)')}</span>
+                <strong>
+                  {shippingEstimate === 0
+                    ? pick(locale, 'Free', 'Gratis')
+                    : formatMoney(shippingEstimate, 'USD', locale === 'es' ? 'es-US' : 'en-US')}
+                </strong>
+              </p>
+              <p className="flex justify-between gap-2 text-base">
+                <span className="font-semibold text-ink">
+                  {pick(locale, 'Estimated total', 'Total estimado')}
+                </span>
+                <strong className="text-ink">
+                  {formatMoney(
+                    cents(subtotal - discount + shippingEstimate),
+                    'USD',
+                    locale === 'es' ? 'es-US' : 'en-US',
+                  )}
+                </strong>
+              </p>
+            </div>
+          ) : null}
+
           <p className="mt-4 text-xs leading-relaxed text-body">
-            {pick(
-              locale,
-              'Taxes and shipping are calculated at checkout. Card, Apple Pay and Google Pay accepted where available.',
-              'Impuestos y envío se calculan en el checkout. Aceptamos tarjeta, Apple Pay y Google Pay donde estén disponibles.',
-            )}
+            {shippingEstimate !== null
+              ? pick(
+                  locale,
+                  'Sales tax is calculated at checkout from your shipping address. Card, Apple Pay and Google Pay accepted where available.',
+                  'El impuesto sobre la venta se calcula en el checkout según tu dirección de envío. Aceptamos tarjeta, Apple Pay y Google Pay donde estén disponibles.',
+                )
+              : pick(
+                  locale,
+                  'Taxes and shipping are calculated at checkout. Card, Apple Pay and Google Pay accepted where available.',
+                  'Impuestos y envío se calculan en el checkout. Aceptamos tarjeta, Apple Pay y Google Pay donde estén disponibles.',
+                )}
           </p>
 
           {hasOutOfStockLine ? (

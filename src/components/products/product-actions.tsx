@@ -1,10 +1,18 @@
 'use client';
 
+import Link from 'next/link';
 import { useCallback, useEffect, useState, useSyncExternalStore } from 'react';
-import { Check, Heart, Plus } from 'lucide-react';
+import { ArrowRight, Check, Heart, Plus } from 'lucide-react';
 import { cn } from '@/lib/utils/cn';
-import { pick, type Locale } from '@/lib/i18n';
-import { addToBag, isFavorite, subscribeFavorites, toggleFavorite } from '@/lib/commerce/bag';
+import { localizedHref, pick, type Locale } from '@/lib/i18n';
+import {
+  addToBag,
+  getBagCount,
+  isFavorite,
+  subscribeBag,
+  subscribeFavorites,
+  toggleFavorite,
+} from '@/lib/commerce/bag';
 
 /**
  * Acciones de la tarjeta de producto.
@@ -119,6 +127,55 @@ export function QuickAdd({
           : ''}
       </span>
     </>
+  );
+}
+
+/**
+ * El paso siguiente después de añadir.
+ *
+ * Hasta ahora, añadir confirmaba con "Añadido" durante 2,4 s y subía el
+ * contador del icono de la cabecera. Eso dice que algo pasó, pero no ofrece a
+ * dónde ir: para ver la bolsa había que localizar un icono pequeño arriba a la
+ * derecha (auditoría del 2026-09-20).
+ *
+ * No es un modal ni un panel deslizante: son dos enlaces bajo la acción, y
+ * "Seguir comprando" está primero en el DOM a propósito —quien quiera seguir
+ * mirando no tiene que pasar por encima de la llamada a la bolsa.
+ *
+ * Aparece cuando la bolsa deja de estar vacía y SE QUEDA, en lugar de irse con
+ * la confirmación a los 2,4 s. Un enlace que desaparece solo es peor que no
+ * tenerlo: obliga a actuar deprisa y desaparece justo bajo el puntero.
+ *
+ * SOLO A PARTIR DE `lg`. Por debajo, `mobile-purchase-bar.tsx` ya cambia
+ * "Añadir a la bolsa" por "Ver bolsa" en una barra fija al borde inferior —
+ * más visible que esto y sin necesidad de desplazarse. Repetirlo aquí ponía
+ * dos "Ver bolsa" en la misma pantalla (medido en el navegador a 390 px). El
+ * hueco que describe la auditoría es el de escritorio, donde esa barra es
+ * `lg:hidden` y la única señal era el contador del icono de la cabecera.
+ */
+export function BagNextStep({ locale }: { locale: Locale }) {
+  // Mismo patrón que `saved-list.tsx`: el snapshot de servidor es 0, así que
+  // el HTML del servidor y el primer render de cliente coinciden y no hay
+  // desajuste de hidratación.
+  const count = useSyncExternalStore(subscribeBag, getBagCount, () => 0);
+  if (count === 0) return null;
+
+  return (
+    <div className="mt-4 hidden flex-wrap items-center gap-x-5 gap-y-2 text-sm lg:flex">
+      <Link
+        href={localizedHref(locale, '/shop')}
+        className="inline-flex min-h-11 items-center text-body underline underline-offset-4 hover:text-ink"
+      >
+        {pick(locale, 'Keep shopping', 'Seguir comprando')}
+      </Link>
+      <Link
+        href={localizedHref(locale, '/cart')}
+        className="inline-flex min-h-11 items-center gap-1.5 font-semibold text-gold-deep underline underline-offset-4 hover:text-ink"
+      >
+        {pick(locale, 'View bag', 'Ver bolsa')}
+        <ArrowRight className="size-4 shrink-0" aria-hidden="true" />
+      </Link>
+    </div>
   );
 }
 

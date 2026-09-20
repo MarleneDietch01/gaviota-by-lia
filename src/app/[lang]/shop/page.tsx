@@ -28,7 +28,7 @@ export default async function ShopPage({ params, searchParams }: PageProps<'/[la
       locale={lang}
       eyebrow={pick(lang, 'The collection', 'La colección')}
       title={pick(lang, 'Body care, made into ritual.', 'Cuidado corporal hecho ritual.')}
-      description={pick(lang, 'Discover Dominican body care for your everyday ritual: body oils, coconut scrub, hydrating cream and post-hair-removal serum. Shop in USD with shipping within the United States.', 'Descubre cuidado corporal dominicano para tu ritual diario: aceites, exfoliante de coco, crema hidratante y sérum post-depilación. Compra en dólares con envíos dentro de Estados Unidos.')}
+      description={pick(lang, 'Oils, creams and scrubs for your daily care. Shop in USD with U.S. shipping.', 'Aceites, cremas y exfoliantes para tu cuidado diario. Compra en dólares con envíos en EE. UU.')}
       query={query}
       breadcrumbs={[{ label: pick(lang, 'Shop', 'Tienda') }]}
     />

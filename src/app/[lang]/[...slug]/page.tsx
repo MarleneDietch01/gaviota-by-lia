@@ -95,8 +95,13 @@ export default async function CatchAllPage({ params }: Props) {
 
   if (key === 'cart' || key === 'wishlist') {
     const products = await getAllProducts(lang);
-    const freeShippingThresholdCents =
-      key === 'cart' ? (await getShippingConfig(await createServerSupabaseClient())).freeAboveCents : null;
+    // Una sola lectura de `shipping_rates`, la MISMA que usa `computeShipping`
+    // en /api/checkout. El importe mostrado en la bolsa y el que Stripe acaba
+    // cobrando no pueden salir de dos sitios distintos: la tarifa vive en la
+    // base de datos (la variable de entorno es solo un respaldo), así que
+    // duplicar el número aquí sería garantizar que algún día discrepen.
+    const shippingConfig =
+      key === 'cart' ? await getShippingConfig(await createServerSupabaseClient()) : null;
     return (
       <Section tone="ivory">
         <Container>
@@ -107,7 +112,13 @@ export default async function CatchAllPage({ params }: Props) {
             {key === 'cart' ? (lang === 'es' ? 'Tu bolsa' : 'Your bag') : (lang === 'es' ? 'Favoritos' : 'Favorites')}
           </h1>
           <Rule className="my-8" />
-          <SavedList kind={key} products={products} locale={lang} freeShippingThresholdCents={freeShippingThresholdCents} />
+          <SavedList
+            kind={key}
+            products={products}
+            locale={lang}
+            freeShippingThresholdCents={shippingConfig?.freeAboveCents ?? null}
+            shippingRateCents={shippingConfig?.rateCents ?? null}
+          />
         </Container>
       </Section>
     );

@@ -32,7 +32,7 @@ export async function RitualSteps({ locale }: { locale: Locale }) {
           subtitle={c.subtitle}
         />
 
-        <ol className="grid gap-12 sm:gap-10 lg:grid-cols-3 lg:gap-8">
+        <ol className="grid gap-10 sm:grid-cols-3 sm:gap-5 lg:gap-8">
           {RITUAL_STEPS.map((step, i) => (
             <Reveal as="li" key={step.n} delay={i * 90} className="ritual-step relative">
               {/* Numeración editorial de fondo. Decorativa: no aporta
@@ -44,22 +44,22 @@ export async function RitualSteps({ locale }: { locale: Locale }) {
                 {step.n}
               </span>
 
-              <div className="relative z-10">
-                <div className="frame-arch">
+              <div className="relative z-10 grid grid-cols-[7rem_1fr] gap-x-5 sm:block">
+                <div className="frame-arch row-span-3 self-start">
                   <div className="aspect-[4/5]" style={step.bg ? { backgroundColor: step.bg } : undefined}>
                     <EditorialImage
                       src={step.image}
                       alt={t(step.alt, locale)}
                       width={1600}
                       height={2000}
-                      sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 31vw"
+                      sizes="(max-width: 639px) 112px, 31vw"
                       focal={step.focal}
                       {...(step.fit ? { fit: step.fit } : {})}
                     />
                   </div>
                 </div>
 
-                <h3 className="mt-6 font-display text-h3">{t(step.verb, locale)}</h3>
+                <h3 className="font-display text-h3 sm:mt-6">{t(step.verb, locale)}</h3>
 
                 <p className="mt-2 text-body-sm leading-relaxed text-body">
                   {t(step.body, locale)}

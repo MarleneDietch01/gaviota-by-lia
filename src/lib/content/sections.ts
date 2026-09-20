@@ -155,14 +155,12 @@ const DEFAULTS_ES: Record<string, ContentSection> = {
     subtitle: 'Antes y después reales del ritual de cuidado. Los resultados pueden variar.',
     status: 'draft',
   },
-  // `/faq` hoy es un párrafo genérico esperando políticas aprobadas (ver
-  // route-pages.ts), no preguntas y respuestas reales. Esta sección espera lo
-  // mismo: activar solo con Q&A real, no inventada.
+  // Respuestas compartidas con la página de ayuda.
   'home.faq': {
     key: 'home.faq',
     eyebrow: 'Ayuda',
     title: 'Preguntas frecuentes',
-    status: 'draft',
+    status: 'active',
   },
 };
 
@@ -181,7 +179,7 @@ const DEFAULTS_EN: Record<string, ContentSection> = {
   'home.ugc': { key: 'home.ugc', title: 'From our community', status: 'draft' },
   'home.instagram': { key: 'home.instagram', title: 'Follow us on Instagram', buttonLabel: 'See more on Instagram', buttonUrl: 'https://www.instagram.com/gaviotabylia/', status: 'draft' },
   'home.beforeAfter': { key: 'home.beforeAfter', eyebrow: 'Visual comparisons', title: 'Care you can see', subtitle: 'Real before-and-after from the care ritual. Results may vary.', status: 'draft' },
-  'home.faq': { key: 'home.faq', eyebrow: 'Help', title: 'Frequently asked questions', status: 'draft' },
+  'home.faq': { key: 'home.faq', eyebrow: 'Help', title: 'Frequently asked questions', status: 'active' },
 };
 
 /**

@@ -25,6 +25,10 @@ import { HomeReviews } from '@/components/sections/home-reviews';
  * bundle de cliente es el header (scroll, drawer, contador), el `Reveal` y los
  * botones de la tarjeta de producto.
  *
+ * Los productos y los kits encabezan la página; la parte editorial y la ayuda
+ * vienen después (auditoría del 2026-09-20: el kit quedaba a nueve secciones
+ * de los productos que lo componen).
+ *
  * RITMO VISUAL — alternancia de temperatura. Es la regla que sostiene la
  * dirección editorial: la página nunca repite superficie en dos secciones
  * consecutivas. Leído de arriba abajo:
@@ -34,6 +38,7 @@ import { HomeReviews } from '@/components/sections/home-reviews';
  *   Beneficios ........ blanco
  *   Colección ......... crema rosado (`blush`, más claro que `powder` — ver
  *                       comentario de `TONES` en layout-primitives.tsx)
+ *   Sets .............. rosa empolvado
  *   Build your ritual . marfil
  *   Campaña ........... vino          ← a sangre, sin padding
  *   Flyers campaña .... marfil
@@ -43,19 +48,23 @@ import { HomeReviews } from '@/components/sections/home-reviews';
  *   Antes/después ..... rosa empolvado  ← oculta, ver abajo
  *   Comunidad ......... espresso
  *   Reseñas ........... blanco           ← solo con reseñas aprobadas
- *   Sets .............. rosa empolvado
- *   FAQ ............... blanco          ← oculta, ver abajo
+ *   FAQ ............... blanco
  *   Newsletter ........ marfil
  *   Footer ............ marfil
  *
- * Secciones que existen en el sistema de contenido pero NO se renderizan porque
- * están en `draft`: `home.ugc`, `home.instagram`,
- * `home.beforeAfter`, `home.faq`. `getSection()` devuelve null y el componente
- * no pinta nada. `BeforeAfter`/`Faq` tienen además un candado propio (un
- * array de contenido vacío a propósito, ver `src/lib/content/
- * before-after-items.ts` y `faq-items.ts`) — se activan solas cuando existan
- * reseñas verificadas, fotografía real y consentida, y preguntas/respuestas
- * reales, nunca antes.
+ * `Collection` (blush) y `Sets` (powder) quedan ahora contiguas: son dos rosas
+ * distintos, no la misma superficie repetida, pero es la transición más suave
+ * de la página. Es el precio de acercar el kit a los productos que lo forman.
+ *
+ * Secciones que existen en el sistema de contenido pero NO se renderizan
+ * porque están en `draft`: `home.ugc`, `home.instagram`, `home.beforeAfter`.
+ * `getSection()` devuelve null y el componente no pinta nada. `BeforeAfter`
+ * tiene además un candado propio (un array de contenido vacío a propósito, ver
+ * `src/lib/content/before-after-items.ts`) — se activa sola cuando exista
+ * fotografía real y consentida, nunca antes.
+ *
+ * `home.faq` SÍ está activa desde la auditoría del 2026-09-20: sus respuestas
+ * ya no se inventan, salen de la misma fuente que `/faq` (ver `faq-items.ts`).
  */
 export default async function HomePage({ params }: PageProps<'/[lang]'>) {
   const { lang } = await params;
@@ -67,6 +76,7 @@ export default async function HomePage({ params }: PageProps<'/[lang]'>) {
       <TrustStrip locale={lang} />
       <Benefits locale={lang} />
       <Collection locale={lang} />
+      <Sets locale={lang} />
       <BuildRitual locale={lang} />
       <Campaign locale={lang} />
       <CampaignFlyers locale={lang} />
@@ -76,7 +86,6 @@ export default async function HomePage({ params }: PageProps<'/[lang]'>) {
       <BeforeAfter locale={lang} />
       <Community locale={lang} />
       <HomeReviews locale={lang} />
-      <Sets locale={lang} />
       <Faq locale={lang} />
       <Newsletter locale={lang} />
     </>

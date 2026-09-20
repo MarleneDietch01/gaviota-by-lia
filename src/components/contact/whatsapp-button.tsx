@@ -11,14 +11,34 @@ const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 
 /** Acceso directo global: enlace real, sin widget ni script de terceros. */
 export function WhatsAppButton({ locale }: { locale: Locale }) {
-  const productPage = /^\/(?:en|es)\/products\/[^/]+\/?$/.test(usePathname());
+  const pathname = usePathname();
+  const productPage = /^\/(?:en|es)\/products\/[^/]+\/?$/.test(pathname);
+  // Rutas donde este botón flotante TAPA un control real por debajo de `lg`.
+  // Medido en Chromium a 390 px, no deducido del código:
+  //
+  //   · La bolsa apila cupón, resumen y "Ir a pagar" contra el borde
+  //     inferior — el botón cae sobre el campo del cupón con la bolsa corta,
+  //     y sobre el resumen al bajar.
+  //   · El catálogo (tienda, categoría y búsqueda) con el panel "Filtrar y
+  //     ordenar" desplegado: el botón se superpone al `select` de orden y al
+  //     botón "Aplicar". Los dos son interactivos, así que no es un solape
+  //     estético: se queda con la pulsación.
+  //
+  // A partir de `lg` hay margen de sobra en la esquina y vuelve a aparecer,
+  // igual que ya hacía en la ficha de producto.
+  const cartPage = /^\/(?:en|es)\/cart\/?$/.test(pathname);
+  const catalogPage = /^\/(?:en|es)\/(?:shop|search|categories(?:\/|$))/.test(pathname);
   const { status } = useConsent();
   // El aviso de cookies (`cookie-consent-banner.tsx`) ocupa bottom-0 a
   // TODOS los anchos mientras no hay respuesta, no solo por debajo de `lg`
   // como la barra de compra de arriba — así que aquí se oculta del todo, sin
   // excepción de `lg`.
   const consentPending = Boolean(GA_ID) && status === 'unknown';
-  const display = consentPending ? 'hidden' : productPage ? 'hidden lg:inline-flex' : 'inline-flex';
+  const display = consentPending
+    ? 'hidden'
+    : productPage || cartPage || catalogPage
+      ? 'hidden lg:inline-flex'
+      : 'inline-flex';
   const message = pick(
     locale,
     'Hello Gaviota by Lia, I would like some help.',

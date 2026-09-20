@@ -44,14 +44,14 @@ export async function CatalogPage({
       <Container className="pb-16 pt-5 sm:pb-20 lg:pb-28 lg:pt-8">
         <Breadcrumbs items={breadcrumbs} locale={locale} />
 
-        <header className="max-w-3xl pb-10 pt-8 sm:pb-12 lg:pb-14 lg:pt-12">
+        <header className="max-w-3xl pb-5 pt-5 sm:pb-8 lg:pt-10">
           <p className="eyebrow mb-3 text-gold-deep">{eyebrow}</p>
           <h1 className="text-h1">{title}</h1>
-          <p className="mt-4 max-w-2xl text-lead text-body">{description}</p>
+          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-body sm:text-lead">{description}</p>
         </header>
 
-        <form action={formAction} className="border-y border-line py-5" role="search">
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[minmax(16rem,1fr)_minmax(12rem,0.55fr)_minmax(12rem,0.55fr)_auto] lg:items-end">
+        <form action={formAction} className="border-y border-line py-3" role="search">
+          <div className="flex items-end gap-2">
             <label className="block">
               <span className="mb-1.5 block text-xs font-semibold text-body">
                 {pick(locale, 'Search products', 'Buscar productos')}
@@ -63,11 +63,21 @@ export async function CatalogPage({
                   name="q"
                   defaultValue={query.q}
                   placeholder={pick(locale, 'Oil, cream, scrub…', 'Aceite, crema, exfoliante…')}
-                  className="min-h-12 w-full rounded-xs border border-line-strong bg-white-warm pl-10 pr-4 text-sm placeholder:text-muted"
+                  className="min-h-12 w-full rounded-md border border-line-strong bg-white-warm pl-10 pr-4 text-base placeholder:text-muted"
                 />
               </span>
             </label>
-
+            <button type="submit" className="min-h-12 rounded-md bg-champagne px-5 text-sm font-semibold text-ink hover:bg-gold">
+              {pick(locale, 'Search', 'Buscar')}
+            </button>
+          </div>
+          <details className="group mt-2" open={Boolean(query.category || (query.sort && query.sort !== 'featured'))}>
+            <summary className="flex min-h-11 cursor-pointer list-none items-center gap-2 text-sm font-semibold text-gold-deep [&::-webkit-details-marker]:hidden">
+              <SlidersHorizontal className="size-4" aria-hidden="true" />
+              {pick(locale, 'Filter and sort', 'Filtrar y ordenar')}
+              <span className="ml-auto group-open:rotate-45" aria-hidden="true">+</span>
+            </summary>
+            <div className="grid gap-3 pb-2 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
             {lockCategory ? (
               <input type="hidden" name="category" value={lockCategory} />
             ) : (
@@ -99,10 +109,11 @@ export async function CatalogPage({
               <SlidersHorizontal className="size-4" aria-hidden="true" />
               {pick(locale, 'Apply', 'Aplicar')}
             </button>
-          </div>
+            </div>
+          </details>
         </form>
 
-        <div className="flex flex-wrap items-center justify-between gap-3 py-7">
+        <div className="flex flex-wrap items-center justify-between gap-3 py-4">
           <p role="status" className="text-sm text-body">
             <strong className="font-semibold text-ink">{products.length}</strong>{' '}
             {products.length === 1

@@ -5,7 +5,7 @@ import { WhatsAppIcon } from '@/components/icons/whatsapp-icon';
 import { whatsAppHref } from '@/lib/contact/whatsapp';
 import { Breadcrumbs } from '@/components/navigation/breadcrumbs';
 import { ProductCard } from '@/components/products/product-card';
-import { QuickAdd, FavoriteToggle } from '@/components/products/product-actions';
+import { BagNextStep, QuickAdd, FavoriteToggle } from '@/components/products/product-actions';
 import { ProductGallery } from '@/components/products/product-gallery';
 import { MobilePurchaseBar } from '@/components/products/mobile-purchase-bar';
 import { ProductReviews } from '@/components/products/product-reviews';
@@ -85,10 +85,21 @@ export default async function ProductPage({ params }: Props) {
       <Section tone="ivory" padding="compact">
         <Container>
           <Breadcrumbs items={breadcrumbItems} locale={lang} />
-          <div className="mt-6 grid gap-10 lg:grid-cols-2 lg:items-center lg:gap-20">
-            <ProductGallery images={product.images} priority />
+          {/* Una sola columna en móvil, dos a partir de `lg`. El orden del DOM es
+              el orden móvil: NOMBRE, foto, precio y compra. Antes la galería
+              iba primero y el título empezaba cerca de y=777 px — se abría la
+              ficha sin saber de qué producto era (auditoría del 2026-09-20).
 
-            <div className="self-center lg:py-5">
+              En escritorio no cambia nada: la cabecera y el bloque de compra
+              se recolocan en la columna 2 con `col-start`/`row-start`, y la
+              galería ocupa la columna 1 a lo alto de las dos filas. Es
+              colocación de rejilla, no un segundo `<h1>` duplicado y oculto:
+              el documento tiene un único encabezado, que es lo que leen los
+              lectores de pantalla y los buscadores. `gap-y-0` en `lg` porque
+              ahí el ritmo vertical de la columna derecha ya lo dan los
+              márgenes propios de cada elemento. */}
+          <div className="mt-6 flex flex-col gap-6 lg:grid lg:grid-cols-2 lg:items-center lg:gap-x-20 lg:gap-y-0">
+            <div className="lg:col-start-2 lg:row-start-1">
               <p className="eyebrow hero-rise text-gold-deep">
                 {pick(lang, 'Body care', 'Cuidado corporal')}
               </p>
@@ -110,8 +121,15 @@ export default async function ProductPage({ params }: Props) {
                   {pick(lang, 'More detail coming', 'Ficha en ampliación')}
                 </span>
               ) : null}
+            </div>
+
+            <div className="lg:col-start-1 lg:row-start-1 lg:row-span-2 lg:self-center">
+              <ProductGallery images={product.images} priority />
+            </div>
+
+            <div className="lg:col-start-2 lg:row-start-2 lg:py-5">
               <p
-                className="hero-rise mt-6 text-xl font-semibold"
+                className="hero-rise text-xl font-semibold lg:mt-6"
                 style={{ '--rise-delay': '220ms' } as React.CSSProperties}
               >
                 {formatMoney(product.price, 'USD', lang === 'es' ? 'es-US' : 'en-US')}{' '}
@@ -134,6 +152,7 @@ export default async function ProductPage({ params }: Props) {
                 <QuickAdd slug={product.slug} productName={product.name} locale={lang} inStock={product.inStock} variant="solid" />
                 <FavoriteToggle slug={product.slug} productName={product.name} locale={lang} />
               </div>
+              <BagNextStep locale={lang} />
               <a
                 href={whatsAppHref(pick(lang, `Hello, I have a question about ${product.name}.`, `Hola, tengo una pregunta sobre ${product.name}.`))}
                 target="_blank"
