@@ -86,6 +86,21 @@ if (process.env.SHIPPING_FLAT_RATE_CENTS && !Number.isInteger(Number(process.env
 }
 
 // --- Seguridad: nada con el valor de ejemplo del repo ------------------------
+// `require_` ADEMÁS de `forbid`, y el orden de estas dos llamadas no es
+// decorativo. `forbid` solo se dispara si el valor coincide con uno de la lista
+// (`if (value && ...)`), así que una variable AUSENTE o vacía lo atraviesa en
+// silencio. Eso ya pasó: `CRON_SECRET` existía en Vercel desde el primer día
+// como marcador sin valor, el build salió verde, y /api/cron/release-reservations
+// se desplegó devolviendo 503 `cron_not_configured` — el cron de caducidad de
+// carritos abandonados quedó inerte sin que nada lo avisara. Un endpoint que
+// escribe en `orders` con `service_role` no puede depender de que alguien se
+// acuerde de rellenar la variable.
+require_(
+  'CRON_SECRET',
+  'Falta CRON_SECRET. Sin ella /api/cron/release-reservations responde 503 y los ' +
+    'checkouts abandonados no se caducan: el stock reservado no vuelve nunca. ' +
+    'Genera uno con: node -e "console.log(require(\'crypto\').randomBytes(32).toString(\'hex\'))"',
+);
 forbid(
   'CRON_SECRET',
   ['desarrollo_cron_secret_no_usar_en_produccion', ''],
