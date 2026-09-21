@@ -16,6 +16,7 @@ import {
   toggleFavorite,
 } from '@/lib/commerce/bag';
 import { localizedHref, pick, type Locale } from '@/lib/i18n';
+import { checkoutSummaryNote } from '@/lib/content/payment-methods';
 import { parsePromotionCode, promotionDiscount } from '@/lib/commerce/promotion';
 import { getSavedPromotion, savePromotion, subscribePromotion } from '@/lib/commerce/promotion-storage';
 
@@ -371,18 +372,11 @@ export function SavedList({
             </div>
           ) : null}
 
+          {/* El texto sale de `lib/content/payment-methods.ts`: estaba repetido
+              aquí en dos variantes y se quedó atrás respecto a lo que Stripe
+              tiene activo de verdad. Ver la nota de ese archivo. */}
           <p className="mt-4 text-xs leading-relaxed text-body">
-            {shippingEstimate !== null
-              ? pick(
-                  locale,
-                  'Sales tax is calculated at checkout from your shipping address. Card, Apple Pay and Google Pay accepted where available.',
-                  'El impuesto sobre la venta se calcula en el checkout según tu dirección de envío. Aceptamos tarjeta, Apple Pay y Google Pay donde estén disponibles.',
-                )
-              : pick(
-                  locale,
-                  'Taxes and shipping are calculated at checkout. Card, Apple Pay and Google Pay accepted where available.',
-                  'Impuestos y envío se calculan en el checkout. Aceptamos tarjeta, Apple Pay y Google Pay donde estén disponibles.',
-                )}
+            {checkoutSummaryNote(locale, shippingEstimate !== null)}
           </p>
 
           {hasOutOfStockLine ? (
