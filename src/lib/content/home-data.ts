@@ -131,8 +131,9 @@ export const RITUAL_NEEDS: readonly RitualNeed[] = [
       en: 'Prep your skin for everything that follows.',
       es: 'Prepara la piel para todo lo que viene después.',
     },
-    image: '/images/gaviota/products/exfoliante-de-coco-studio.jpg',
-    imageEn: '/images/gaviota/products/exfoliante-de-coco-en.png',
+    // Sin `imageEn`: desde la presentación de 251 mL la etiqueta del bote ya
+    // es bilingüe, así que `build-ritual.tsx` cae a `image` en los dos idiomas.
+    image: '/images/gaviota/products/exfoliante-de-coco-251-studio.jpg',
     focal: '50% 50%',
     fit: 'contain',
     alt: {

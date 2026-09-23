@@ -140,11 +140,16 @@ const LEGACY_IMAGE: Record<string, { path: string; alt: string; width: number; h
     width: 1200,
     height: 1200,
   },
+  // Presentación de 251 mL (sept. 2026). El bote cambió de forma y de tamaño:
+  // el anterior era recto de 236 mL y tenía dos fotos, una por idioma. La
+  // etiqueta nueva ya trae «EXFOLIANTE DE COCO / COCONUT SCRUB» impreso, así
+  // que esta única foto sirve para los dos idiomas y la entrada de este
+  // producto desapareció de `ENGLISH_IMAGE`.
   'exfoliante-de-coco': {
-    path: '/images/gaviota/products/exfoliante-de-coco-studio.jpg',
-    alt: 'Tarro del Exfoliante de Coco Gaviota by Lia de 236 mL',
-    width: 1200,
-    height: 1200,
+    path: '/images/gaviota/products/exfoliante-de-coco-251-studio.jpg',
+    alt: 'Tarro del Exfoliante de Coco Gaviota by Lia de 251 mL',
+    width: 1254,
+    height: 1254,
   },
   'crema-hidratante': {
     path: '/images/gaviota/products/crema-hidratante-studio.jpg',
@@ -279,7 +284,7 @@ const ENGLISH: Record<
   'exfoliante-de-coco': {
     name: 'Coconut Body Scrub',
     shortDescription: 'Gentle exfoliation with a tropical coconut scent.',
-    imageAlt: '8 fl oz Gaviota by Lia Coconut Body Scrub jar',
+    imageAlt: '8.5 fl oz Gaviota by Lia Coconut Body Scrub jar',
     precautions: 'Keep out of reach of children. In case of irritation, discontinue use. Avoid contact with eyes. External use.',
     usageInstructions: 'Apply a moderate amount to damp skin and massage in circular motions for 3-5 minutes on the desired area. Then remove with plenty of water. For optimal results, use twice a week.',
   },
@@ -324,7 +329,10 @@ const ENGLISH: Record<
  * foto por idioma, así que este mapa es la única fuente del packshot inglés.
  *
  * `serum-vellos-encarnados` no tiene versión en inglés todavía: en `en` cae a
- * la foto en español con el `imageAlt` de `ENGLISH`.
+ * la foto en español con el `imageAlt` de `ENGLISH`. `exfoliante-de-coco` cae
+ * por el mismo camino desde la presentación de 251 mL, pero por el motivo
+ * contrario: su etiqueta nueva ya es bilingüe, así que una segunda foto en
+ * inglés sería la misma imagen dos veces.
  *
  * Solo cubre la foto PRINCIPAL. Si algún producto llega a tener varias fotos de
  * Storage, las secundarias seguirían en español — no ocurre hoy (ninguno pasa
@@ -332,7 +340,6 @@ const ENGLISH: Record<
  */
 const ENGLISH_IMAGE: Record<string, { path: string; width: number; height: number }> = {
   'aceite-anti-estrias': { path: '/images/gaviota/products/aceite-anti-estrias-en.png', width: 1254, height: 1254 },
-  'exfoliante-de-coco': { path: '/images/gaviota/products/exfoliante-de-coco-en.png', width: 1254, height: 1254 },
   'crema-hidratante': { path: '/images/gaviota/products/crema-hidratante-en.png', width: 1254, height: 1254 },
   'aceite-anti-estrias-masculino': { path: '/images/gaviota/products/aceite-anti-estrias-masculino-en.png', width: 1254, height: 1254 },
   'tonico-para-barba': { path: '/images/gaviota/products/tonico-para-barba-en.png', width: 1254, height: 1254 },
