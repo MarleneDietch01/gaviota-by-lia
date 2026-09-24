@@ -1,0 +1,593 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>Gaviota by Lia</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script src="audio-data.js"></script>
+    <style>
+      /* Tipografías de la marca, subseteadas al texto exacto de este vídeo.
+         Dos familias, ni una más — es la regla del proyecto. */
+      @font-face {
+        font-family: "Cormorant Garamond";
+        font-style: normal;
+        font-weight: 300;
+        font-display: block;
+        src: url("assets/fonts/cormorant-300.woff2") format("woff2");
+      }
+      @font-face {
+        font-family: "Cormorant Garamond";
+        font-style: normal;
+        font-weight: 400;
+        font-display: block;
+        src: url("assets/fonts/cormorant-400.woff2") format("woff2");
+      }
+      @font-face {
+        font-family: "Cormorant Garamond";
+        font-style: italic;
+        font-weight: 400;
+        font-display: block;
+        src: url("assets/fonts/cormorant-italic-400.woff2") format("woff2");
+      }
+      @font-face {
+        font-family: "Manrope";
+        font-style: normal;
+        font-weight: 400;
+        font-display: block;
+        src: url("assets/fonts/manrope-400.woff2") format("woff2");
+      }
+      @font-face {
+        font-family: "Manrope";
+        font-style: normal;
+        font-weight: 600;
+        font-display: block;
+        src: url("assets/fonts/manrope-600.woff2") format("woff2");
+      }
+
+      /* Tokens copiados literalmente de src/app/globals.css. No se reinventa
+         la paleta: es la misma que sirve la tienda. */
+      :root {
+        --ivory: #f7f0ec;
+        --white-warm: #fffaf8;
+        --blush: #f3e4ee;
+        --powder: #e6c6de;
+        --espresso: #3d2b26;
+        --body: #5e4a42;
+        --muted: #7d6a60;
+        --champagne: #c9a44a;
+        --gold-deep: #6a5304;
+        --line: #ece0e6;
+        --display: "Cormorant Garamond", Georgia, serif;
+        --sans: "Manrope", system-ui, sans-serif;
+      }
+
+      body {
+        margin: 0;
+        background: var(--ivory);
+        color: var(--espresso);
+        font-family: var(--sans);
+      }
+
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: var(--ivory);
+      }
+
+      .clip {
+        position: absolute;
+        inset: 0;
+      }
+
+      /* Cada escena tiene un .inner: las opacidades se animan AQUÍ y nunca
+         sobre el .clip, que es propiedad del runtime. */
+      .inner {
+        position: absolute;
+        inset: 0;
+      }
+
+      .eyebrow {
+        font-family: var(--sans);
+        font-weight: 600;
+        font-size: 19px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--gold-deep);
+        margin: 0;
+      }
+
+      /* ESCENA 1 — el origen ------------------------------------------- */
+      #s1 .inner {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        align-items: center;
+        background: var(--ivory);
+      }
+      #s1-text {
+        padding: 0 0 0 132px;
+        max-width: 760px;
+      }
+      #s1-title {
+        font-family: var(--display);
+        font-weight: 300;
+        font-size: 116px;
+        line-height: 1.04;
+        letter-spacing: -0.015em;
+        margin: 28px 0 0;
+        color: var(--espresso);
+      }
+      #s1-title em {
+        font-style: italic;
+        font-weight: 400;
+      }
+      /* El gesto de marca: arco grande en la diagonal, plano en la otra.
+         Mismas esquinas que hero.module.css a partir de lg. */
+      /* Respira con el grave de la cama. Amplitud mínima a propósito: no es
+         un visualizador, es que la escena no esté muerta. Prohibido cualquier
+         gesto que se lea como "reacciona a la música". */
+      #s1-glow {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        margin: -520px 0 0 -420px;
+        width: 840px;
+        height: 1040px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgb(201 164 74 / 0.5), transparent 68%);
+        filter: blur(60px);
+        opacity: 0.08;
+        pointer-events: none;
+      }
+      #s1-frame {
+        position: relative;
+        justify-self: center;
+        width: 648px;
+        height: 810px;
+        border-radius: 96px 2px 96px 2px;
+        overflow: hidden;
+        background: var(--powder);
+        box-shadow: 0 40px 90px -50px rgb(61 43 38 / 0.55);
+      }
+      #s1-photo {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: 50% 28%;
+        display: block;
+      }
+
+      /* ESCENA 2 — la colección ----------------------------------------- */
+      #s2 .inner {
+        background: var(--blush);
+        display: grid;
+        grid-template-rows: auto 1fr;
+        align-content: center;
+        padding: 96px 120px;
+        box-sizing: border-box;
+      }
+      #s2-head {
+        text-align: center;
+        margin-bottom: 56px;
+      }
+      #s2-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 44px;
+        align-items: start;
+      }
+      .pc-shot {
+        width: 100%;
+        aspect-ratio: 1;
+        border-radius: 48px 2px 48px 2px;
+        overflow: hidden;
+        background: var(--white-warm);
+        box-shadow: 0 26px 60px -40px rgb(61 43 38 / 0.5);
+      }
+      .pc-shot img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      .pc-name {
+        font-family: var(--display);
+        font-size: 40px;
+        font-weight: 400;
+        margin: 26px 0 0;
+        text-align: center;
+        color: var(--espresso);
+        line-height: 1.15;
+      }
+
+      /* ESCENA 3 — la compra -------------------------------------------- */
+      #s3 .inner {
+        background: var(--white-warm);
+        display: grid;
+        place-items: center;
+      }
+      /* Dos columnas, foto a la izquierda: es la maqueta real de la ficha a
+         partir de lg. Antes era una sola columna y dejaba medio cuadro
+         vacío — se leía como layout roto, no como contención. */
+      #s3-card {
+        position: relative;
+        display: grid;
+        grid-template-columns: 620px 1fr;
+        align-items: center;
+        gap: 92px;
+        width: 1560px;
+      }
+      #s3-shot {
+        width: 620px;
+        height: 620px;
+        border-radius: 96px 2px 96px 2px;
+        overflow: hidden;
+        background: var(--blush);
+        box-shadow: 0 40px 90px -52px rgb(61 43 38 / 0.55);
+      }
+      #s3-shot img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      #s3-col {
+        position: relative;
+        min-height: 620px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      #s3-name {
+        font-family: var(--display);
+        font-weight: 400;
+        font-size: 68px;
+        margin: 0;
+        color: var(--espresso);
+        line-height: 1.08;
+      }
+      #s3-price {
+        font-family: var(--sans);
+        font-weight: 600;
+        font-size: 40px;
+        margin: 22px 0 0;
+        color: var(--espresso);
+      }
+      #s3-price span {
+        font-weight: 400;
+        font-size: 28px;
+        color: var(--muted);
+      }
+      #s3-usage {
+        font-family: var(--sans);
+        font-size: 24px;
+        line-height: 1.62;
+        color: var(--body);
+        margin: 14px 0 0;
+        max-width: 780px;
+      }
+      #s3-usage b {
+        font-weight: 600;
+        color: var(--espresso);
+      }
+      /* Botón rectangular de 2px: es el radio real del sistema, no una
+         píldora. La tienda no usa píldoras para acciones de texto. */
+      #s3-btn {
+        position: relative;
+        align-self: flex-start;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 44px;
+        padding: 26px 52px;
+        border-radius: 2px;
+        background: var(--champagne);
+        color: var(--espresso);
+        font-family: var(--sans);
+        font-weight: 600;
+        font-size: 26px;
+        letter-spacing: 0.02em;
+      }
+      #s3-cursor {
+        position: absolute;
+        right: 34px;
+        top: 50%;
+        margin-top: -17px;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        border: 3px solid var(--gold-deep);
+        background: rgb(201 164 74 / 0.25);
+      }
+      /* El resumen de bolsa entra en el sitio de la ficha. */
+      #s3-bag {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      #s3-detail {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      .bag-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        font-family: var(--sans);
+        font-size: 34px;
+        color: var(--body);
+        padding: 20px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .bag-row b {
+        font-weight: 600;
+        color: var(--espresso);
+      }
+      .bag-total {
+        font-size: 50px;
+        border-bottom: none;
+        padding-top: 34px;
+      }
+      .bag-total b {
+        font-size: 58px;
+      }
+
+      /* ESCENA 4 — la firma --------------------------------------------- */
+      #s4 .inner {
+        background: var(--ivory);
+        display: grid;
+        place-items: center;
+        align-content: center;
+        gap: 0;
+      }
+      #s4-stack {
+        text-align: center;
+      }
+      #s4-logo {
+        width: 540px;
+        display: block;
+        margin: 0 auto;
+      }
+      #s4-origin {
+        font-family: var(--sans);
+        font-weight: 600;
+        font-size: 20px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin: 56px 0 0;
+      }
+      #s4-domain {
+        font-family: var(--display);
+        font-weight: 400;
+        font-size: 60px;
+        letter-spacing: 0.01em;
+        color: var(--gold-deep);
+        margin: 26px 0 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="brag"
+      data-start="0"
+      data-width="1920"
+      data-height="1080"
+      data-duration="22"
+    >
+      <!-- ESCENA 1 — el origen. Ventana alargada 0,7 s sobre su hueco de 5 s
+           para cubrir el fundido cruzado de salida. -->
+      <section id="s1" class="clip" data-layout-allow-overlap data-layout-allow-occlusion data-start="0" data-duration="5.7" data-track-index="0">
+        <div class="inner">
+          <div id="s1-text">
+            <p class="eyebrow" id="s1-eyebrow">
+              Cuidado corporal inspirado en la belleza dominicana
+            </p>
+            <h1 id="s1-title">Tu piel.<br />Tu <em>ritual</em>.<br />Tu momento.</h1>
+          </div>
+          <div style="position: relative; justify-self: center">
+            <div id="s1-glow"></div>
+          <div id="s1-frame">
+            <img id="s1-photo" src="assets/img/hero-desktop.jpg" alt="" data-layout-allow-overflow />
+          </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ESCENA 2 — la colección -->
+      <section id="s2" class="clip" data-layout-allow-overlap data-layout-allow-occlusion data-start="5" data-duration="6.2" data-track-index="1">
+        <div class="inner">
+          <div id="s2-head">
+            <p class="eyebrow">La colección</p>
+          </div>
+          <div id="s2-row">
+            <figure class="pc" id="pc1" style="margin: 0">
+              <div class="pc-shot"><img src="assets/img/aceite-anti-estrias-studio.jpg" alt="" /></div>
+              <figcaption class="pc-name">Aceite<br />Anti-Estrías</figcaption>
+            </figure>
+            <figure class="pc" id="pc2" style="margin: 0">
+              <div class="pc-shot"><img src="assets/img/exfoliante-de-coco-studio.jpg" alt="" /></div>
+              <figcaption class="pc-name">Exfoliante<br />de Coco</figcaption>
+            </figure>
+            <figure class="pc" id="pc3" style="margin: 0">
+              <div class="pc-shot"><img src="assets/img/crema-hidratante-studio.jpg" alt="" /></div>
+              <figcaption class="pc-name">Crema<br />Hidratante</figcaption>
+            </figure>
+            <figure class="pc" id="pc4" style="margin: 0">
+              <div class="pc-shot"><img src="assets/img/tonico-para-barba-studio.jpg" alt="" /></div>
+              <figcaption class="pc-name">Tónico<br />para Barba</figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <!-- ESCENA 3 — la compra -->
+      <section id="s3" class="clip" data-layout-allow-overlap data-layout-allow-occlusion data-start="10.5" data-duration="6.2" data-track-index="2">
+        <div class="inner">
+          <div id="s3-card">
+            <div id="s3-shot">
+              <img src="assets/img/aceite-anti-estrias.jpg" alt="" />
+            </div>
+            <div id="s3-col">
+            <div id="s3-detail">
+              <p class="eyebrow">Cuidado corporal</p>
+              <h2 id="s3-name">Aceite Anti-Estrías</h2>
+              <p id="s3-price">$50.00 <span>· 115 mL</span></p>
+              <p class="eyebrow" style="margin-top: 44px">Modo de uso</p>
+              <p id="s3-usage">
+                Aplicar en la zona deseada y masajear con movimientos circulares por unos
+                minutos. Para óptimos resultados, aplicar <b>después del baño, dos veces al
+                día.</b>
+              </p>
+              <div id="s3-btn">Añadir a la bolsa<div id="s3-cursor"></div></div>
+            </div>
+            <div id="s3-bag">
+              <div class="bag-row"><span>Subtotal estimado</span><b>$50.00</b></div>
+              <div class="bag-row"><span>Envío estimado (EE. UU.)</span><b>$14.00</b></div>
+              <div class="bag-row bag-total"><span>Total estimado</span><b>$64.00</b></div>
+            </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ESCENA 4 — la firma -->
+      <section id="s4" class="clip" data-layout-allow-overlap data-layout-allow-occlusion data-start="16" data-duration="6" data-track-index="3">
+        <div class="inner">
+          <div id="s4-stack">
+            <img id="s4-logo" src="assets/img/logo-oficial-transparent.png" alt="Gaviota by Lia" />
+            <p id="s4-origin">Hecho en República Dominicana · Envíos en Estados Unidos</p>
+            <p id="s4-domain">gaviotabylia.com</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Cama musical. Volumen bajo y constante, con entrada y salida por
+           lane de automatización — no por tween, que el mixer ignoraría. -->
+      <audio
+        id="bed"
+        src="assets/music/happy-beats-business-moves-vol-10-by-ende-dot-app.mp3"
+        data-start="0"
+        data-duration="22"
+        data-track-index="10"
+        data-volume="0.34"
+        data-automation='{"version":1,"lanes":[{"target":"volume","points":[{"t":0,"v":0},{"t":0.8,"v":1},{"t":20.2,"v":1},{"t":22,"v":0}]}]}'
+      ></audio>
+
+      <!-- SFX. Nada en el cierre: el logotipo entra en silencio, que es
+           justamente el gesto que esta marca sí hace. -->
+      <audio id="tick1" src="assets/sfx/bong_001.ogg" data-start="5.19" data-duration="0.13" data-track-index="11" data-volume="0.2"></audio>
+      <audio id="tick2" src="assets/sfx/bong_001.ogg" data-start="6.28" data-duration="0.13" data-track-index="11" data-volume="0.2"></audio>
+      <audio id="tick3" src="assets/sfx/bong_001.ogg" data-start="7.35" data-duration="0.13" data-track-index="11" data-volume="0.2"></audio>
+      <audio id="tick4" src="assets/sfx/bong_001.ogg" data-start="8.22" data-duration="0.13" data-track-index="11" data-volume="0.2"></audio>
+      <audio id="press" src="assets/sfx/click2.ogg" data-start="13.25" data-duration="0.06" data-track-index="12" data-volume="0.3"></audio>
+    </div>
+
+    <script>
+      const tl = gsap.timeline({ paused: true });
+
+      /* ---------------------------------------------------------------
+         ESCENA 1 — el origen (0 → 5,7)
+         Entrada rápida, reposo largo: es la disciplina de `polished`.
+         El titular queda asentado desde 1,35 s hasta que empieza el
+         fundido en 5,0 → 3,65 s de lectura para cinco palabras.
+         --------------------------------------------------------------- */
+      tl.fromTo("#s1-frame", { opacity: 0, scale: 1.04 }, { opacity: 1, scale: 1, duration: 1.1, ease: "power2.out" }, 0)
+        // Ken Burns muy contenido: 4,5 % en toda la escena, imperceptible
+        // como movimiento y perceptible como respiración.
+        .fromTo("#s1-photo", { scale: 1 }, { scale: 1.045, duration: 5.7, ease: "none" }, 0)
+        .fromTo("#s1-eyebrow", { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.55, ease: "power3.out" }, 0.45)
+        .fromTo("#s1-title", { opacity: 0, y: 34 }, { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }, 0.8)
+        .to("#s1 .inner", { opacity: 0, duration: 0.7, ease: "power1.inOut" }, 5.0);
+
+      /* ---------------------------------------------------------------
+         ESCENA 2 — la colección (5,0 → 11,2)
+         Los cuatro packshots llegan a la rejilla de beats, UN BEAT SÍ Y
+         OTRO NO. A cada beat (0,545 s) no daría tiempo a leer el nombre.
+         // beat-grid: 5.19 / 6.28 / 7.35 / 8.22
+         Los cuatro quedan juntos en pantalla desde 8,57 hasta 10,5 —
+         casi dos segundos con la colección completa.
+         --------------------------------------------------------------- */
+      tl.fromTo("#s2 .inner", { opacity: 0 }, { opacity: 1, duration: 0.7, ease: "power1.inOut" }, 5.0)
+        .fromTo("#s2-head", { opacity: 0 }, { opacity: 1, duration: 0.5 }, 5.2);
+
+      const shots = [
+        ["#pc1", 5.19],
+        ["#pc2", 6.28],
+        ["#pc3", 7.35],
+        ["#pc4", 8.22],
+      ];
+      shots.forEach(([sel, at]) => {
+        tl.fromTo(sel, { opacity: 0, y: 46 }, { opacity: 1, y: 0, duration: 0.35, ease: "power3.out" }, at);
+      });
+      tl.to("#s2 .inner", { opacity: 0, duration: 0.7, ease: "power1.inOut" }, 10.5);
+
+      /* ---------------------------------------------------------------
+         ESCENA 3 — la compra (10,5 → 16,7)
+         La ficha real, el cursor pulsando, y el resumen de bolsa
+         ocupando su sitio. Todas las cifras son las de producción.
+         --------------------------------------------------------------- */
+      tl.fromTo("#s3 .inner", { opacity: 0 }, { opacity: 1, duration: 0.7, ease: "power1.inOut" }, 10.5)
+        .set("#s3-bag", { opacity: 0 }, 10.5)
+        .set("#s3-cursor", { opacity: 0 }, 10.5)
+        .fromTo("#s3-detail", { opacity: 0, y: 26 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 10.7)
+        // El cursor entra tarde y va directo: no es un personaje, es una
+        // demostración de que el botón se pulsa.
+        .fromTo("#s3-cursor", { opacity: 0, x: 90, y: 60 }, { opacity: 1, x: 0, y: 0, duration: 0.55, ease: "power2.out" }, 12.5)
+        // La pulsación. El botón se hunde y vuelve — 2 %, lo justo.
+        .to("#s3-btn", { scale: 0.975, duration: 0.11, ease: "power2.out" }, 13.25)
+        .to("#s3-btn", { scale: 1, duration: 0.2, ease: "power2.out" }, 13.36)
+        .to("#s3-cursor", { scale: 0.86, duration: 0.11, ease: "power2.out" }, 13.25)
+        .to("#s3-cursor", { scale: 1, duration: 0.2, ease: "power2.out" }, 13.36)
+        // La ficha cede el sitio al resumen.
+        .to("#s3-detail", { opacity: 0, y: -22, duration: 0.45, ease: "power2.in" }, 13.7)
+        .to("#s3-cursor", { opacity: 0, duration: 0.3 }, 13.7)
+        .fromTo("#s3-bag", { opacity: 0, y: 26 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 14.1)
+        .to("#s3 .inner", { opacity: 0, duration: 0.7, ease: "power1.inOut" }, 16.0);
+
+      /* ---------------------------------------------------------------
+         ESCENA 4 — la firma (16,0 → 22,0)
+         El dominio es el remate: dónde se compra. Se ancla al único
+         strong cue de la ventana.
+         // beat-locked: 20.19s (strong_beat, intensidad 1.00)
+         Asentado en 20,54 y en pantalla hasta 22,0 → 1,46 s de lectura.
+         --------------------------------------------------------------- */
+      tl.fromTo("#s4 .inner", { opacity: 0 }, { opacity: 1, duration: 0.7, ease: "power1.inOut" }, 16.0)
+        .fromTo("#s4-logo", { opacity: 0, scale: 0.965 }, { opacity: 1, scale: 1, duration: 1.0, ease: "power2.out" }, 16.4)
+        .fromTo("#s4-origin", { opacity: 0 }, { opacity: 1, duration: 0.7, ease: "power2.out" }, 17.7)
+        .fromTo("#s4-domain", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.35, ease: "power3.out" }, 20.19);
+
+      /* ---------------------------------------------------------------
+         AUDIO-REACTIVO — solo escena 1, solo el halo, amplitud 0,06→0,20.
+         El grave mueve la calidez del fondo; nada más responde. Sin barras,
+         sin ondas, sin partículas: esta marca no hace ese gesto.
+         --------------------------------------------------------------- */
+      (function () {
+        const glow = document.getElementById("s1-glow");
+        const bass = window.BASS || [];
+        const fps = window.BASS_FPS || 30;
+        for (let f = 0; f < bass.length; f++) {
+          tl.call(
+            (function (v) {
+              return function () {
+                glow.style.opacity = String(0.06 + v * 0.14);
+              };
+            })(bass[f]),
+            [],
+            f / fps,
+          );
+        }
+      })();
+
+      window.__timelines["brag"] = tl;
+    </script>
+  </body>
+</html>

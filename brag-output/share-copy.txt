@@ -1,0 +1,5 @@
+Gaviota by Lia ya está en línea: cuidado corporal dominicano, seis productos, envíos a Estados Unidos.
+
+Tienda bilingüe con Next.js, Supabase y Stripe — el inventario se reserva al iniciar la compra y se libera solo si no se paga.
+
+gaviotabylia.com

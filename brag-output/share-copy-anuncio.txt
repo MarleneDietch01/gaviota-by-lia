@@ -1,0 +1,58 @@
+Gaviota by Lia ya tiene tienda propia.
+
+Entras, eliges, lo añades a la bolsa y pagas. El envío se ve antes de pagar y
+el cobro va por Stripe. Hecho en República Dominicana, con envíos en Estados
+Unidos.
+
+gaviotabylia.com
+
+================================================================================
+CUATRO ARCHIVOS. DOS PIEZAS DISTINTAS.
+================================================================================
+
+LA COMPRA (la nueva — enseña la tienda funcionando)
+  anuncio-compra-1x1.mp4    1080x1080, 25 s  — feed de Instagram y Facebook
+  anuncio-compra-9x16.mp4   1080x1920, 25 s  — Reels, Stories y TikTok
+
+  Metraje real de gaviotabylia.com grabado en móvil CON EL CURSOR VISIBLE. Se
+  pulsa de verdad: portada -> colección -> ficha -> «Añadir a la bolsa» (el
+  botón se pone verde y el contador de la bolsa sube a 1) -> la bolsa con
+  subtotal, envío y total -> «Ir a pagar» -> la pantalla de pago de Stripe con
+  64,00 US$.
+
+    0-4 s    portada + clic      «Gaviota by Lia tiene tienda propia.»
+    4-8 s    tienda + clic       «Entras y eliges.»
+    8-12 s   añadir a la bolsa   «Lo añades a la bolsa.»
+    12-16 s  la bolsa            «Ves el envío antes de pagar.»
+    16-20 s  ir a pagar -> Stripe «Pago seguro con Stripe.»
+    20-25 s  logotipo y dominio
+
+EL RECORRIDO (la anterior — solo pasa por las pantallas)
+  anuncio-1x1.mp4           1080x1080, 21 s
+  anuncio-9x16.mp4          1080x1920, 21 s
+
+Los cuatro llevan música y su póster horneado como fotograma 0
+(anuncio-*.jpg), que es lo que se ve antes de darle al play.
+
+================================================================================
+NOTAS
+================================================================================
+
+· El 9:16 no es el cuadrado estirado. Su pantalla mide 486x1050, que es la
+  resolución nativa de la grabación: el metraje entra sin escalar un solo
+  píxel. En el cuadrado hay que reducirlo a dos tercios para que el teléfono
+  quepa junto al titular. Si solo vas a publicar uno, publica el vertical.
+
+· Se ve la barra que anuncia GAVIOTA10 porque está publicada y el descuento es
+  permanente (`GAVIOTA_PROMOTION` en src/lib/commerce/promotion.ts). Si algún
+  día se retira, hay que volver a grabar.
+
+· La pantalla de Stripe ofrece tarjeta, Link, Cash App, Apple Pay y Amazon Pay.
+  Klarna, Afterpay y Affirm NO aparecen en ella.
+
+· Entre pulsar «Ir a pagar» y que Stripe pinte pasan ~5,5 s reales de carga.
+  En el anuncio están cortados con un fundido: es un corte de montaje, no una
+  promesa de que la tienda sea más rápida de lo que es.
+
+· Ningún dato de cliente aparece en ninguna parte. La pantalla de Stripe sale
+  con los campos vacíos y sus textos de ejemplo.

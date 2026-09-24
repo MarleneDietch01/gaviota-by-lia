@@ -1,0 +1,57 @@
+{
+  "stripeUrl": "https://checkout.stripe.com/f/pay/cs_live_a19GnVFiztlZwhZsjbmMMFuxx58k0CTbSVM4DZCZeyQPgXj9lVnc6k2NNW#fidnandhYHdWcXxpYCc%2FJ2FgY2RwaXEnKSdicyc%2FMCknZHVsTmB8Jz8ndW5aaWxzYFowNFAyQmh%2FRkZqQ3VOakRAbkRLdHJIR1BUS1JfaE8yUHxMX19EVHRfaHxdf0RtfzRKNFdHfWhhVTFzdjRcNTI1QDNNY19%2FVnZRT0RmNj1AaXR3cl9BdUtVajU1aV1SSVQ8UUMnKSdjd2poVmB3c2B3Jz9xd3BgKSdnZGZuYndqcGthRmppancnPycmYzJjNGBmJyknaWR8anBxUXx1YCc%2FJ3Zsa2JpYFpscWBoJyknYGtkZ2lgVWlkZmBtamlhYHd2Jz9xd3BgeCUl",
+  "marks": [
+    {
+      "name": "portada asentada",
+      "t": 3.514
+    },
+    {
+      "name": "antes del click a la coleccion",
+      "t": 8.963
+    },
+    {
+      "name": "tienda",
+      "t": 12.651
+    },
+    {
+      "name": "antes del click a la ficha",
+      "t": 17.2
+    },
+    {
+      "name": "ficha",
+      "t": 21.369
+    },
+    {
+      "name": "antes de anadir a la bolsa",
+      "t": 21.369
+    },
+    {
+      "name": "anadido (el contador sube)",
+      "t": 24.555
+    },
+    {
+      "name": "antes de abrir la bolsa",
+      "t": 25.263
+    },
+    {
+      "name": "bolsa",
+      "t": 29.389
+    },
+    {
+      "name": "antes de ir a pagar",
+      "t": 34.317
+    },
+    {
+      "name": "pulsado ir a pagar",
+      "t": 35.98
+    },
+    {
+      "name": "stripe",
+      "t": 46.351
+    }
+  ],
+  "files": [
+    "page@5c71b0b97d01b328c049052cbf39546b.webm"
+  ],
+  "recordedAt": "2026-09-23T20:55:18.655Z"
+}

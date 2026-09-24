@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1080, height=1920">
+    <title>Gaviota by Lia — la compra, vertical</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Cormorant Garamond";
+        font-style: normal;
+        font-weight: 300;
+        font-display: block;
+        src: url("assets/fonts/cormorant-300.woff2") format("woff2");
+      }
+      @font-face {
+        font-family: "Cormorant Garamond";
+        font-style: normal;
+        font-weight: 400;
+        font-display: block;
+        src: url("assets/fonts/cormorant-400.woff2") format("woff2");
+      }
+      @font-face {
+        font-family: "Cormorant Garamond";
+        font-style: italic;
+        font-weight: 400;
+        font-display: block;
+        src: url("assets/fonts/cormorant-italic-400.woff2") format("woff2");
+      }
+      @font-face {
+        font-family: "Manrope";
+        font-style: normal;
+        font-weight: 400;
+        font-display: block;
+        src: url("assets/fonts/manrope-400.woff2") format("woff2");
+      }
+      @font-face {
+        font-family: "Manrope";
+        font-style: normal;
+        font-weight: 600;
+        font-display: block;
+        src: url("assets/fonts/manrope-600.woff2") format("woff2");
+      }
+
+      /* Paleta literal de src/app/globals.css. */
+      :root {
+        --ivory: #f7f0ec;
+        --blush: #f3e4ee;
+        --espresso: #3d2b26;
+        --body: #5e4a42;
+        --muted: #7d6a60;
+        --champagne: #c9a44a;
+        --gold-deep: #6a5304;
+        --display: "Cormorant Garamond", Georgia, serif;
+        --sans: "Manrope", system-ui, sans-serif;
+      }
+
+      body {
+        margin: 0;
+        background: var(--ivory);
+        color: var(--espresso);
+        font-family: var(--sans);
+      }
+
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: var(--ivory);
+      }
+
+      .clip {
+        position: absolute;
+        inset: 0;
+      }
+
+      /* El escenario es un contenedor SIN `data-start`: hyperframes rechaza un
+         elemento temporizado dentro de otro elemento temporizado. */
+      #stage {
+        position: absolute;
+        inset: 0;
+      }
+
+      /* Halo cálido detrás del teléfono. Mismo recurso que el hero del sitio. */
+      #halo {
+        position: absolute;
+        left: 50%;
+        top: 1043px;
+        width: 900px;
+        height: 900px;
+        margin-left: -450px;
+        margin-top: -450px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgb(230 198 222 / 0.65), transparent 66%);
+        filter: blur(60px);
+      }
+
+      /* La pantalla va a 486x1050, que es la resolución NATIVA de la grabación:
+         el metraje entra sin escalar un solo píxel. */
+      #phone {
+        position: absolute;
+        left: 279px;
+        top: 500px;
+        width: 522px;
+        height: 1086px;
+        box-sizing: border-box;
+        padding: 18px;
+        border-radius: 68px;
+        background: var(--espresso);
+        box-shadow:
+          0 56px 110px -44px rgb(61 43 38 / 0.55),
+          0 3px 0 rgb(255 253 252 / 0.14) inset;
+      }
+      #screen {
+        position: relative;
+        width: 486px;
+        height: 1050px;
+        border-radius: 50px;
+        overflow: hidden;
+        background: var(--espresso);
+      }
+
+      /* Titular por tramo. Cada uno es su propio clip temporizado. */
+      .head {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 150px;
+        text-align: center;
+        padding: 0 90px;
+      }
+      .head p {
+        margin: 0;
+        font-family: var(--display);
+        font-weight: 400;
+        font-size: 66px;
+        line-height: 1.12;
+        color: var(--espresso);
+      }
+      .head span {
+        display: block;
+        font-family: var(--sans);
+        font-weight: 600;
+        font-size: 21px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--gold-deep);
+        margin-bottom: 26px;
+      }
+
+      /* El dominio vive toda la pieza: es un anuncio, no un cortometraje. */
+      #urlbar {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 1690px;
+        text-align: center;
+        font-family: var(--display);
+        font-size: 56px;
+        color: var(--gold-deep);
+      }
+
+      /* Cierre. Tapa el escenario entero con fondo opaco. */
+      #outro .inner {
+        position: absolute;
+        inset: 0;
+        background: var(--ivory);
+        display: grid;
+        place-items: center;
+        align-content: center;
+      }
+      #outro-logo {
+        width: 620px;
+        display: block;
+        margin: 0 auto;
+      }
+      #outro-origin {
+        font-family: var(--sans);
+        font-weight: 600;
+        font-size: 23px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin: 72px 0 0;
+        text-align: center;
+      }
+      #outro-domain {
+        font-family: var(--display);
+        font-size: 76px;
+        color: var(--gold-deep);
+        margin: 30px 0 0;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="flow9" data-start="0" data-width="1080" data-height="1920" data-duration="25">
+      <div id="stage">
+        <div id="halo"></div>
+        <div id="phone">
+          <div id="screen">
+            <!-- La COMPRA real de www.gaviotabylia.com, grabada en móvil con el
+                 cursor visible: se pulsa, se navega, se añade a la bolsa y se
+                 llega a la pantalla de pago. Se compone encima con ffmpeg. -->
+          </div>
+        </div>
+        <div id="urlbar">gaviotabylia.com</div>
+      </div>
+
+      <section id="h1" class="clip head" data-start="0" data-duration="4" data-track-index="1">
+        <p><span>Ya está en línea</span>Gaviota by Lia<br>tiene tienda propia.</p>
+      </section>
+      <section id="h2" class="clip head" data-start="4" data-duration="4" data-track-index="1">
+        <p><span>El catálogo</span>Entras y eliges.</p>
+      </section>
+      <section id="h3" class="clip head" data-start="8" data-duration="4" data-track-index="1">
+        <p><span>Cada producto</span>Lo añades<br>a la bolsa.</p>
+      </section>
+      <section id="h4" class="clip head" data-start="12" data-duration="4" data-track-index="1">
+        <p><span>La bolsa</span>Ves el envío<br>antes de pagar.</p>
+      </section>
+      <section id="h5" class="clip head" data-start="16" data-duration="4" data-track-index="1">
+        <p><span>El pago</span>Pago seguro<br>con Stripe.</p>
+      </section>
+
+      <section id="outro" class="clip" data-start="20" data-duration="5" data-track-index="2">
+        <div class="inner">
+          <div>
+            <img id="outro-logo" src="assets/img/logo-oficial-transparent.png" alt="Gaviota by Lia">
+            <p id="outro-origin">Hecho en República Dominicana · Envíos en Estados Unidos</p>
+            <p id="outro-domain">gaviotabylia.com</p>
+          </div>
+        </div>
+      </section>
+
+      <audio id="bed" src="assets/music/happy-beats-business-moves-vol-10-by-ende-dot-app.mp3" data-start="0" data-duration="25" data-track-index="10" data-volume="0.34" data-automation="{&quot;version&quot;:1,&quot;lanes&quot;:[{&quot;target&quot;:&quot;volume&quot;,&quot;points&quot;:[{&quot;t&quot;:0,&quot;v&quot;:0},{&quot;t&quot;:0.8,&quot;v&quot;:1},{&quot;t&quot;:23.4,&quot;v&quot;:1},{&quot;t&quot;:25,&quot;v&quot;:0}]}]}"></audio>
+    </div>
+
+    <script>
+      const tl = gsap.timeline({ paused: true });
+
+      /* El teléfono entra una vez y se queda: el protagonista es lo que pasa
+         DENTRO de la pantalla, no el teléfono. */
+      tl.fromTo("#phone", { opacity: 0, y: 34 }, { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }, 0)
+        .fromTo("#halo", { opacity: 0 }, { opacity: 1, duration: 1.2, ease: "power1.out" }, 0)
+        .fromTo("#urlbar", { opacity: 0 }, { opacity: 1, duration: 0.6 }, 0.5);
+
+      /* Cinco tramos de 4 s. Entrada rápida, reposo largo. */
+      [
+        ["#h1", 0.35],
+        ["#h2", 4],
+        ["#h3", 8],
+        ["#h4", 12],
+        ["#h5", 16],
+      ].forEach(([sel, at]) => {
+        tl.fromTo(sel, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, at);
+      });
+
+      /* Cierre: el teléfono se va, la marca se queda.
+         // beat-locked: 24.009s (strong_cue, intensidad 0.981) — el dominio cae
+         en un golpe fuerte de la ventana final. */
+      tl.to("#stage", { opacity: 0, duration: 0.6, ease: "power1.inOut" }, 20.0)
+        .fromTo("#outro .inner", { opacity: 0 }, { opacity: 1, duration: 0.7, ease: "power1.inOut" }, 20.0)
+        .fromTo("#outro-logo", { opacity: 0, scale: 0.965 }, { opacity: 1, scale: 1, duration: 0.9, ease: "power2.out" }, 20.5)
+        .fromTo("#outro-origin", { opacity: 0 }, { opacity: 1, duration: 0.6 }, 21.7)
+        .fromTo("#outro-domain", { opacity: 0, y: 22 }, { opacity: 1, y: 0, duration: 0.35, ease: "power3.out" }, 24.009);
+
+      window.__timelines["flow9"] = tl;
+    </script>
+  </body>
+</html>
