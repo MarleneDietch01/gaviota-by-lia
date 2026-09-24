@@ -140,11 +140,8 @@ const LEGACY_IMAGE: Record<string, { path: string; alt: string; width: number; h
     width: 1200,
     height: 1200,
   },
-  // Presentación de 251 mL (sept. 2026). El bote cambió de forma y de tamaño:
-  // el anterior era recto de 236 mL y tenía dos fotos, una por idioma. La
-  // etiqueta nueva ya trae «EXFOLIANTE DE COCO / COCONUT SCRUB» impreso, así
-  // que esta única foto sirve para los dos idiomas y la entrada de este
-  // producto desapareció de `ENGLISH_IMAGE`.
+  // Presentación de 251 mL. La versión con el nombre principal en inglés
+  // se selecciona desde `ENGLISH_IMAGE` al cambiar de idioma.
   'exfoliante-de-coco': {
     path: '/images/gaviota/products/exfoliante-de-coco-251-studio.jpg',
     alt: 'Tarro del Exfoliante de Coco Gaviota by Lia de 251 mL',
@@ -329,10 +326,7 @@ const ENGLISH: Record<
  * foto por idioma, así que este mapa es la única fuente del packshot inglés.
  *
  * `serum-vellos-encarnados` no tiene versión en inglés todavía: en `en` cae a
- * la foto en español con el `imageAlt` de `ENGLISH`. `exfoliante-de-coco` cae
- * por el mismo camino desde la presentación de 251 mL, pero por el motivo
- * contrario: su etiqueta nueva ya es bilingüe, así que una segunda foto en
- * inglés sería la misma imagen dos veces.
+ * la foto en español con el `imageAlt` de `ENGLISH`.
  *
  * Solo cubre la foto PRINCIPAL. Si algún producto llega a tener varias fotos de
  * Storage, las secundarias seguirían en español — no ocurre hoy (ninguno pasa
@@ -340,6 +334,7 @@ const ENGLISH: Record<
  */
 const ENGLISH_IMAGE: Record<string, { path: string; width: number; height: number }> = {
   'aceite-anti-estrias': { path: '/images/gaviota/products/aceite-anti-estrias-en.png', width: 1254, height: 1254 },
+  'exfoliante-de-coco': { path: '/images/gaviota/products/exfoliante-de-coco-251-en.png', width: 1254, height: 1254 },
   'crema-hidratante': { path: '/images/gaviota/products/crema-hidratante-en.png', width: 1254, height: 1254 },
   'aceite-anti-estrias-masculino': { path: '/images/gaviota/products/aceite-anti-estrias-masculino-en.png', width: 1254, height: 1254 },
   'tonico-para-barba': { path: '/images/gaviota/products/tonico-para-barba-en.png', width: 1254, height: 1254 },
