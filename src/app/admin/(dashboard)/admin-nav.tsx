@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
+  Mail,
   MessageSquareText,
   Package,
   ShieldCheck,
@@ -16,6 +17,7 @@ const NAV = [
   { href: "/admin/products", label: "Productos", icon: Package },
   { href: "/admin/orders", label: "Pedidos", icon: ShoppingBag },
   { href: "/admin/customers", label: "Clientes", icon: Users },
+  { href: "/admin/subscribers", label: "Suscriptoras", icon: Mail },
   { href: "/admin/team", label: "Equipo", icon: ShieldCheck },
   { href: "/admin/reviews", label: "Reseñas", icon: MessageSquareText },
 ] as const;

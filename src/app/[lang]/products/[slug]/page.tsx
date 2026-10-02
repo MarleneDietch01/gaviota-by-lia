@@ -13,6 +13,7 @@ import { getTrustPoints } from '@/components/sections/trust-strip';
 import { Container, Rule, Section } from '@/components/ui/layout-primitives';
 import { CATEGORIES, getAllProducts, getProductBySlug } from '@/lib/catalog/products';
 import { formatMoney } from '@/lib/commerce/money';
+import { BackInStockForm } from '@/components/subscriptions/subscribe-forms';
 import { isLocale, localizedHref, pageAlternates, pick, socialMeta } from '@/lib/i18n';
 import { getSiteUrl } from '@/lib/site-url';
 import { breadcrumbJsonLd, jsonLdScript, productJsonLd } from '@/lib/structured-data';
@@ -169,6 +170,11 @@ export default async function ProductPage({ params }: Props) {
                 <QuickAdd slug={product.slug} productName={product.name} locale={lang} inStock={product.inStock} variant="solid" />
                 <FavoriteToggle slug={product.slug} productName={product.name} locale={lang} />
               </div>
+              {product.inStock ? null : (
+                <div className="mt-5 max-w-md">
+                  <BackInStockForm slug={product.slug} locale={lang} />
+                </div>
+              )}
               <BagNextStep locale={lang} />
               <a
                 href={whatsAppHref(pick(lang, `Hello, I have a question about ${product.name}.`, `Hola, tengo una pregunta sobre ${product.name}.`))}

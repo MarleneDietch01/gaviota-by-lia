@@ -6,6 +6,8 @@ import sharp from 'sharp';
 import { requireAdmin } from '@/lib/auth/guards';
 import { fromUnits } from '@/lib/commerce/money';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { createAdminSupabaseClient } from '@/lib/supabase/admin';
+import { notifyBackInStock } from '@/lib/email/back-in-stock';
 import {
   findMedicalClaims,
   productEditSchema,
@@ -225,6 +227,21 @@ export async function adjustStock(formData: FormData): Promise<ActionResult> {
 
   if (error) {
     return { ok: false, error: `No se pudo ajustar el inventario: ${error.message}` };
+  }
+
+  // Si el ajuste deja unidades disponibles, salen los avisos de reposición
+  // pendientes. Con stock en 0 no hay nada que hacer y la consulta lo descarta.
+  const { data: variant } = await supabase
+    .from('product_variants')
+    .select('product_id, stock_quantity, reserved_quantity')
+    .eq('id', parsed.data.variantId)
+    .maybeSingle();
+  if (variant && variant.stock_quantity - variant.reserved_quantity > 0) {
+    try {
+      await notifyBackInStock(createAdminSupabaseClient(), variant.product_id);
+    } catch (notifyError) {
+      console.error('[back-in-stock] notify failed:', notifyError);
+    }
   }
 
   revalidatePath('/admin/products');

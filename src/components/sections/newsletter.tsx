@@ -1,5 +1,6 @@
 import { Container, Rule, Section } from '@/components/ui/layout-primitives';
 import { Reveal } from '@/components/ui/reveal';
+import { NewsletterForm } from '@/components/subscriptions/subscribe-forms';
 import { getSection } from '@/lib/content/sections';
 import { pick, type Locale } from '@/lib/i18n';
 
@@ -10,9 +11,8 @@ import { pick, type Locale } from '@/lib/i18n';
  * llega y cada cuánto, en la medida en que se puede afirmar hoy. No se promete
  * descuento de bienvenida porque no existe ninguno aprobado.
  *
- * El formulario permanece oculto hasta que existan persistencia y rate limit.
- * Mostrar un campo que termina en una API inexistente sería una interacción
- * engañosa. El CTA temporal usa el canal oficial y funcional de la marca.
+ * Las altas van a `newsletter_subscribers` con límite de intentos (ver
+ * `lib/subscriptions/actions.ts`). Instagram queda como enlace secundario.
  */
 export async function Newsletter({ locale }: { locale: Locale }) {
   const c = await getSection('home.newsletter', locale);
@@ -34,13 +34,17 @@ export async function Newsletter({ locale }: { locale: Locale }) {
             <p className="mx-auto max-w-md text-lead leading-relaxed text-body">{c.body}</p>
           ) : null}
 
+          <div className="mt-9">
+            <NewsletterForm locale={locale} />
+          </div>
+
           <a
             href="https://www.instagram.com/gaviotabylia/"
             target="_blank"
             rel="noopener noreferrer"
-            className="premium-button mt-9 inline-flex min-h-12 items-center overflow-hidden rounded-xs bg-champagne px-7 text-sm font-semibold tracking-[0.02em] text-ink transition-[background-color,box-shadow,transform] duration-300 hover:bg-gold"
+            className="mt-6 inline-flex min-h-11 items-center text-sm font-semibold text-gold-deep underline-offset-4 hover:underline"
           >
-            {pick(locale, 'Follow updates on Instagram', 'Seguir novedades en Instagram')}
+            {pick(locale, 'Or follow us on Instagram', 'O síguenos en Instagram')}
           </a>
         </Reveal>
       </Container>

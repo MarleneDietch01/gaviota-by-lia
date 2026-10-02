@@ -117,12 +117,13 @@ export const ROUTE_PAGES: Readonly<Record<string, RoutePage>> = {
         c("We never see your card. Payment happens entirely on Stripe: your card details do not pass through our servers and are not stored in our database at any point.", "Nunca vemos tu tarjeta. El pago ocurre íntegramente en Stripe: los datos de tu tarjeta no pasan por nuestros servidores ni se guardan en nuestra base de datos en ningún momento."),
         c("If you create an account, which is optional: your email address and a password. The password is handled by our authentication provider and is stored hashed — we cannot see it or recover it for you.", "Si creas una cuenta, que es opcional: tu correo y una contraseña. La contraseña la gestiona nuestro proveedor de autenticación y se guarda cifrada — no podemos verla ni recuperarla por ti."),
         c("If you write to us through the contact form: your name, email, phone, subject and message. If you leave a review: your rating and the text you write.", "Si nos escribes por el formulario de contacto: tu nombre, correo, teléfono, asunto y mensaje. Si dejas una reseña: tu calificación y el texto que escribas."),
+        c("If you subscribe to our news, or ask us to let you know when a sold-out product is back: your email address and the language you browse in.", "Si te suscribes a nuestras novedades, o nos pides que te avisemos cuando vuelva un producto agotado: tu correo electrónico y el idioma en que navegas."),
         c("If you accept Google Analytics in the cookie banner: aggregate data about the pages you visit and how you move through the site. This is tied to an anonymous browser identifier, not to your name, email or order.", "Si aceptas Google Analytics en el aviso de cookies: datos agregados sobre las páginas que visitas y cómo te mueves por el sitio. Esto se asocia a un identificador de navegador anónimo, no a tu nombre, correo ni pedido."),
       ] },
       { heading: c("What we use it for", "Para qué los usamos"), body: [
         c("To process and ship your order, to send you the receipt and the tracking number, to answer you when you write to us, and to publish your review if you leave one and it is approved.", "Para procesar y enviar tu pedido, mandarte el recibo y el número de seguimiento, responderte cuando nos escribes, y publicar tu reseña si dejas una y se aprueba."),
         c("If you accept Google Analytics: to understand which pages and products get the most attention, so we can improve the store. If you decline or say nothing, this never happens.", "Si aceptas Google Analytics: para entender qué páginas y productos reciben más atención, y así mejorar la tienda. Si lo rechazas o no respondes, esto no ocurre nunca."),
-        c("We do not send marketing email. Every email this store sends today is transactional: it is about an order you placed.", "No enviamos correo comercial. Todos los correos que manda esta tienda hoy son transaccionales: se refieren a un pedido que hiciste."),
+        c("We only send marketing email if you subscribe to our news, and every one of those emails includes a link to unsubscribe in one click. A back-in-stock alert is a single email about the product you asked for; it does not sign you up for anything else. All other email is about an order you placed.", "Solo enviamos correo comercial si te suscribes a nuestras novedades, y cada uno de esos correos incluye un enlace para darte de baja con un clic. Un aviso de reposición es un único correo sobre el producto que pediste; no te suscribe a nada más. El resto de correos se refieren a un pedido que hiciste."),
       ] },
       { heading: c("Who we share it with", "Con quién los compartimos"), body: [
         c("Only with the services needed for your order to exist and arrive: Stripe processes the payment, Supabase hosts the database and accounts, Resend delivers our emails, Vercel hosts the site, and USPS delivers the parcel. Each one only receives what its job requires.", "Solo con los servicios necesarios para que tu pedido exista y llegue: Stripe procesa el pago, Supabase aloja la base de datos y las cuentas, Resend entrega nuestros correos, Vercel aloja el sitio y USPS entrega el paquete. Cada uno recibe únicamente lo que su función requiere."),
@@ -130,7 +131,7 @@ export const ROUTE_PAGES: Readonly<Record<string, RoutePage>> = {
         c("We do not sell, rent or trade your data, and we do not share it for advertising purposes with anyone.", "No vendemos, alquilamos ni intercambiamos tus datos, y no los compartimos con nadie con fines publicitarios."),
       ] },
       { heading: c("How long we keep it", "Cuánto tiempo los guardamos"), body: [
-        c("Orders and their receipts are kept for as long as tax and accounting obligations require. Contact messages and account data are kept until you ask us to delete them.", "Los pedidos y sus recibos se conservan durante el tiempo que exijan las obligaciones fiscales y contables. Los mensajes de contacto y los datos de la cuenta se conservan hasta que nos pidas eliminarlos."),
+        c("Orders and their receipts are kept for as long as tax and accounting obligations require. Contact messages and account data are kept until you ask us to delete them. Your newsletter email is kept until you unsubscribe or ask us to delete it.", "Los pedidos y sus recibos se conservan durante el tiempo que exijan las obligaciones fiscales y contables. Los mensajes de contacto y los datos de la cuenta se conservan hasta que nos pidas eliminarlos. Tu correo de novedades se conserva hasta que te des de baja o nos pidas eliminarlo."),
       ] },
       { heading: c("Your rights", "Tus derechos"), body: [
         c("You can ask us for a copy of your data, for a correction, or for its deletion. Write to gaviotabylia@gmail.com and we will answer within 30 days.", "Puedes pedirnos una copia de tus datos, su corrección o su eliminación. Escribe a gaviotabylia@gmail.com y te respondemos en un plazo de 30 días."),
@@ -144,7 +145,7 @@ export const ROUTE_PAGES: Readonly<Record<string, RoutePage>> = {
       ] },
     ],
     links: [{ href: '/cookies', label: c("Cookie policy", "Política de cookies") }, { href: '/contact', label: c("Contact us", "Escríbenos") }],
-    updated: c("Last updated: 14 September 2026.", "Última actualización: 14 de septiembre de 2026."),
+    updated: c("Last updated: 2 October 2026.", "Última actualización: 2 de octubre de 2026."),
   },
   terms: {
     eyebrow: c("Policies", "Políticas"),
