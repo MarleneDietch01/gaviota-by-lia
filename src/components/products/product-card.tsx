@@ -79,7 +79,19 @@ export function ProductCard({
           locale={locale}
         />
 
-        {badge ? (
+        {/* Agotado ocupa la esquina del badge editorial: a quien está mirando
+            la foto le importa más que no puede comprarlo que un "Best seller".
+            Rectángulo rosa polvo con texto espresso (8.6:1); el rosa con blanco
+            de la referencia no llega a 4.5:1. `aria-hidden` porque el botón de
+            la fila de acciones ya anuncia "Agotado" a los lectores de pantalla. */}
+        {!product.inStock ? (
+          <span
+            aria-hidden="true"
+            className="absolute left-3 top-3 z-10 bg-powder px-2.5 py-1 text-2xs font-bold uppercase tracking-[0.1em] text-espresso"
+          >
+            {pick(locale, 'Sold out', 'Agotado')}
+          </span>
+        ) : badge ? (
           <span className="absolute left-3 top-3 z-10 rounded-pill bg-gold-ink px-2.5 py-1 text-2xs font-bold uppercase tracking-[0.1em] text-white-warm">
             {badge}
           </span>
